@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Today's Labor News — 2026.04.20</title>
+<style>
+  :root {
+    --navy: #0a0f1e;
+    --navy-card: #141d2e;
+    --navy-border: #1f3260;
+    --gold: #c9a84c;
+    --gold-dim: #9b7d36;
+    --cream: #f5f0e8;
+    --cream-dim: #ccc4b0;
+    --text-body: #c8ccd8;
+    --text-muted: #7a8299;
+    --base: 17px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--navy);
+    color: var(--text-body);
+    font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+    font-size: var(--base);
+    line-height: 1.7;
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  /* ── 헤더 ── */
+  .header {
+    background: #111827;
+    border-bottom: 2px solid var(--gold);
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-logo {
+    font-size: var(--base);
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 0.04em;
+  }
+  .header-date {
+    font-size: var(--base);
+    font-weight: 700;
+    color: #ffffff;
+  }
+
+  /* ── 히어로 (첫 페이지) ── */
+  .hero {
+    background: linear-gradient(180deg, #111827 0%, var(--navy) 100%);
+    padding: 28px 20px 24px;
+    border-bottom: 1px solid var(--navy-border);
+  }
+  .hero-label {
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+  .hero-title {
+    font-size: 26px;
+    font-weight: 900;
+    color: var(--cream);
+    line-height: 1.2;
+    margin-bottom: 6px;
+    text-align: center;
+  }
+  .hero-title span { color: var(--gold); }
+  .hero-sub {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.7;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  /* ── 헤드라인 목록 ── */
+  .headline-list {
+    background: rgba(31,50,96,0.3);
+    border: 1px solid var(--navy-border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .headline-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 13px 16px;
+    border-bottom: 1px solid var(--navy-border);
+    text-decoration: none;
+  }
+  .headline-item:last-child { border-bottom: none; }
+  .headline-num {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--gold);
+    background: rgba(201,168,76,0.12);
+    border: 1px solid rgba(201,168,76,0.25);
+    width: 22px;
+    height: 22px;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .headline-content { flex: 1; }
+  .headline-source {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-bottom: 3px;
+  }
+  .headline-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--cream);
+    line-height: 1.45;
+    word-break: keep-all;
+  }
+  .headline-tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 2px;
+    margin-top: 5px;
+  }
+  .tag-high { background: rgba(192,57,43,0.15); color: #e74c3c; border: 1px solid rgba(192,57,43,0.3); }
+  .tag-med  { background: rgba(243,156,18,0.12); color: #f39c12; border: 1px solid rgba(243,156,18,0.3); }
+  .tag-info { background: rgba(52,152,219,0.12); color: #5dade2; border: 1px solid rgba(52,152,219,0.3); }
+
+  /* ── 섹션 헤더 ── */
+  .section-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 24px 16px 10px;
+  }
+  .section-head-icon {
+    width: var(--base);
+    height: var(--base);
+    min-width: 28px;
+    min-height: 28px;
+    background: var(--navy-border);
+    border: 1px solid var(--gold-dim);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--base);
+    color: var(--gold);
+    font-weight: 700;
+    flex-shrink: 0;
+    padding: 4px 8px;
+    width: auto;
+    height: auto;
+  }
+  .section-head-text {
+    font-size: var(--base);
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 0.04em;
+  }
+
+  /* ── 뉴스 카드 ── */
+  .news-card {
+    background: var(--navy-card);
+    border: 1px solid var(--navy-border);
+    margin: 0 16px 16px;
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+  }
+  .news-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 4px;
+    background: linear-gradient(to right, var(--gold-dim), var(--gold), var(--gold-dim));
+  }
+
+  /* 출처 바 */
+  .source-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(31,50,96,0.7);
+    border-bottom: 1px solid var(--navy-border);
+    padding: 8px 16px;
+    margin-top: 4px;
+  }
+  .source-name {
+    font-size: var(--base);
+    font-weight: 700;
+    color: var(--cream-dim);
+  }
+  .source-date {
+    font-size: var(--base);
+    color: var(--text-muted);
+  }
+
+  .card-inner { padding: 18px 16px 0; }
+
+  .risk-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: var(--base);
+    font-weight: 700;
+    padding: 5px 11px;
+    margin-bottom: 10px;
+    border-radius: 2px;
+  }
+  .risk-high { background: rgba(192,57,43,0.15); color: #e74c3c; border: 1px solid rgba(192,57,43,0.3); }
+  .risk-med  { background: rgba(243,156,18,0.12); color: #f39c12; border: 1px solid rgba(243,156,18,0.3); }
+  .risk-info { background: rgba(52,152,219,0.12); color: #5dade2; border: 1px solid rgba(52,152,219,0.3); }
+
+  .card-category {
+    font-size: var(--base);
+    letter-spacing: 0.08em;
+    color: var(--gold);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .card-category::before {
+    content: '';
+    width: 10px;
+    height: 1px;
+    background: var(--gold);
+    display: inline-block;
+    flex-shrink: 0;
+  }
+
+  .card-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--cream);
+    line-height: 1.45;
+    margin-bottom: 16px;
+    word-break: keep-all;
+  }
+
+  .bullet-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .bullet-list li {
+    font-size: 15px;
+    color: var(--text-body);
+    padding-left: 16px;
+    position: relative;
+    line-height: 1.7;
+    word-break: keep-all;
+  }
+  .bullet-list li::before {
+    content: '·';
+    position: absolute;
+    left: 0;
+    color: var(--gold);
+    font-size: 22px;
+    line-height: 1.2;
+  }
+  .bullet-list li strong { color: var(--cream-dim); font-weight: 600; }
+
+  .insight {
+    background: rgba(201,168,76,0.07);
+    border: 1px solid rgba(201,168,76,0.2);
+    border-left: 4px solid var(--gold);
+    padding: 13px 14px;
+  }
+  .insight-label {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 700;
+    margin-bottom: 5px;
+  }
+  .insight-text {
+    font-size: 14px;
+    color: var(--cream-dim);
+    line-height: 1.8;
+    word-break: keep-all;
+  }
+
+  .read-more {
+    border-top: 1px solid var(--navy-border);
+    padding: 12px 16px;
+    margin-top: 14px;
+    display: flex;
+    justify-content: flex-end;
+  }
+  .read-more a {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--gold);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .read-more a::after { content: '→'; font-size: 15px; }
+
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--navy-border);
+    margin-bottom: 0;
+  }
+  .stat-cell {
+    background: var(--navy-card);
+    padding: 14px 10px;
+    text-align: center;
+  }
+  .stat-num {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--gold);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .stat-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 1.5;
+    word-break: keep-all;
+  }
+
+  .compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--navy-border);
+    margin-bottom: 14px;
+  }
+  .compare-cell { background: var(--navy-card); padding: 12px; }
+  .compare-head { font-size: 11px; font-weight: 700; color: var(--gold); margin-bottom: 5px; }
+  .compare-body { font-size: 13px; color: var(--text-body); line-height: 1.6; word-break: keep-all; }
+
+  /* ── 푸터 ── */
+  .footer {
+    border-top: 1px solid var(--navy-border);
+    background: #111827;
+    padding: 24px 20px;
+    text-align: center;
+    margin-top: 8px;
+  }
+  .footer-logo { font-size: 14px; font-weight: 700; color: var(--gold); margin-bottom: 6px; }
+  .footer-disc { font-size: 11px; color: var(--text-muted); line-height: 1.8; }
+</style>
+</head>
+<body>
+
+<!-- 헤더 -->
+<header class="header">
+  <div class="header-logo">Today's Labor News</div>
+  <div class="header-date">2026. 04. 20.</div>
+</header>
+
+<!-- 히어로 + 헤드라인 목록 -->
+<section class="hero">
+  <div class="hero-label">인사노무 핵심 브리핑</div>
+  <h1 class="hero-title">오늘의 <span>Labor</span> 이슈</h1>
+  <p class="hero-sub">꼭 알아야 할 핵심 노동법·노사 이슈 5건</p>
+
+  <div class="headline-list">
+    <a class="headline-item" href="#news1">
+      <div class="headline-num">1</div>
+      <div class="headline-content">
+        <div class="headline-source">매일노동뉴스 · 2026.04.10</div>
+        <div class="headline-title">정부, 기간제 사용기간 연장 실태조사 착수</div>
+        <span class="headline-tag tag-high">🔴 핵심 이슈</span>
+      </div>
+    </a>
+    <a class="headline-item" href="#news2">
+      <div class="headline-num">2</div>
+      <div class="headline-content">
+        <div class="headline-source">매일노동뉴스 · 2026.04.09</div>
+        <div class="headline-title">국회에서 멈춘 '일하는 사람' 패키지 입법</div>
+        <span class="headline-tag tag-med">⚠ 입법 지연</span>
+      </div>
+    </a>
+    <a class="headline-item" href="#news3">
+      <div class="headline-num">3</div>
+      <div class="headline-content">
+        <div class="headline-source">동아일보 · 2026.04.19</div>
+        <div class="headline-title">기업 절반 "인건비 부담에 계속고용 못 해"</div>
+        <span class="headline-tag tag-med">⚠ 고용 현안</span>
+      </div>
+    </a>
+    <a class="headline-item" href="#news4">
+      <div class="headline-num">4</div>
+      <div class="headline-content">
+        <div class="headline-source">매일노동뉴스 · 2026.04.20</div>
+        <div class="headline-title">포스코이앤씨 원청 사용자성 '인정', 쿠팡CLS는 '기각'</div>
+        <span class="headline-tag tag-high">🔴 판례 충돌</span>
+      </div>
+    </a>
+    <a class="headline-item" href="#news5">
+      <div class="headline-num">5</div>
+      <div class="headline-content">
+        <div class="headline-source">연합뉴스 · 2026.04.20</div>
+        <div class="headline-title">산업인력공단, 국가자격시험에 AI 도입 추진</div>
+        <span class="headline-tag tag-info">ℹ 제도변화</span>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- ① 정책·입법 동향 -->
+<div class="section-head">
+  <div class="section-head-icon">①</div>
+  <div class="section-head-text">정책 · 입법 동향</div>
+</div>
+
+<!-- 카드 1 -->
+<div class="news-card" id="news1">
+  <div class="source-bar">
+    <span class="source-name">📰 매일노동뉴스</span>
+    <span class="source-date">2026.04.10</span>
+  </div>
+  <div class="card-inner">
+    <div class="risk-tag risk-high">🔴 핵심 이슈</div>
+    <div class="card-category">기간제 · 고용정책</div>
+    <h2 class="card-title">정부, 기간제 사용기간 연장<br>실태조사 착수</h2>
+    <ul class="bullet-list">
+      <li>현행 <strong>2년 사용기간 연장</strong> 여부 파악 위한 사업체 실태조사 착수</li>
+      <li>이 대통령 "기간제법이 사실상 2년 이상 고용 금지법으로 작동" 문제 제기</li>
+      <li>한국노총 <strong>"사용기간 연장은 해법 아니다"</strong> 강력 반발</li>
+      <li>전문가 포럼 구성 → 사용 사유 제한·갱신 제한 등 개편안 검토 중</li>
+    </ul>
+    <div class="insight">
+      <div class="insight-label">실무 시사점</div>
+      <div class="insight-text">기간제 계약 갱신 구조와 횟수 관리 체계를 선제적으로 정비 필요. 사용 사유 제한 방식으로 개편 시 현행 갱신 관행이 전면 재검토될 수 있음.</div>
+    </div>
+  </div>
+  <div class="read-more"><a href="https://www.labortoday.co.kr" target="_blank">자세히 보기</a></div>
+</div>
+
+<!-- 카드 2 -->
+<div class="news-card" id="news2">
+  <div class="source-bar">
+    <span class="source-name">📰 매일노동뉴스</span>
+    <span class="source-date">2026.04.09</span>
+  </div>
+  <div class="card-inner">
+    <div class="risk-tag risk-med">⚠ 입법 지연</div>
+    <div class="card-category">노동절 · 패키지 입법</div>
+    <h2 class="card-title">국회에서 멈춘<br>'일하는 사람' 패키지 입법</h2>
+    <ul class="bullet-list">
+      <li><strong>일하는 사람 기본법 + 노동자추정제</strong> 도입 국회 처리 속도 미달</li>
+      <li>정부 5월 1일 노동절 입법 마무리 공언했으나 현실적 처리 불투명</li>
+      <li>플랫폼·특수고용직 법적 보호 확대 시기 지연 우려</li>
+      <li>근로자 추정제 입법화 시 <strong>중소사업장 갈등 확산</strong> 가능</li>
+    </ul>
+    <div class="insight">
+      <div class="insight-label">실무 시사점</div>
+      <div class="insight-text">특수고용·도급 계약 활용 사업장은 근로자 추정제도 입법 동향 면밀히 모니터링. 도급계약서 상 지휘감독 조항 사전 점검 필요.</div>
+    </div>
+  </div>
+  <div class="read-more"><a href="https://www.labortoday.co.kr" target="_blank">자세히 보기</a></div>
+</div>
+
+<!-- ② 산업별 노사 이슈 -->
+<div class="section-head">
+  <div class="section-head-icon">②</div>
+  <div class="section-head-text">산업별 노사 이슈</div>
+</div>
+
+<!-- 카드 3 -->
+<div class="news-card" id="news3">
+  <div class="source-bar">
+    <span class="source-name">📰 동아일보</span>
+    <span class="source-date">2026.04.19</span>
+  </div>
+  <div class="card-inner">
+    <div class="risk-tag risk-med">⚠ 고용 현안</div>
+    <div class="card-category">계속고용 · 정년연장</div>
+    <h2 class="card-title">기업 절반<br>"인건비 부담에 계속고용 못 해"</h2>
+    <ul class="bullet-list">
+      <li>정년연장·계속고용 논의 확산에도 <strong>기업 절반</strong> 인건비 부담 이유로 시행 불가 응답</li>
+      <li>노동부, '정년연장' 보고서 <strong>1년 넘게 미공개</strong> — 정치적 부담 회피 지적</li>
+      <li>인센티브 설계 없이는 현장 확산 어려운 구조</li>
+    </ul>
+    <div class="insight">
+      <div class="insight-label">실무 시사점</div>
+      <div class="insight-text">정년 도래 인력의 재고용 조건(임금피크·직무 재설계)을 지금부터 노사 합의로 설계해 두면 향후 법제화 시 선도적 대응 가능.</div>
+    </div>
+  </div>
+  <div class="read-more"><a href="https://www.donga.com" target="_blank">자세히 보기</a></div>
+</div>
+
+<!-- 카드 4 -->
+<div class="news-card" id="news4">
+  <div class="source-bar">
+    <span class="source-name">📰 매일노동뉴스</span>
+    <span class="source-date">2026.04.20</span>
+  </div>
+  <div class="card-inner">
+    <div class="risk-tag risk-high">🔴 판례 충돌</div>
+    <div class="card-category">원청 사용자성 · 노란봉투법</div>
+    <h2 class="card-title">포스코이앤씨 원청 사용자성 '인정'<br>쿠팡CLS는 '기각' — 판정 엇갈려</h2>
+    <ul class="bullet-list">
+      <li>노동위원회 <strong>첫 원청 사용자성 인정</strong> 판정 — 포스코이앤씨</li>
+      <li>동일 쟁점 쿠팡CLS는 기각 → 판단 기준 불일치로 현장 혼란</li>
+      <li>원·하청 교섭요구 <strong>1천 건 돌파</strong>, 확정 공고는 33곳뿐(3%)</li>
+    </ul>
+    <div class="compare">
+      <div class="compare-cell">
+        <div class="compare-head">✅ 원청 사용자성 인정</div>
+        <div class="compare-body">포스코이앤씨<br>노동위원회 첫 인정 판정</div>
+      </div>
+      <div class="compare-cell">
+        <div class="compare-head">❌ 원청 사용자성 기각</div>
+        <div class="compare-body">쿠팡CLS<br>동일 쟁점 기각 판정</div>
+      </div>
+    </div>
+    <div class="stat-grid">
+      <div class="stat-cell">
+        <div class="stat-num">1,000+</div>
+        <div class="stat-label">원·하청<br>교섭요구 건수</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-num">33</div>
+        <div class="stat-label">확정 공고<br>사업장(3%)</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-num">90%</div>
+        <div class="stat-label">하청 포함<br>법 개정 요구</div>
+      </div>
+    </div>
+    <div class="insight" style="margin-top:0;">
+      <div class="insight-label">실무 시사점</div>
+      <div class="insight-text">원청 사업장은 하청·파견 근로자 대상 괴롭힘 예방 규정을 취업규칙에 선제적으로 포함. 원청 사용자성 판단 기준이 정립될 때까지 교섭 범위·의제 설정 전략 수립 필요.</div>
+    </div>
+  </div>
+  <div class="read-more"><a href="https://www.labortoday.co.kr" target="_blank">자세히 보기</a></div>
+</div>
+
+<!-- ③ 실무 Tip -->
+<div class="section-head">
+  <div class="section-head-icon">③</div>
+  <div class="section-head-text">실무 Tip</div>
+</div>
+
+<!-- 카드 5 -->
+<div class="news-card" id="news5">
+  <div class="source-bar">
+    <span class="source-name">📰 연합뉴스</span>
+    <span class="source-date">2026.04.20</span>
+  </div>
+  <div class="card-inner">
+    <div class="risk-tag risk-info">ℹ 제도변화</div>
+    <div class="card-category">산업인력공단 · AI</div>
+    <h2 class="card-title">산업인력공단,<br>국가자격시험에 AI 도입 추진</h2>
+    <ul class="bullet-list">
+      <li>산업인력공단, 국가자격시험 전 과정 <strong>AI 접목</strong> 계획 공식 발표</li>
+      <li>전문자격협의체 구성 → 시험 신뢰도·공정성 제고 추진</li>
+      <li>공인노무사 등 전문자격 시험 <strong>출제·채점 방식 변화</strong> 예상</li>
+    </ul>
+    <div class="insight">
+      <div class="insight-label">실무 시사점</div>
+      <div class="insight-text">공인노무사 시험 등 전문자격 준비자는 AI 출제 방식 변화에 주목. 향후 시행 세칙 공고 시 즉시 확인 권장.</div>
+    </div>
+  </div>
+  <div class="read-more"><a href="https://www.yna.co.kr" target="_blank">자세히 보기</a></div>
+</div>
+
+<div style="height:24px;"></div>
+
+<!-- 푸터 -->
+<footer class="footer">
+  <div class="footer-logo">Today's Labor News</div>
+  <div class="footer-disc">
+    Powered by Claude AI · 매일 자동 생성<br>
+    본 카드뉴스는 정보 제공 목적이며 구체적 사안은 전문가 상담이 필요합니다.<br>
+    © 2026 JP Labor News
+  </div>
+</footer>
+
+</body>
+</html>
