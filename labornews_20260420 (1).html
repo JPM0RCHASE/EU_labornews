@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Today's Labor News — 2026.04.20</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700;900&family=Noto+Sans+KR:wght@300;400;500;700&family=Playfair+Display:wght@700;900&family=IM+Fell+English:ital@1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:#0a0f1e; --navy-mid:#111827; --navy-card:#141d2e; --navy-border:#1f3260;
+    --gold:#c9a84c; --gold-light:#e2c278; --gold-dim:#9b7d36;
+    --cream:#f5f0e8; --cream-dim:#ccc4b0; --text-body:#c8ccd8; --text-muted:#7a8299;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--navy);color:var(--text-body);font-family:'Noto Sans KR',sans-serif;font-weight:300;line-height:1.7;}
+
+  .header{background:var(--navy-mid);border-bottom:1px solid var(--navy-border);padding:0 40px;position:sticky;top:0;z-index:100;}
+  .header-inner{max-width:1080px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:60px;}
+  .header-logo{font-family:'Playfair Display',serif;font-size:14px;font-weight:700;color:var(--gold);letter-spacing:0.1em;}
+  .header-date{font-size:11px;color:var(--text-muted);letter-spacing:0.1em;}
+  .header-badge{background:var(--gold);color:var(--navy);font-size:10px;font-weight:700;padding:4px 10px;letter-spacing:0.08em;}
+
+  .hero{max-width:1080px;margin:0 auto;padding:60px 40px 40px;border-bottom:1px solid var(--navy-border);}
+  .hero-eye{font-size:11px;letter-spacing:0.2em;color:var(--gold);text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;gap:10px;}
+  .hero-eye::before{content:'';width:24px;height:1px;background:var(--gold);}
+  .hero-title{font-family:'Playfair Display',serif;font-size:clamp(32px,4vw,48px);font-weight:900;color:var(--cream);line-height:1.1;margin-bottom:12px;}
+  .hero-title em{color:var(--gold);font-style:italic;font-family:'IM Fell English',serif;}
+  .hero-sub{font-size:13px;color:var(--text-muted);max-width:560px;line-height:1.9;}
+
+  .main{max-width:1080px;margin:0 auto;padding:48px 40px;}
+  .section-block{margin-bottom:64px;}
+  .section-label{display:flex;align-items:center;gap:12px;margin-bottom:28px;}
+  .section-icon{width:32px;height:32px;border:1px solid var(--gold-dim);display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--gold);flex-shrink:0;}
+  .section-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--cream);}
+  .section-line{flex:1;height:1px;background:linear-gradient(to right,var(--navy-border),transparent);}
+
+  .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+  .grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;}
+
+  /* CARD */
+  .card{background:var(--navy-card);border:1px solid var(--navy-border);display:flex;flex-direction:column;position:relative;transition:border-color 0.3s,transform 0.3s;overflow:hidden;animation:fadeUp 0.5s ease both;}
+  .card::before{content:'';position:absolute;top:0;left:0;width:100%;height:3px;background:linear-gradient(to right,var(--gold-dim),var(--gold),var(--gold-dim));opacity:0;transition:opacity 0.3s;}
+  .card:hover{border-color:var(--gold-dim);transform:translateY(-2px);}
+  .card:hover::before{opacity:1;}
+  .card:nth-child(1){animation-delay:0.05s}.card:nth-child(2){animation-delay:0.12s}.card:nth-child(3){animation-delay:0.19s}
+
+  /* 언론사 출처 바 */
+  .source-bar{display:flex;align-items:center;justify-content:space-between;background:rgba(31,50,96,0.7);border-bottom:1px solid var(--navy-border);padding:7px 16px;}
+  .source-name{font-size:10px;font-weight:700;letter-spacing:0.1em;color:var(--cream-dim);}
+  .source-date{font-size:10px;color:var(--text-muted);}
+
+  .card-body{padding:18px 18px 0;flex:1;}
+
+  .risk-tag{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;padding:3px 9px;margin-bottom:10px;}
+  .risk-high{background:rgba(192,57,43,0.15);color:#e74c3c;border:1px solid rgba(192,57,43,0.3);}
+  .risk-med{background:rgba(243,156,18,0.12);color:#f39c12;border:1px solid rgba(243,156,18,0.3);}
+  .risk-info{background:rgba(52,152,219,0.12);color:#3498db;border:1px solid rgba(52,152,219,0.3);}
+
+  .card-tag{font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+  .card-tag::before{content:'';width:10px;height:1px;background:var(--gold);}
+  .card-title{font-family:'Noto Serif KR',serif;font-size:15px;font-weight:700;color:var(--cream);line-height:1.5;margin-bottom:12px;}
+
+  .bullets{list-style:none;display:flex;flex-direction:column;gap:7px;margin-bottom:12px;}
+  .bullets li{font-size:12.5px;color:var(--text-body);padding-left:14px;position:relative;line-height:1.7;}
+  .bullets li::before{content:'·';position:absolute;left:0;color:var(--gold);font-size:16px;line-height:1.4;}
+  .bullets li strong{color:var(--cream-dim);font-weight:500;}
+
+  .insight{background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.2);border-left:3px solid var(--gold);padding:10px 12px;}
+  .insight-label{font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold);margin-bottom:5px;font-weight:700;}
+  .insight-text{font-size:12px;color:var(--cream-dim);line-height:1.8;}
+
+  /* 자세히 보기 */
+  .read-more{border-top:1px solid var(--navy-border);padding:10px 16px;margin-top:14px;display:flex;justify-content:flex-end;}
+  .read-more a{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);text-decoration:none;display:flex;align-items:center;gap:6px;transition:color 0.2s;}
+  .read-more a:hover{color:var(--gold-light);}
+  .read-more a::after{content:'→';font-size:13px;}
+
+  /* WIDE CARD */
+  .card.wide{grid-column:1/-1;display:grid;grid-template-columns:3fr 2fr;grid-template-rows:auto 1fr auto;}
+  .card.wide .source-bar{grid-column:1/-1;}
+  .card.wide .wide-left{padding:18px 18px 0;border-right:1px solid var(--navy-border);display:flex;flex-direction:column;gap:12px;}
+  .card.wide .wide-right{padding:20px;display:flex;flex-direction:column;justify-content:center;}
+  .card.wide .read-more{grid-column:1/-1;}
+
+  .compare{display:grid;grid-template-columns:1fr 1fr;gap:2px;background:var(--navy-border);}
+  .compare-cell{background:var(--navy-card);padding:10px 12px;}
+  .compare-head{font-size:10px;letter-spacing:0.08em;color:var(--gold);margin-bottom:5px;font-weight:700;}
+  .compare-body{font-size:11.5px;color:var(--text-body);line-height:1.6;}
+
+  .stat-block{display:flex;flex-direction:column;gap:14px;}
+  .stat-row{display:flex;align-items:flex-start;gap:12px;padding-bottom:14px;border-bottom:1px solid var(--navy-border);}
+  .stat-row:last-child{border-bottom:none;padding-bottom:0;}
+  .stat-num{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:var(--gold);line-height:1;flex-shrink:0;width:64px;}
+  .stat-desc{font-size:12px;color:var(--text-muted);line-height:1.6;}
+  .stat-desc strong{display:block;color:var(--cream-dim);font-size:12.5px;font-weight:500;}
+
+  /* TELEGRAM BAR */
+  .tg-bar{background:linear-gradient(135deg,#0f1825,#1a2540);border:1px solid var(--navy-border);border-left:3px solid #0088cc;padding:14px 20px;margin-bottom:32px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
+  .tg-bar-text{font-size:13px;color:var(--cream-dim);flex:1;}
+  .tg-bar-text strong{color:var(--cream);display:block;margin-bottom:2px;}
+  .tg-btn{background:#0088cc;color:#fff;border:none;padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:0.04em;transition:background 0.2s;white-space:nowrap;border-radius:2px;text-decoration:none;display:inline-block;}
+  .tg-btn:hover{background:#006fa8;}
+
+  .footer{border-top:1px solid var(--navy-border);background:var(--navy-mid);padding:28px 40px;}
+  .footer-inner{max-width:1080px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+  .footer-logo{font-family:'Playfair Display',serif;font-size:13px;color:var(--gold);font-weight:700;}
+  .footer-disc{font-size:10.5px;color:var(--text-muted);max-width:460px;}
+
+  @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+
+  @media(max-width:900px){
+    .grid-3,.grid-2{grid-template-columns:1fr;}
+    .card.wide{grid-template-columns:1fr;}
+    .card.wide .wide-left{border-right:none;border-bottom:1px solid var(--navy-border);}
+    .hero,.main,.header,.footer{padding-left:20px;padding-right:20px;}
+  }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <div class="header-logo">Today's Labor News</div>
+    <div class="header-date">2026 · 04 · 20 · MON</div>
+    <div class="header-badge">HR Daily Brief</div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-eye">2026년 4월 20일 · 인사노무 핵심 브리핑</div>
+  <h1 class="hero-title">오늘의 <em>Labor</em> 이슈</h1>
+  <p class="hero-sub">기간제 사용기간 연장 논란, 하청직원 괴롭힘 법 사각지대, 노동절 입법 지연, 국가자격시험 AI 도입까지 — 오늘 HR 실무자가 반드시 알아야 할 이슈를 정리했습니다.</p>
+</section>
+
+<main class="main">
+
+  <div class="tg-bar">
+    <div style="font-size:22px;">📨</div>
+    <div class="tg-bar-text">
+      <strong>텔레그램으로 오늘의 브리핑 발송</strong>
+      버튼 클릭 시 JP님 텔레그램으로 요약 메시지가 전송됩니다.
+    </div>
+    <a class="tg-btn" href="https://api.telegram.org/bot8410721070:AAFmLPGoM39IsMYuIqr7Hbga-vi9gD2hBqk/sendMessage?chat_id=8695339577&text=%F0%9F%93%8B%20%EC%98%A4%EB%8A%98%EC%9D%98%20%EC%9D%B8%EC%82%AC%EB%85%B8%EB%AC%B4%20%EB%B8%8C%EB%A6%AC%ED%95%91%20%E2%80%94%202026.04.20.%0A%0A%F0%9F%94%B4%20%EA%B8%B0%EA%B0%84%EC%A0%9C%20%EC%82%AC%EC%9A%A9%EA%B8%B0%EA%B0%84%20%EC%97%B0%EC%9E%A5%20%EC%8B%A4%ED%83%9C%EC%A1%B0%EC%82%AC%20%EC%B0%A9%EC%88%98%20%7C%20%ED%97%A4%EB%9F%B4%EB%93%9C%EA%B2%BD%EC%A0%9C%0A%E2%9A%A0%EF%B8%8F%20%EB%85%B8%EB%8F%99%EC%A0%88%20%ED%8C%A8%ED%82%A4%EC%A7%80%20%EC%9E%85%EB%B2%95%20%EC%A7%80%EC%97%B0%20%7C%20%EB%A7%A4%EC%9D%BC%EB%85%B8%EB%8F%99%EB%89%B4%EC%8A%A4%0A%F0%9F%94%B4%20%ED%95%98%EC%B2%AD%EC%A7%81%EC%9B%90%20%EA%B4%B4%EB%A1%AD%ED%9E%98%20%EB%B2%95%20%EC%82%AC%EA%B0%81%EC%A7%80%EB%8C%80%20%7C%20%EC%98%A4%EB%A7%88%EC%9D%B4%EB%89%B4%EC%8A%A4%0A%F0%9F%94%B4%20SPC%20%EC%82%BC%EB%A6%BD%20%EB%98%90%20%EB%81%BC%EC%9E%84%EC%82%AC%EA%B3%A0%20%7C%20%EB%A7%A4%EC%9D%BC%EB%85%B8%EB%8F%99%EB%89%B4%EC%8A%A4%0Aℹ%EF%B8%8F%20%EA%B5%AD%EA%B0%80%EC%9E%90%EA%B2%A9%EC%8B%9C%ED%97%98%20AI%20%EB%8F%84%EC%9E%85%20%7C%20%EB%8D%B0%EC%9D%BC%EB%A6%AC%EC%95%88%0A%0A%C2%A9%20JP%20Labor%20News%20%C2%B7%20Claude%20AI%20%EC%9E%90%EB%8F%99%20%EC%83%9D%EC%84%B1" target="_blank">📲 텔레그램 발송</a>
+  </div>
+
+  <!-- ① 정책·입법 동향 -->
+  <div class="section-block">
+    <div class="section-label">
+      <div class="section-icon">①</div>
+      <div class="section-title">정책 · 입법 동향</div>
+      <div class="section-line"></div>
+    </div>
+    <div class="grid-3">
+
+      <div class="card">
+        <div class="source-bar"><span class="source-name">📰 헤럴드경제</span><span class="source-date">2026.04.13</span></div>
+        <div class="card-body">
+          <div class="risk-tag risk-high">🔴 핵심 이슈</div>
+          <div class="card-tag">기간제 · 고용정책</div>
+          <div class="card-title">정부, 기간제 사용기간 연장<br>실태조사 착수</div>
+          <ul class="bullets">
+            <li>현행 2년 사용기간 연장 여부 파악 위한 사업체 실태조사 착수</li>
+            <li>이 대통령 "기간제법이 사실상 2년 이상 고용 금지법" 문제 제기</li>
+            <li>한국노총 "사용기간 연장은 해법 아니다" 강력 반발</li>
+            <li>전문가 포럼 → 사용 사유 제한·갱신 제한 등 개편안 검토 중</li>
+          </ul>
+          <div class="insight">
+            <div class="insight-label">실무 시사점</div>
+            <div class="insight-text">기간제 계약 갱신 남발 관행 집중 점검 예상. 현행 2년 상한 내 계약 구조와 갱신 횟수·사유 관리 체계를 선제적으로 정비 필요.</div>
+          </div>
+        </div>
+        <div class="read-more"><a href="https://biz.heraldcorp.com/article/10715907" target="_blank">자세히 보기</a></div>
+      </div>
+
+      <div class="card">
+        <div class="source-bar"><span class="source-name">📰 매일노동뉴스</span><span class="source-date">2026.04.09</span></div>
+        <div class="card-body">
+          <div class="risk-tag risk-med">⚠ 입법 지연</div>
+          <div class="card-tag">노동절 · 패키지 입법</div>
+          <div class="card-title">5월 1일 노동절까지<br>'일하는 사람' 입법 불투명</div>
+          <ul class="bullets">
+            <li>일하는 사람 기본법 + 노동자추정제 국회 처리 속도 미달</li>
+            <li>정부 노동절 입법 마무리 공언했으나 현실적 처리 불투명</li>
+            <li>플랫폼·특수고용직 법적 보호 확대 시기 지연 우려</li>
+            <li>근로자 추정제 입법화 시 중소사업장 갈등 확산 가능</li>
+          </ul>
+          <div class="insight">
+            <div class="insight-label">실무 시사점</div>
+            <div class="insight-text">특수고용·도급 계약 활용 사업장은 근로자 추정제도 입법 동향 면밀히 모니터링. 도급계약서 상 지휘감독 조항 사전 점검 필요.</div>
+          </div>
+        </div>
+        <div class="read-more"><a href="https://www.labortoday.co.kr" target="_blank">자세히 보기</a></div>
+      </div>
+
+      <div class="card">
+        <div class="source-bar"><span class="source-name">📰 데일리안 · 연합뉴스</span><span class="source-date">2026.04.20</span></div>
+        <div class="card-body">
+          <div class="risk-tag risk-info">ℹ AI · 제도변화</div>
+          <div class="card-tag">산업인력공단 · AI</div>
+          <div class="card-title">국가자격시험에 AI 도입—<br>노동부 산하기관 청사진</div>
+          <ul class="bullets">
+            <li>산업인력공단, 국가자격시험 전 과정 AI 접목 계획 공식 발표</li>
+            <li>전문자격협의체 구성 → 시험 신뢰도·공정성 제고 추진</li>
+            <li>공인노무사 등 전문자격 시험 방식 변화 예상</li>
+          </ul>
+          <div class="insight">
+            <div class="insight-label">실무 시사점</div>
+            <div class="insight-text">공인노무사 시험 등 전문자격 준비자는 AI 출제 방식 변화에 주목. 향후 시행 세칙 공고 시 즉시 확인 권장.</div>
+          </div>
+        </div>
+        <div class="read-more"><a href="https://news.daum.net/labor" target="_blank">자세히 보기</a></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ② 산업별 노사 이슈 -->
+  <div class="section-block">
+    <div class="section-label">
+      <div class="section-icon">②</div>
+      <div class="section-title">산업별 노사 이슈</div>
+      <div class="section-line"></div>
+    </div>
+    <div class="grid-3">
+      <div class="card wide">
+        <div class="source-bar"><span class="source-name">📰 오마이뉴스 · 매일노동뉴스</span><span class="source-date">2026.04.18</span></div>
+        <div class="wide-left">
+          <div>
+            <div class="risk-tag risk-high">🔴 법 사각지대</div>
+            <div class="card-tag">직장 내 괴롭힘 · 하청</div>
+            <div class="card-title" style="font-size:17px;">하청직원 폭행해도 '직장내 괴롭힘' 아니라니—<br>응답자 10명 중 9명 "법 개정 필요"</div>
+            <ul class="bullets">
+              <li>현행법: <strong>소속 근로자 간</strong> 괴롭힘만 적용 → 원청이 하청 괴롭혀도 법 적용 불가</li>
+              <li>응답자 90% "하청·파견 포함 법 개정 필요" 응답</li>
+              <li>포스코이앤씨 원청 사용자성 <strong>인정</strong> vs 쿠팡CLS <strong>기각</strong> — 판정 엇갈려 혼란</li>
+              <li>원·하청 교섭요구 1천 건 돌파, 확정 공고는 33곳뿐(3%)</li>
+            </ul>
+          </div>
+          <div class="compare">
+            <div class="compare-cell">
+              <div class="compare-head">✅ 원청 사용자성 인정</div>
+              <div class="compare-body">포스코이앤씨<br>노동위원회 첫 인정 판정<br><span style="color:var(--gold);font-size:11px;">→ 하청 교섭요구 정당</span></div>
+            </div>
+            <div class="compare-cell">
+              <div class="compare-head">❌ 원청 사용자성 기각</div>
+              <div class="compare-body">쿠팡CLS<br>동일 쟁점 기각 판정<br><span style="color:#e74c3c;font-size:11px;">→ 판정 기준 불일치</span></div>
+            </div>
+          </div>
+          <div class="insight">
+            <div class="insight-label">실무 시사점</div>
+            <div class="insight-text">원청 사업장은 하청·파견 근로자 대상 괴롭힘 예방 규정을 취업규칙에 선제적으로 포함. 법 개정 전에도 내부 지침으로 리스크 관리 필요.</div>
+          </div>
+        </div>
+        <div class="wide-right">
+          <div style="font-size:11px;color:var(--gold);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:16px;">원·하청 교섭 현황</div>
+          <div class="stat-block">
+            <div class="stat-row">
+              <div class="stat-num">1,000+</div>
+              <div class="stat-desc"><strong>원·하청 교섭요구 건수</strong>노란봉투법 시행 후 돌파</div>
+            </div>
+            <div class="stat-row">
+              <div class="stat-num">33</div>
+              <div class="stat-desc"><strong>확정 공고 사업장</strong>전체의 3% 수준</div>
+            </div>
+            <div class="stat-row">
+              <div class="stat-num">90%</div>
+              <div class="stat-desc"><strong>법 개정 요구 비율</strong>하청 포함 괴롭힘법 확대 적용 요구</div>
+            </div>
+          </div>
+        </div>
+        <div class="read-more"><a href="https://www.ohmynews.com" target="_blank">자세히 보기</a></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ③ 실무 Tip -->
+  <div class="section-block">
+    <div class="section-label">
+      <div class="section-icon">③</div>
+      <div class="section-title">실무 Tip — 오늘의 체크포인트</div>
+      <div class="section-line"></div>
+    </div>
+    <div class="grid-2">
+
+      <div class="card">
+        <div class="source-bar"><span class="source-name">📰 동아일보</span><span class="source-date">2026.04.19</span></div>
+        <div class="card-body">
+          <div class="risk-tag risk-med">⚠ 인건비 관리</div>
+          <div class="card-tag">계속고용 · 정년연장</div>
+          <div class="card-title">기업 절반 "인건비 부담에<br>계속고용 못 해"</div>
+          <ul class="bullets">
+            <li>기업 절반, 인건비 부담 이유로 계속고용 시행 불가 응답</li>
+            <li>노동부, 정년연장 보고서 1년 넘게 미공개 — 정치적 부담 회피 지적</li>
+            <li>인센티브 설계 없이는 현장 확산 어려운 구조</li>
+          </ul>
+          <div class="insight">
+            <div class="insight-label">실무 시사점</div>
+            <div class="insight-text">정년 도래 인력의 재고용 조건(임금피크·직무 재설계)을 지금부터 노사 합의로 설계해 두면 향후 법제화 시 선도적 대응 가능.</div>
+          </div>
+        </div>
+        <div class="read-more"><a href="https://www.donga.com" target="_blank">자세히 보기</a></div>
+      </div>
+
+      <div class="card">
+        <div class="source-bar"><span class="source-name">📰 매일노동뉴스 · 경인일보</span><span class="source-date">2026.04.20</span></div>
+        <div class="card-body">
+          <div class="risk-tag risk-high">🔴 산재 · 안전</div>
+          <div class="card-tag">SPC 삼립 · 중대재해</div>
+          <div class="card-title">SPC 삼립 또 끼임사고—<br>컨베이어벨트 손가락 2명 절단</div>
+          <ul class="bullets">
+            <li>SPC 삼립 제조 현장 컨베이어벨트 끼임 → 노동자 2명 손가락 절단</li>
+            <li>SPC그룹 반복 산재 — 중대재해처벌법 적용·경영책임자 처벌 여부 주목</li>
+            <li>교대체제 개편 현장 평가 냉담 — 구조적 안전 개선 필요</li>
+          </ul>
+          <div class="insight">
+            <div class="insight-label">실무 시사점</div>
+            <div class="insight-text">반복 산재 사업장은 중대재해처벌법상 경영책임자 처벌 대상. 끼임 위험 설비 정기점검 기록을 철저히 유지해야 함.</div>
+          </div>
+        </div>
+        <div class="read-more"><a href="https://www.labortoday.co.kr" target="_blank">자세히 보기</a></div>
+      </div>
+
+    </div>
+  </div>
+
+</main>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-logo">Today's Labor News</div>
+      <div class="footer-info" style="margin-top:6px;font-size:11px;color:var(--text-muted);">Powered by Claude AI · 매일 자동 생성</div>
+    </div>
+    <div class="footer-disc">본 카드뉴스는 일반적인 정보 제공 목적이며, 구체적인 사안은 전문가 상담이 필요합니다. © 2026 JP Labor News</div>
+  </div>
+</footer>
+
+</body>
+</html>
