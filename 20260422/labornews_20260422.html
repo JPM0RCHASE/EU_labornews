@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Today's Labor News — 2026.04.22</title>
+<style>
+  :root {
+    --navy:#0a0f1e; --navy-card:#141d2e; --navy-border:#1f3260;
+    --gold:#c9a84c; --gold-dim:#9b7d36;
+    --cream:#f5f0e8; --cream-dim:#ccc4b0;
+    --text-body:#c8ccd8; --text-muted:#7a8299;
+    --base:17px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--navy);color:var(--text-body);font-family:'Apple SD Gothic Neo','Malgun Gothic',sans-serif;font-size:var(--base);line-height:1.7;max-width:640px;margin:0 auto;}
+
+  .header{background:#111827;border-bottom:2px solid var(--gold);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+  .header-logo{font-size:var(--base);font-weight:700;color:var(--gold);}
+  .header-date{font-size:var(--base);font-weight:700;color:#ffffff;}
+
+  .hero{background:linear-gradient(180deg,#111827 0%,var(--navy) 100%);padding:28px 20px 24px;border-bottom:1px solid var(--navy-border);}
+  .hero-label{font-size:12px;letter-spacing:0.2em;color:var(--gold);text-transform:uppercase;margin-bottom:10px;text-align:center;}
+  .hero-title{font-size:26px;font-weight:900;color:var(--cream);line-height:1.2;margin-bottom:6px;text-align:center;}
+  .hero-title span{color:var(--gold);}
+  .hero-sub{font-size:13px;color:var(--text-muted);line-height:1.7;text-align:center;margin-bottom:20px;}
+
+  .headline-list{background:rgba(31,50,96,0.3);border:1px solid var(--navy-border);border-radius:4px;overflow:hidden;}
+  .headline-item{display:flex;align-items:flex-start;gap:12px;padding:13px 16px;border-bottom:1px solid var(--navy-border);text-decoration:none;}
+  .headline-item:last-child{border-bottom:none;}
+  .headline-num{font-size:11px;font-weight:700;color:var(--gold);background:rgba(201,168,76,0.12);border:1px solid rgba(201,168,76,0.25);min-width:22px;height:22px;border-radius:2px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+  .headline-content{flex:1;}
+  .headline-source{font-size:11px;color:var(--text-muted);margin-bottom:3px;}
+  .headline-title{font-size:15px;font-weight:700;color:var(--cream);line-height:1.45;word-break:keep-all;}
+  .headline-tag{display:inline-block;font-size:10px;font-weight:700;padding:2px 7px;border-radius:2px;margin-top:5px;}
+  .tag-high{background:rgba(192,57,43,0.15);color:#e74c3c;border:1px solid rgba(192,57,43,0.3);}
+  .tag-med{background:rgba(243,156,18,0.12);color:#f39c12;border:1px solid rgba(243,156,18,0.3);}
+  .tag-info{background:rgba(52,152,219,0.12);color:#5dade2;border:1px solid rgba(52,152,219,0.3);}
+
+  .section-head{display:flex;align-items:center;gap:10px;padding:24px 16px 10px;}
+  .section-head-icon{background:var(--navy-border);border:1px solid var(--gold-dim);display:flex;align-items:center;justify-content:center;font-size:var(--base);color:var(--gold);font-weight:700;flex-shrink:0;padding:4px 10px;}
+  .section-head-text{font-size:var(--base);font-weight:700;color:var(--gold);}
+
+  .news-card{background:var(--navy-card);border:1px solid var(--navy-border);margin:0 16px 16px;border-radius:4px;overflow:hidden;position:relative;}
+  .news-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:4px;background:linear-gradient(to right,var(--gold-dim),var(--gold),var(--gold-dim));}
+
+  .source-bar{display:flex;align-items:center;justify-content:space-between;background:rgba(31,50,96,0.7);border-bottom:1px solid var(--navy-border);padding:8px 16px;margin-top:4px;}
+  .source-name{font-size:var(--base);font-weight:700;color:var(--cream-dim);}
+  .source-date{font-size:var(--base);color:var(--text-muted);}
+
+  .card-inner{padding:18px 16px 0;}
+  .risk-tag{display:inline-flex;align-items:center;gap:5px;font-size:var(--base);font-weight:700;padding:5px 11px;margin-bottom:10px;border-radius:2px;}
+  .risk-high{background:rgba(192,57,43,0.15);color:#e74c3c;border:1px solid rgba(192,57,43,0.3);}
+  .risk-med{background:rgba(243,156,18,0.12);color:#f39c12;border:1px solid rgba(243,156,18,0.3);}
+  .risk-info{background:rgba(52,152,219,0.12);color:#5dade2;border:1px solid rgba(52,152,219,0.3);}
+
+  .card-category{font-size:var(--base);color:var(--gold);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+  .card-category::before{content:'';width:10px;height:1px;background:var(--gold);display:inline-block;flex-shrink:0;}
+  .card-title{font-size:20px;font-weight:700;color:var(--cream);line-height:1.45;margin-bottom:16px;word-break:keep-all;}
+
+  .bullet-list{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:14px;}
+  .bullet-list li{font-size:15px;color:var(--text-body);padding-left:16px;position:relative;line-height:1.7;word-break:keep-all;}
+  .bullet-list li::before{content:'·';position:absolute;left:0;color:var(--gold);font-size:22px;line-height:1.2;}
+  .bullet-list li strong{color:var(--cream-dim);font-weight:600;}
+
+  .insight{background:rgba(201,168,76,0.07);border:1px solid rgba(201,168,76,0.2);border-left:4px solid var(--gold);padding:13px 14px;}
+  .insight-label{font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:5px;}
+  .insight-text{font-size:14px;color:var(--cream-dim);line-height:1.8;word-break:keep-all;}
+
+  .read-more{border-top:1px solid var(--navy-border);padding:12px 16px;margin-top:14px;display:flex;justify-content:flex-end;}
+  .read-more a{font-size:13px;font-weight:700;color:var(--gold);text-decoration:none;display:flex;align-items:center;gap:6px;}
+  .read-more a::after{content:'→';font-size:15px;}
+
+  .footer{border-top:1px solid var(--navy-border);background:#111827;padding:24px 20px;text-align:center;margin-top:8px;}
+  .footer-logo{font-size:14px;font-weight:700;color:var(--gold);margin-bottom:6px;}
+  .footer-disc{font-size:11px;color:var(--text-muted);line-height:1.8;}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-logo">Today's Labor News</div>
+  <div class="header-date">2026. 04. 22.</div>
+</header>
+
+<section class="hero">
+  <div class="hero-label">인사노무 핵심 브리핑</div>
+  <h1 class="hero-title">오늘의 <span>Labor</span> 이슈</h1>
+  <p class="hero-sub">꼭 알아야 할 핵심 노동법·노사 이슈 5건</p>
+
+  <div class="headline-list">
+    <a class="headline-item" href="#news1">
+      <div class="headline-num">1</div>
+      <div class="headline-content">
+        <div class="headline-source">노동법률 · 2026.04.22</div>
+        <div class="headline-title">독감 걸린 채 일하다 사망한 조리사… 법원 "과로 아니어도 산재"</div>
+        <span class="headline-tag tag-high">🔴 판례</span>
+      </div>
+    </a>
+    <a class="headline-item" href="#news2">
+      <div class="headline-num">2</div>
+      <div class="headline-content">
+        <div class="headline-source">노동법률 · 2026.04.22</div>
+        <div class="headline-title">코웨이 방문점검원 근로자 아냐… 근로자성 또 '부정'</div>
+        <span class="headline-tag tag-high">🔴 근로자성</span>
+      </div>
+    </a>
+    <a class="headline-item" href="#news3">
+      <div class="headline-num">3</div>
+      <div class="headline-content">
+        <div class="headline-source">노동법률 · 2026.04.22</div>
+        <div class="headline-title">특고·플랫폼 최저임금, 법 개정 없이는 적용 불가</div>
+        <span class="headline-tag tag-med">⚠ 입법 현안</span>
+      </div>
+    </a>
+    <a class="headline-item" href="#news4">
+      <div class="headline-num">4</div>
+      <div class="headline-content">
+        <div class="headline-source">노동법률 · 2026.04.22</div>
+        <div class="headline-title">정부, 돌봄 노정협의체 구성… 노란봉투법 시행 후 첫 사례</div>
+        <span class="headline-tag tag-info">ℹ 노사정</span>
+      </div>
+    </a>
+    <a class="headline-item" href="#news5">
+      <div class="headline-num">5</div>
+      <div class="headline-content">
+        <div class="headline-source">매일노동뉴스 · 2026.04.22</div>
+        <div class="headline-title">공무원노조, 시간외 근무수당 차별 철폐 기자회견</div>
+        <span class="headline-tag tag-med">⚠ 공공부문</span>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- ① 판례·행정해석 -->
+<div class="section-head">
+  <div class="section-head-icon">①</div>
+  <div class="section-head-text">판례 · 행정해석</div>
+</div>
+
+<div class="news-card" id="news1">
+  <div class="source-bar"><span class="source-name">📰 노동법률</span><span class="source-date">2026.04.22</span></div>
+  <div class="card-inner">
+    <div class="risk-tag risk-high">🔴 산재 판례</div>
+    <div class="card-category">업무상 재해 · 산재보험</div>
+    <h2 class="card-title">독감 걸린 채 일하다 사망한 조리사<br>법원 "과로 아니어도 산재"</h2>
+    <ul class="bullet-list">
+      <li>기저질환 보유 조리사, 독감 상태로 근무하다 퇴근 후 <strong>심부전으로 사망</strong></li>
+      <li>근로복지공단 부지급 처분에 유족이 소송 → <strong>서울행정법원 원고 승소</strong></li>
+      <li>법원 "과로에 이르지 않더라도 기저질환+업무 환경이 발병 기여했다면 산재 인정"</li>
+      <li>기존 '과로 중심' 판단 기준을 넘어선 <strong>업무 기여도 확장 해석</strong></li>
+    </ul>
+    <div class="insight">
+      <div class="insight-label">실무 시사점</div>
+      <div class="insight-text">기저질환 보유 직원이 유증상 상태로 출근 후 사망하면 산재 인정 가능성 높아짐. 근무 중 건강이상 징후 발생 시 즉시 귀가·진료 조치 및 기록 관리가 사용자 보호에 중요.</div>
+    </div>
+  </div>
+  <div class="read-more"><a href="https://www.worklaw.co.kr" target="_blank">자세히 보기</a></div>
+</div>
+
+<div class="news-card" id="news2">
+  <div class="source-bar"><span class="source-name">📰 노동법률</span><span class="source-date">2026.04.22</span></div>
+  <div class="card-inner">
+    <div class="risk-tag risk-high">🔴 근로자성 부정</div>
+    <div class="card-category">특수고용 · 근로자성</div>
+    <h2 class="card-title">코웨이 방문점검원<br>근로자 아냐… 근로자성 또 '부정'</h2>
+    <ul class="bullet-list">
+      <li>법원, 코웨이 방문점검원(렌탈 서비스 기사)에 대해 <strong>근로자성 부정</strong> 판결</li>
+      <li>업무 수행 방식·보수 구조·전속성 등 종합 판단 → 독립사업자 성격 인정</li>
+      <li>플랫폼·특수고용 근로자성 판단 기준 여전히 불명확 → <strong>법원별 결론 엇갈려</strong></li>
+    </ul>
+    <div class="insight">
+      <div class="insight-label">실무 시사점</div>
+      <div class="insight-text">용역·위탁 계약 활용 사업장은 근로자성 판단 요소(지휘감독·전속성·보수 구조)를 사전 점검해야 함. 향후 근로자 추정제도 입법 시 리스크가 크게 달라질 수 있음.</div>
+    </div>
+  </div>
+  <div class="read-more"><a href="https://www.worklaw.co.kr" target="_blank">자세히 보기</a></div>
+</div>
+
+<!-- ② 정책·입법 동향 -->
+<div class="section-head">
+  <div class="section-head-icon">②</div>
+  <div class="section-head-text">정책 · 입법 동향</div>
+</div>
+
+<div class="news-card" id="news3">
+  <div class="source-bar"><span class="source-name">📰 노동법률</span><span class="source-date">2026.04.22</span></div>
+  <div class="card-inner">
+    <div class="risk-tag risk-med">⚠ 입법 현안</div>
+    <div class="card-category">특수고용 · 최저임금</div>
+    <h2 class="card-title">특고·플랫폼 최저임금<br>법 개정 없이는 적용 불가</h2>
+    <ul class="bullet-list">
+      <li>최임위 결정만으로는 특고·플랫폼 종사자에게 최저임금 적용 <strong>법적 근거 부족</strong></li>
+      <li>현행 최저임금법: 근로기준법상 근로자에만 적용 → 특고·플랫폼 제외</li>
+      <li><strong>별도 입법 없이는</strong> 배달·대리운전 등 플랫폼 종사자 최저임금 보호 불가</li>
+      <li>'일하는 사람 기본법' 제정과 연동되어야 실질적 보호 가능</li>
+    </ul>
+    <div class="insight">
+      <div class="insight-label">실무 시사점</div>
+      <div class="insight-text">플랫폼·특수고용 활용 사업장은 향후 입법 동향에 따라 보수 구조 재설계가 필요할 수 있음. 지금부터 단가 기준과 계약 구조를 점검해 두는 것이 유리.</div>
+    </div>
+  </div>
+  <div class="read-more"><a href="https://www.worklaw.co.kr" target="_blank">자세히 보기</a></div>
+</div>
+
+<div class="news-card" id="news4">
+  <div class="source-bar"><span class="source-name">📰 노동법률</span><span class="source-date">2026.04.22</span></div>
+  <div class="card-inner">
+    <div class="risk-tag risk-info">ℹ 노사정</div>
+    <div class="card-category">돌봄 · 노란봉투법</div>
+    <h2 class="card-title">정부, 돌봄 노정협의체 구성<br>노란봉투법 시행 후 첫 사례</h2>
+    <ul class="bullet-list">
+      <li>정부, 돌봄 분야 노정협의체 구성 → <strong>노란봉투법 시행 이후 첫 공식 협의체</strong></li>
+      <li>요양·보육 등 돌봄 노동자 처우 개선 방안 논의 시작</li>
+      <li>원청-노조 간 직접 교섭 구조 정착 여부를 가늠하는 선도 사례로 주목</li>
+    </ul>
+    <div class="insight">
+      <div class="insight-label">실무 시사점</div>
+      <div class="insight-text">노란봉투법 이후 원청의 교섭 참여 의무가 실질화되는 첫 신호. 돌봄·용역 분야 사용 사업장은 향후 교섭 요구 가능성을 전제로 대응 전략 수립 필요.</div>
+    </div>
+  </div>
+  <div class="read-more"><a href="https://www.worklaw.co.kr" target="_blank">자세히 보기</a></div>
+</div>
+
+<!-- ③ 실무 Tip -->
+<div class="section-head">
+  <div class="section-head-icon">③</div>
+  <div class="section-head-text">실무 Tip</div>
+</div>
+
+<div class="news-card" id="news5">
+  <div class="source-bar"><span class="source-name">📰 매일노동뉴스</span><span class="source-date">2026.04.22</span></div>
+  <div class="card-inner">
+    <div class="risk-tag risk-med">⚠ 공공부문</div>
+    <div class="card-category">공무원 · 임금 차별</div>
+    <h2 class="card-title">공무원노조, 시간외 근무수당<br>차별 철폐 기자회견</h2>
+    <ul class="bullet-list">
+      <li>공무원노조, 청와대 앞에서 <strong>시간외 근무수당 차별 철폐</strong> 요구 기자회견</li>
+      <li>공무원 시간외수당 상한액이 민간 대비 낮아 실질 임금 차별 발생 주장</li>
+      <li>공무원 기본권 입법 관련 여야 T/F 실무협의회도 동시 진행</li>
+    </ul>
+    <div class="insight">
+      <div class="insight-label">실무 시사점</div>
+      <div class="insight-text">공공기관·공무원 조직 HR 담당자는 시간외수당 산정 기준 및 상한액 변경 가능성에 대비해 인건비 시뮬레이션을 미리 준비해 두는 것이 좋음.</div>
+    </div>
+  </div>
+  <div class="read-more"><a href="https://www.labortoday.co.kr" target="_blank">자세히 보기</a></div>
+</div>
+
+<div style="height:24px;"></div>
+
+<footer class="footer">
+  <div class="footer-logo">Today's Labor News</div>
+  <div class="footer-disc">Powered by Claude AI · 매일 자동 생성<br>본 카드뉴스는 정보 제공 목적이며 구체적 사안은 전문가 상담이 필요합니다.<br>© 2026 JP Labor News</div>
+</footer>
+
+</body>
+</html>
