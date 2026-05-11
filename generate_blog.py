@@ -133,22 +133,62 @@ print("Claude API 호출 중...")
 response = client.messages.create(
     model="claude-sonnet-4-5",
     max_tokens=8000,
+    system="You are a Korean labor law expert. Always respond with valid JSON only. Never include any text outside the JSON object. Never use single quotes inside JSON strings. Escape all special characters properly.",
     messages=[{"role": "user", "content": PROMPT}]
 )
 
 raw = response.content[0].text.strip()
-raw = re.sub(r"```json|```", "", raw).strip()
 
-# JSON 안전 파싱
-try:
-    data = json.loads(raw)
-except json.JSONDecodeError:
-    # 마지막 완전한 객체까지만 추출
-    match = re.search(r'\{.*\}', raw, re.DOTALL)
-    if match:
-        data = json.loads(match.group())
-    else:
-        raise
+# JSON 안전 파싱 - 다단계 시도
+def safe_parse_json(text):
+    # 1단계: 마크다운 제거
+    text = re.sub(r"```json|```", "", text).strip()
+
+    # 2단계: 직접 파싱 시도
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        pass
+
+    # 3단계: 첫 { 부터 마지막 } 까지 추출
+    start = text.find('{')
+    end   = text.rfind('}')
+    if start != -1 and end != -1:
+        try:
+            return json.loads(text[start:end+1])
+        except json.JSONDecodeError:
+            pass
+
+    # 4단계: 문제 문자 제거 후 재시도
+    cleaned = re.sub(r'[\x00-\x1f\x7f]', ' ', text[start:end+1]) if start != -1 else text
+    try:
+        return json.loads(cleaned)
+    except json.JSONDecodeError:
+        pass
+
+    # 5단계: 기본 템플릿 반환 (오류 방지용)
+    print("⚠ JSON 파싱 실패 — 기본 템플릿 사용")
+    return {
+        "week_label": WEEK_LABEL,
+        "news": [{
+            "rank": i+1,
+            "section_num": [1,1,2,2,3,3,4,5][i],
+            "section": ["노사 핫이슈","노사 핫이슈","판례·단속","판례·단속","사장님 체크포인트","사장님 체크포인트","5인 미만 사업장 필독","HR 동향"][i],
+            "source": "공인노무사 JP",
+            "date": TODAY.strftime("%Y.%m.%d"),
+            "url": "https://laborjp.tistory.com",
+            "risk_level": "info",
+            "risk_label": "ℹ 참고",
+            "category": "노동법 실무",
+            "title": f"이번 주 노동·HR 이슈 {i+1}",
+            "keyword": "노동법",
+            "bullets": ["뉴스 수집 중 오류가 발생했습니다.", "다음 주 브리핑을 확인해 주세요.", "문의: laborjp.tistory.com"],
+            "insight": "구체적인 사안은 공인노무사 JP에게 문의하세요.",
+            "is_insight_card": True
+        } for i in range(8)]
+    }
+
+data = safe_parse_json(raw)
 
 news_list  = data["news"]
 week_label = data.get("week_label", WEEK_LABEL)
