@@ -156,7 +156,8 @@ body{background:var(--navy);color:var(--text-body);font-family:'Apple SD Gothic 
 .hero-title span{color:var(--gold)}
 .hero-sub{font-size:13px;color:var(--text-muted);line-height:1.7;text-align:center;margin-bottom:20px}
 .headline-list{background:rgba(31,50,96,.3);border:1px solid var(--navy-border);border-radius:4px;overflow:hidden}
-.headline-item{display:flex;align-items:flex-start;gap:12px;padding:13px 16px;border-bottom:1px solid var(--navy-border)}
+.headline-item{display:flex;align-items:flex-start;gap:12px;padding:13px 16px;border-bottom:1px solid var(--navy-border);text-decoration:none;transition:background 0.2s}
+.headline-item:hover{background:rgba(31,50,96,.5)}
 .headline-item:last-child{border-bottom:none}
 .headline-num{font-size:11px;font-weight:700;color:var(--gold);background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.25);min-width:22px;height:22px;border-radius:2px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
 .headline-content{flex:1}
@@ -194,20 +195,20 @@ body{background:var(--navy);color:var(--text-body);font-family:'Apple SD Gothic 
 .footer-logo{font-size:14px;font-weight:700;color:var(--gold);margin-bottom:6px}
 .footer-disc{font-size:11px;color:var(--text-muted);line-height:1.8}"""
 
-# 헤드라인
+# 헤드라인 (클릭 시 해당 카드로 이동)
 headlines_html = ""
 for n in news_list:
     tc = TAG_CLS.get(n["risk_level"],"tag-info")
     if n.get("is_construction"):
         tc = "tag-construction"
-    headlines_html += f"""<div class="headline-item">
+    headlines_html += f"""<a class="headline-item" href="#news{n['rank']}">
   <div class="headline-num">{n['rank']}</div>
   <div class="headline-content">
     <div class="headline-source">📰 {n['source']} · {n['date']}</div>
     <div class="headline-title">{n['title']}</div>
     <span class="headline-tag {tc}">{n['risk_label']}</span>
   </div>
-</div>"""
+</a>"""
 
 # 카드
 cards_html = ""
@@ -215,7 +216,7 @@ for n in news_list:
     bullets = "".join(f"<li>{b}</li>" for b in n["bullets"])
     rc = RISK_CLS.get(n["risk_level"],"risk-info")
     construction_badge = ' <span style="font-size:10px;background:rgba(46,125,50,.15);color:#66bb6a;border:1px solid rgba(46,125,50,.3);padding:2px 6px;border-radius:2px">🏗 건설·건자재</span>' if n.get("is_construction") else ""
-    cards_html += f"""<div class="news-card">
+    cards_html += f"""<div class="news-card" id="news{n['rank']}">
   <div class="source-bar"><span class="source-name">📰 {n['source']}{construction_badge}</span><span class="source-date">{n['date']}</span></div>
   <div class="card-inner">
     <div class="risk-tag {rc}">{n['risk_label']}</div>
