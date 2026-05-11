@@ -35,4 +35,10 @@ jobs:
           git config --global user.name "GitHub Actions"
           git add .
           git diff --staged --quiet || git commit -m "Auto: $(date +'%Y%m%d') 블로그 카드뉴스 자동 생성"
-          git pushㅍ
+          - name: GitHub에 자동 커밋
+        run: |
+          git config --global user.email "action@github.com"
+          git config --global user.name "GitHub Actions"
+          git add .
+          git diff --staged --quiet || git commit -m "Auto: $(date +'%Y%m%d') 블로그 카드뉴스 자동 생성"
+          git push origin main
