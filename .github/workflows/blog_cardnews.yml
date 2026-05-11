@@ -2,9 +2,8 @@ name: Daily Blog Cardnews
 
 on:
   schedule:
-    # 매일 오전 8시 (KST = UTC+9, 즉 UTC 23:00 전날)
     - cron: '0 23 * * *'
-  workflow_dispatch:  # 수동 실행 버튼 활성화
+  workflow_dispatch:
 
 jobs:
   generate-blog-cardnews:
@@ -30,12 +29,6 @@ jobs:
         run: python generate_blog.py
 
       - name: GitHub에 자동 커밋
-        run: |
-          git config --global user.email "action@github.com"
-          git config --global user.name "GitHub Actions"
-          git add .
-          git diff --staged --quiet || git commit -m "Auto: $(date +'%Y%m%d') 블로그 카드뉴스 자동 생성"
-          - name: GitHub에 자동 커밋
         run: |
           git config --global user.email "action@github.com"
           git config --global user.name "GitHub Actions"
