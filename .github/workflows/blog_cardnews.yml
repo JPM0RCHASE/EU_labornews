@@ -1,4 +1,4 @@
-name: Daily Blog Cardnews
+name: Weekly Blog Cardnews
 
 on:
   schedule:
@@ -8,6 +8,8 @@ on:
 jobs:
   generate-blog-cardnews:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - name: 레포지토리 체크아웃
