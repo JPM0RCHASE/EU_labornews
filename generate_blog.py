@@ -156,7 +156,7 @@ is_insight_card: 뉴스가 아닌 JP 인사이트 카드이면 true
 
 print("Claude API 호출 중...")
 response = client.messages.create(
-    model="claude-sonnet-4-20250514",
+    model="claude-sonnet-4-5",
     max_tokens=4000,
     messages=[{"role": "user", "content": PROMPT}]
 )
