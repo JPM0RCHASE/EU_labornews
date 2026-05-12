@@ -27,6 +27,8 @@ FOLDER   = DATE_STR
 NEWS_FILE = f"labornews_{DATE_STR}.html"
 SEND_FILE = f"send_{DATE_STR}.html"
 VERCEL_URL = f"https://eu-labornews.vercel.app/{FOLDER}/{NEWS_FILE}"
+THUMBNAIL_URL = "https://eu-labornews.vercel.app/thumbnail_telegram.svg"
+OG_IMAGE   = "https://eu-labornews.vercel.app/thumbnail.svg"
 
 os.makedirs(FOLDER, exist_ok=True)
 print(f"[{DATE_LABEL}] 텔레그램 카드뉴스 생성 시작...")
@@ -244,7 +246,18 @@ NEWS_HTML = f"""<!DOCTYPE html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Today's Labor News — {DATE_LABEL}</title>
+<title>Today's Labor News — {DATE_LABEL} | 공인노무사 JP</title>
+<meta name="description" content="오늘의 인사노무 핵심 브리핑. 노동법·노사·HR 이슈 5건.">
+<meta property="og:title" content="Today's Labor News — {DATE_LABEL} | 공인노무사 JP">
+<meta property="og:description" content="노란봉투법·대기업 노사·임금체불·건설경기 등 오늘의 핵심 이슈 5건">
+<meta property="og:type" content="article">
+<meta property="og:url" content="{VERCEL_URL}">
+<meta property="og:image" content="{OG_IMAGE}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:site_name" content="JP Labor News">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="{OG_IMAGE}">
 <style>{CSS}</style>
 </head>
 <body>
