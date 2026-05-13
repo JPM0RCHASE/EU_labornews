@@ -5,6 +5,8 @@ JP Labor & HR Blog - 주간 블로그 카드뉴스 생성
 - Claude API 깊이있는 카드뉴스 생성
 - 5인 미만 사업장 섹션 필수 포함
 - labor_hr_briefing_v2 형식 HTML 생성
+- PC/노트북 최적화 4:3 비율 레이아웃
+- blog/latest.html 항상 최신으로 덮어쓰기
 """
 import os, re, json, requests
 from datetime import datetime, timezone, timedelta
@@ -24,19 +26,32 @@ WEEK_KO     = ["첫","둘","셋","넷","다섯"][WEEK_NUM - 1]
 WEEK_LABEL  = f"{TODAY.year}년 {TODAY.month}월 {WEEK_KO}째주"
 
 os.makedirs("blog", exist_ok=True)
-OUTPUT = f"blog/blog_{DATE_STR}.html"
+OUTPUT      = f"blog/blog_{DATE_STR}.html"   # 날짜별 보관용
+LATEST      = "blog/latest.html"             # 티스토리 iframe용 고정 URL
 print(f"[{DATE_LABEL}] 블로그 카드뉴스 생성 시작...")
 
 # ── Naver 뉴스 수집 ──────────────────────────────────
 KEYWORDS = [
-    "5인미만 사업장 노동법","주휴수당 알바","퇴직금 소상공인",
-    "가짜 프리랜서 3.3 단속","고용지원금 중소기업","근로계약서 작성",
-    "직원 해고 절차","손해배상 직원 퇴사",
-    "임금체불 단속","부당해고 판결","중대재해 처벌",
-    "고용노동부 정책","최저임금","직장내괴롭힘",
-    "AI 일자리 대체","인공지능 채용 HR","챗GPT 노동시장",
-    "플랫폼 노동자","디지털 전환 고용",
-    "산업재해","육아휴직 중소기업","외국인 근로자",
+    "5인미만 사업장 노동법",
+    "주휴수당 알바",
+    "퇴직금 소상공인",
+    "가짜 프리랜서 3.3 단속",
+    "고용지원금 중소기업",
+    "근로계약서 작성",
+    "직원 해고 절차",
+    "손해배상 직원 퇴사",
+    "임금체불 단속",
+    "부당해고 판결",
+    "중대재해 처벌",
+    "고용노동부 정책",
+    "최저임금 2026",
+    "직장내 괴롭힘",
+    "AI 일자리 대체",
+    "플랫폼 노동자 권리",
+    "인사노무 HR 트렌드",
+    "육아휴직 중소기업",
+    "외국인 근로자 고용",
+    "산업재해 보상",
 ]
 
 headers = {"X-Naver-Client-Id": NAVER_CLIENT_ID, "X-Naver-Client-Secret": NAVER_CLIENT_SECRET}
@@ -192,11 +207,10 @@ news_list  = data["news"]
 week_label = data.get("week_label", WEEK_LABEL)
 print(f"카드뉴스 {len(news_list)}건 생성 완료")
 
-# ── HTML 생성 (labor_hr_briefing_v2 형식) ────────────
+# ── HTML 생성 ─────────────────────────────────────────
 RISK_CLS = {"high":"r-h","med":"r-m","info":"r-i"}
 TAG_CLS  = {"high":"tag-h","med":"tag-m","info":"tag-i"}
 
-# 섹션번호 → 주제 번호 표시 문자열
 SEC_TOPIC = {
     1: ("①", "노사 핫이슈"),
     2: ("②", "판례·단속"),
@@ -205,129 +219,171 @@ SEC_TOPIC = {
     5: ("⑤", "HR 동향"),
 }
 
+# ── CSS: PC/노트북 4:3 최적화 ─────────────────────────
 CSS = """:root{
   --navy:#0a0f1e;--navy-mid:#111827;--navy-card:#141d2e;
   --navy-border:#1f3260;--gold:#c9a84c;--gold-dim:#9b7d36;
   --gold-light:#e2c278;--cream:#f5f0e8;--cream-dim:#ccc4b0;
-  --text-body:#c8ccd8;--text-muted:#7a8299
+  --text-body:#c8ccd8;--text-muted:#7a8299;
+  --page-w:960px;
 }
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:var(--navy);color:var(--text-body);font-family:'Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif;font-size:16px;line-height:1.75}
+html{background:#0a0f1e}
+body{
+  background:var(--navy);
+  color:var(--text-body);
+  font-family:'Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif;
+  font-size:16px;line-height:1.75;
+  /* 4:3 비율: 최대 너비 960px 고정, 좌우 중앙 정렬 */
+  max-width:var(--page-w);
+  margin:0 auto;
+  box-shadow:0 0 60px rgba(0,0,0,.6);
+}
 
 /* ── 헤더 ── */
-.blog-header{background:var(--navy-mid);border-bottom:2px solid var(--gold);padding:16px 40px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
-.blog-logo{font-size:20px;font-weight:700;color:var(--gold)}
-.blog-author{font-size:13px;color:var(--text-muted);margin-top:3px}
+.blog-header{
+  background:var(--navy-mid);border-bottom:2px solid var(--gold);
+  padding:14px 32px;display:flex;align-items:center;
+  justify-content:space-between;flex-wrap:wrap;gap:10px;
+}
+.blog-logo{font-size:18px;font-weight:700;color:var(--gold)}
+.blog-author{font-size:12px;color:var(--text-muted);margin-top:3px}
 .wm-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.35);border-radius:3px;padding:4px 10px;font-size:11px;font-weight:700;color:var(--gold)}
-.blog-date{font-size:15px;font-weight:700;color:#fff;text-align:right}
-.blog-period{font-size:12px;color:var(--text-muted);text-align:right;margin-top:3px}
+.blog-date{font-size:14px;font-weight:700;color:#fff;text-align:right}
+.blog-period{font-size:11px;color:var(--text-muted);text-align:right;margin-top:2px}
 
-/* ── 히어로 ── */
-.hero{background:linear-gradient(160deg,#111827 0%,#0d1628 50%,var(--navy) 100%);padding:52px 40px 44px;border-bottom:1px solid var(--navy-border);text-align:center}
-.hero-eyebrow{font-size:22px;letter-spacing:.15em;color:var(--gold);margin-bottom:14px;display:flex;align-items:center;justify-content:center;gap:12px;font-weight:700}
-.hero-eyebrow::before,.hero-eyebrow::after{content:'';width:32px;height:1px;background:var(--gold)}
-.hero-title{font-size:clamp(32px,5vw,54px);font-weight:900;color:var(--cream);line-height:1.15;margin-bottom:12px}
+/* ── 히어로 (1페이지) ── */
+.hero{
+  background:linear-gradient(160deg,#111827 0%,#0d1628 50%,var(--navy) 100%);
+  padding:40px 32px 36px;border-bottom:1px solid var(--navy-border);text-align:center;
+}
+.hero-eyebrow{
+  font-size:14px;letter-spacing:.12em;color:var(--gold);
+  margin-bottom:12px;display:flex;align-items:center;justify-content:center;gap:10px;font-weight:700;
+}
+.hero-eyebrow::before,.hero-eyebrow::after{content:'';width:24px;height:1px;background:var(--gold)}
+.hero-title{font-size:clamp(26px,4vw,42px);font-weight:900;color:var(--cream);line-height:1.15;margin-bottom:10px}
 .hero-title em{color:var(--gold);font-style:italic}
-.hero-desc{font-size:16px;color:var(--cream-dim);max-width:560px;margin:0 auto 28px;line-height:1.8}
+.hero-desc{font-size:14px;color:var(--cream-dim);max-width:560px;margin:0 auto 24px;line-height:1.8}
 
-/* ── 1페이지 헤드라인 그리드 ── */
-.headline-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:2px;max-width:960px;margin:0 auto;background:var(--navy-border);border:1px solid var(--navy-border)}
-.headline-item{background:rgba(31,50,96,.35);padding:20px 22px;text-decoration:none;display:block;transition:background .2s}
+/* ── 헤드라인 그리드 (2열) ── */
+.headline-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);
+  gap:2px;background:var(--navy-border);border:1px solid var(--navy-border);
+}
+.headline-item{
+  background:rgba(31,50,96,.35);padding:16px 18px;
+  text-decoration:none;display:block;transition:background .2s;
+}
 .headline-item:hover{background:rgba(31,50,96,.65)}
-.hl-inner{display:flex;align-items:center;gap:13px;width:100%}
-.hl-num{font-size:15px;font-weight:700;color:var(--gold);background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.3);min-width:34px;height:34px;border-radius:3px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.hl-inner{display:flex;align-items:center;gap:12px;width:100%}
+.hl-num{
+  font-size:13px;font-weight:700;color:var(--gold);
+  background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.3);
+  min-width:30px;height:30px;border-radius:3px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
 .hl-content{flex:1}
-.hl-source{font-size:14px;color:var(--gold-light);margin-bottom:6px;font-weight:600}
-.hl-title{font-size:19px;font-weight:800;color:var(--cream);line-height:1.5;word-break:keep-all;text-wrap:balance}
+.hl-source{font-size:12px;color:var(--gold-light);margin-bottom:4px;font-weight:600}
+.hl-title{font-size:15px;font-weight:800;color:var(--cream);line-height:1.45;word-break:keep-all;text-wrap:balance}
 .hl-title .kw{color:var(--gold)}
-.hl-tag{display:inline-block;font-size:12px;font-weight:700;padding:3px 10px;border-radius:2px;margin-top:8px}
+.hl-tag{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:2px;margin-top:6px}
 .tag-h{background:rgba(192,57,43,.15);color:#e74c3c;border:1px solid rgba(192,57,43,.3)}
 .tag-m{background:rgba(243,156,18,.12);color:#f39c12;border:1px solid rgba(243,156,18,.3)}
 .tag-i{background:rgba(52,152,219,.12);color:#5dade2;border:1px solid rgba(52,152,219,.3)}
 
-/* ── 메인 ── */
-.main-wrap{max-width:1100px;margin:0 auto;padding:52px 40px}
+/* ── 메인 (2페이지~) ── */
+.main-wrap{padding:36px 32px}
 
 /* 섹션탭 숨김 */
 .sec-head{display:none}
 
-/* 카드 1열 (주제 1개 = 1페이지) */
-.card-grid-2{display:grid;grid-template-columns:1fr;gap:18px;margin-bottom:48px}
+/* 카드 1열 배치 */
+.card-grid-2{display:grid;grid-template-columns:1fr;gap:0;margin-bottom:36px}
 
 /* ── 뉴스 카드 ── */
-.n-card{background:var(--navy-card);border:1px solid var(--navy-border);display:flex;flex-direction:column;position:relative;overflow:hidden;transition:border-color .25s,transform .25s}
+.n-card{
+  background:var(--navy-card);border:1px solid var(--navy-border);
+  display:flex;flex-direction:column;position:relative;overflow:hidden;
+  transition:border-color .25s,transform .25s;
+}
 .n-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:4px;background:linear-gradient(to right,var(--gold-dim),var(--gold),var(--gold-dim))}
 .n-card:hover{border-color:var(--gold-dim);transform:translateY(-2px)}
-.card-wm{position:absolute;bottom:46px;right:12px;font-size:10px;font-weight:700;color:rgba(201,168,76,.2);pointer-events:none;white-space:nowrap}
-.n-source{display:flex;align-items:center;justify-content:space-between;background:rgba(31,50,96,.6);border-bottom:1px solid var(--navy-border);padding:8px 16px;margin-top:4px;font-size:13px}
+.card-wm{position:absolute;bottom:46px;right:12px;font-size:10px;font-weight:700;color:rgba(201,168,76,.15);pointer-events:none;white-space:nowrap}
+.n-source{
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(31,50,96,.6);border-bottom:1px solid var(--navy-border);
+  padding:7px 16px;margin-top:4px;font-size:12px;
+}
 .n-source-name{font-weight:700;color:var(--cream-dim)}
 .n-source-date{color:var(--text-muted)}
-.n-body{padding:16px 16px 0;flex:1}
+.n-body{padding:14px 16px 0;flex:1}
 
-/* 긴급 뱃지 숨김 → 주제번호 배지로 대체 */
+/* 긴급뱃지 숨김 → 주제번호로 대체 */
 .n-risk{display:none}
-.n-topic-num{display:inline-block;font-size:12px;font-weight:700;color:var(--gold);margin-bottom:9px}
+.n-topic-num{display:inline-block;font-size:12px;font-weight:700;color:var(--gold);margin-bottom:8px}
 
-.n-cat{font-size:14px;color:var(--gold);letter-spacing:.06em;margin-bottom:7px;display:flex;align-items:center;gap:6px}
+.n-cat{font-size:14px;color:var(--gold);letter-spacing:.06em;margin-bottom:6px;display:flex;align-items:center;gap:6px}
 .n-cat::before{content:'';width:10px;height:1px;background:var(--gold);flex-shrink:0}
-.n-title{font-size:18px;font-weight:800;color:var(--cream);line-height:1.45;margin-bottom:12px;word-break:keep-all}
+.n-title{font-size:17px;font-weight:800;color:var(--cream);line-height:1.45;margin-bottom:10px;word-break:keep-all}
 .n-title .kw{color:var(--gold)}
 
-.n-bullets{list-style:none;display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.n-bullets{list-style:none;display:flex;flex-direction:column;gap:7px;margin-bottom:12px}
 .n-bullets li{font-size:14px;color:var(--text-body);padding-left:14px;position:relative;line-height:1.7;word-break:keep-all}
 .n-bullets li::before{content:'·';position:absolute;left:0;color:var(--gold);font-size:18px;line-height:1.3}
 .n-bullets li strong{color:var(--cream-dim);font-weight:600}
 
-.n-insight{background:rgba(201,168,76,.07);border:1px solid rgba(201,168,76,.2);border-left:4px solid var(--gold);padding:16px 18px}
-.n-insight-label{font-size:16px;letter-spacing:.18em;color:var(--gold);font-weight:700;margin-bottom:8px}
+.n-insight{background:rgba(201,168,76,.07);border:1px solid rgba(201,168,76,.2);border-left:4px solid var(--gold);padding:14px 16px}
+.n-insight-label{font-size:16px;letter-spacing:.15em;color:var(--gold);font-weight:700;margin-bottom:7px}
 .n-insight-text{font-size:13px;color:var(--cream-dim);line-height:1.9;word-break:keep-all;font-weight:500}
 
 /* 해시태그 숨김 */
 .n-insight-tags{display:none}
 
-.n-footer{border-top:1px solid var(--navy-border);padding:10px 16px;margin-top:12px;display:flex;align-items:center;justify-content:space-between}
+.n-footer{border-top:1px solid var(--navy-border);padding:9px 16px;margin-top:12px;display:flex;align-items:center;justify-content:space-between}
 .n-footer-wm{font-size:10px;color:rgba(201,168,76,.35);font-weight:600}
 .n-link{font-size:16px;font-weight:bold;color:var(--gold);text-decoration:none;display:flex;align-items:center;gap:4px;transition:color .2s}
 .n-link:hover{color:var(--gold-light)}
 .n-link::after{content:'→';font-size:16px}
 
-/* ── 공유·푸터 ── */
-.share-bar{max-width:1100px;margin:0 auto 44px;padding:0 40px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+/* ── 공유바: 링크 복사만 ── */
+.share-bar{
+  padding:0 32px 32px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+}
 .share-label{font-size:12px;color:var(--text-muted)}
 .share-btn{padding:9px 18px;font-size:13px;font-weight:700;border:none;border-radius:3px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:opacity .2s}
 .share-btn:hover{opacity:.85}
-.share-kakao{background:#FEE500;color:#3A1D1D}
 .share-copy{background:var(--navy-border);color:var(--cream)}
 #copy-msg{font-size:12px;color:var(--gold);display:none}
-.blog-footer{background:var(--navy-mid);border-top:2px solid var(--gold-dim);padding:32px 40px}
-.blog-footer-inner{max-width:1100px;margin:0 auto;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:20px}
-.footer-logo{font-size:16px;font-weight:700;color:var(--gold);margin-bottom:4px}
-.footer-name{font-size:13px;color:var(--text-muted);margin-bottom:6px}
-.footer-url{font-size:12px;color:rgba(201,168,76,.45);font-weight:600}
-.footer-copy{font-size:11px;color:rgba(201,168,76,.3);margin-top:6px;font-weight:700}
-.footer-disc{font-size:11px;color:var(--navy-border);max-width:480px;line-height:1.9}
 
-@media(max-width:780px){
-  .blog-header,.hero,.main-wrap,.share-bar,.blog-footer{padding-left:20px;padding-right:20px}
-  .card-grid-2{grid-template-columns:1fr}
+/* ── 푸터 ── */
+.blog-footer{background:var(--navy-mid);border-top:2px solid var(--gold-dim);padding:24px 32px}
+.blog-footer-inner{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:16px}
+.footer-logo{font-size:15px;font-weight:700;color:var(--gold);margin-bottom:3px}
+.footer-name{font-size:12px;color:var(--text-muted);margin-bottom:5px}
+.footer-url{font-size:11px;color:rgba(201,168,76,.45);font-weight:600}
+.footer-copy{font-size:10px;color:rgba(201,168,76,.3);margin-top:5px;font-weight:700}
+.footer-disc{font-size:11px;color:var(--navy-border);max-width:400px;line-height:1.9}
+
+/* ── 반응형: 모바일 대응 ── */
+@media(max-width:600px){
+  body{max-width:100%}
+  .blog-header,.hero,.main-wrap,.share-bar,.blog-footer{padding-left:16px;padding-right:16px}
   .headline-grid{grid-template-columns:1fr}
-  .hero{padding-top:36px;padding-bottom:32px}
+  .hero{padding-top:28px;padding-bottom:24px}
+  .hl-title{font-size:14px}
 }"""
 
 
 def make_card(n):
-    """카드 HTML 생성 — labor_hr_briefing_v2 형식"""
     bullets_html = "".join(f"<li>{b}</li>" for b in n["bullets"])
     kw = n.get("keyword", "")
     title_html = (
         n["title"].replace(kw, f'<span class="kw">{kw}</span>')
         if kw and kw in n["title"] else n["title"]
     )
-    # 언론사명 표시
     src = "💡 공인노무사 JP" if n.get("is_insight_card") else f"📰 {n['source']}"
-    # 자세히 보기 → 실제 기사 원문 URL (인사이트 카드는 tistory)
     card_url = "https://laborjp.tistory.com" if n.get("is_insight_card") else n["url"]
-    # 주제 번호 표시
     circle, sec_name = SEC_TOPIC.get(n["section_num"], ("•", n["section"]))
     topic_num = f"{circle} {sec_name}"
 
@@ -355,16 +411,13 @@ def make_card(n):
 
 
 def make_headline(n):
-    """1페이지 헤드라인 아이템 — 클릭 시 해당 카드 앵커로 이동"""
     tc = TAG_CLS.get(n["risk_level"], "tag-i")
     kw = n.get("keyword", "")
     th = (
         n["title"].replace(kw, f'<span class="kw">{kw}</span>')
         if kw and kw in n["title"] else n["title"]
     )
-    # 언론사명 + 날짜 (인사이트 카드는 JP 명의)
     src = "💡 공인노무사 JP" if n.get("is_insight_card") else f"📰 {n['source']} · {n['date']}"
-    # 뱃지 = 카테고리 소제목과 동일
     badge = n["category"]
 
     return f"""<a class="headline-item" href="#card{n['rank']}">
@@ -379,7 +432,7 @@ def make_headline(n):
 </a>"""
 
 
-# ── 섹션별 카드 조립 (섹션탭 없이 카드만) ──────────────
+# ── 섹션별 카드 조립 ──────────────────────────────────
 from collections import defaultdict
 sec_groups = defaultdict(list)
 for n in news_list:
@@ -390,7 +443,6 @@ for sn in sorted(sec_groups.keys()):
     for n in sec_groups[sn]:
         sections_html += f'<div class="card-grid-2">{make_card(n)}</div>'
 
-# ── 1페이지 헤드라인 조립 ──────────────────────────────
 headlines_html = "".join(make_headline(n) for n in news_list)
 
 # ── 최종 HTML ─────────────────────────────────────────
@@ -401,7 +453,7 @@ HTML = f"""<!DOCTYPE html>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>노동·HR 주간 브리핑 {week_label} | 공인노무사 JP</title>
 <meta name="description" content="{week_label} 노동·인사·HR 이슈 8건. 사장님·HR 담당자 필독.">
-<meta name="keywords" content="노동법,인사노무,HR,공인노무사JP,5인미만사업장,임금체불,부당해고">
+<meta name="keywords" content="노동법,인사노무,HR,공인노무사JP,5인미만사업장,임금체불,부당해고,주휴수당,퇴직금,최저임금,근로계약서,해고절차,고용지원금,중소기업,자영업자,산업재해,육아휴직,외국인근로자,플랫폼노동,AI일자리">
 <meta name="author" content="공인노무사 JP">
 <meta property="og:title" content="노동·HR 주간 브리핑 {week_label} | 공인노무사 JP">
 <meta property="og:type" content="article">
@@ -421,7 +473,6 @@ HTML = f"""<!DOCTYPE html>
   </div>
 </header>
 
-<!-- 1페이지: 메인 표지 -->
 <section class="hero">
   <div class="hero-eyebrow">{week_label} · 노동·인사·HR 핵심 브리핑</div>
   <h1 class="hero-title">이번 주 <em>Labor &amp; HR</em> 이슈 8선</h1>
@@ -429,12 +480,10 @@ HTML = f"""<!DOCTYPE html>
   <div class="headline-grid">{headlines_html}</div>
 </section>
 
-<!-- 2페이지 이후: 카드 상세 -->
 <main class="main-wrap">{sections_html}</main>
 
 <div class="share-bar">
   <span class="share-label">이 글 공유하기</span>
-  <button class="share-btn share-kakao" onclick="shareKakao()">💬 카카오톡</button>
   <button class="share-btn share-copy" onclick="copyLink()">🔗 링크 복사</button>
   <span id="copy-msg">✅ 링크 복사 완료!</span>
 </div>
@@ -452,12 +501,25 @@ HTML = f"""<!DOCTYPE html>
 </footer>
 
 <script>
-function copyLink(){{navigator.clipboard.writeText(window.location.href).then(()=>{{const m=document.getElementById('copy-msg');m.style.display='inline';setTimeout(()=>{{m.style.display='none';}},2500);}})}}
-function shareKakao(){{const u=encodeURIComponent(window.location.href);const t=encodeURIComponent('[노동·HR 주간 브리핑] {week_label} — 공인노무사 JP');window.open('https://sharer.kakao.com/talk/friends/picker/link?url='+u+'&text='+t,'_blank')}}
+function copyLink(){{
+  navigator.clipboard.writeText(window.location.href).then(()=>{{
+    const m=document.getElementById('copy-msg');
+    m.style.display='inline';
+    setTimeout(()=>{{m.style.display='none';}},2500);
+  }});
+}}
 </script>
 </body>
 </html>"""
 
+# ── 파일 저장 ─────────────────────────────────────────
+# 1) 날짜별 보관용
 with open(OUTPUT, "w", encoding="utf-8") as f:
     f.write(HTML)
-print(f"✅ 완료: {OUTPUT}")
+print(f"✅ 날짜별 저장: {OUTPUT}")
+
+# 2) 티스토리 iframe용 고정 파일 (매주 덮어쓰기)
+with open(LATEST, "w", encoding="utf-8") as f:
+    f.write(HTML)
+print(f"✅ 최신 파일 갱신: {LATEST}")
+print("🎉 완료! 티스토리 iframe URL: https://eu-labornews.vercel.app/blog/latest.html")
