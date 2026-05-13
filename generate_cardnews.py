@@ -295,7 +295,7 @@ for n in news_list:
     tg_lines.append(f"{emoji} {n['title']}")
 tg_lines.append(f"\n🔗 전체 카드뉴스:\n{VERCEL_URL}")
 tg_text = "\n".join(tg_lines)
-tg_api_url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage?chat_id={TELEGRAM_CHAT_ID}&text={urllib.parse.quote(tg_text)}"
+tg_photo_url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendPhoto" tg_api_url = f"{tg_photo_url}?chat_id={urllib.parse.quote(str(TELEGRAM_CHAT_ID))}&photo={urllib.parse.quote(THUMBNAIL_URL)}&caption={urllib.parse.quote(tg_text[:1024])}"
 
 items_html = "".join(
     f'<div class="news-item"><span class="news-num">{n["rank"]}</span>{n["title"]}</div>'
@@ -324,7 +324,7 @@ with open(f"{FOLDER}/{SEND_FILE}", "w", encoding="utf-8") as f:
     f.write(SEND_HTML)
 
 # 텔레그램 자동 발송
-resp = requests.get(tg_api_url, timeout=10)
+resp = requests.post(     tg_photo_url,     data={"chat_id": TELEGRAM_CHAT_ID, "photo": THUMBNAIL_URL, "caption": tg_text[:1024]},     timeout=10 )
 if resp.json().get("ok"):
     print("✅ 텔레그램 발송 성공!")
 else:
