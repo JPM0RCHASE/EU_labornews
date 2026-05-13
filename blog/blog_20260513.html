@@ -9,38 +9,56 @@
 <meta name="author" content="공인노무사 JP">
 <meta property="og:title" content="노동·HR 주간 브리핑 2026년 5월 둘째주 | 공인노무사 JP">
 <meta property="og:type" content="article">
-<style>:root{--navy:#0a0f1e;--navy-mid:#111827;--navy-card:#141d2e;--navy-border:#1f3260;--gold:#c9a84c;--gold-dim:#9b7d36;--gold-light:#e2c278;--cream:#f5f0e8;--cream-dim:#ccc4b0;--text-body:#c8ccd8;--text-muted:#7a8299}
+<style>:root{
+  --navy:#0a0f1e;--navy-mid:#111827;--navy-card:#141d2e;
+  --navy-border:#1f3260;--gold:#c9a84c;--gold-dim:#9b7d36;
+  --gold-light:#e2c278;--cream:#f5f0e8;--cream-dim:#ccc4b0;
+  --text-body:#c8ccd8;--text-muted:#7a8299
+}
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:var(--navy);color:var(--text-body);font-family:'Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif;font-size:16px;line-height:1.75}
+
+/* ── 헤더 ── */
 .blog-header{background:var(--navy-mid);border-bottom:2px solid var(--gold);padding:16px 40px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
 .blog-logo{font-size:20px;font-weight:700;color:var(--gold)}
 .blog-author{font-size:13px;color:var(--text-muted);margin-top:3px}
 .wm-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.35);border-radius:3px;padding:4px 10px;font-size:11px;font-weight:700;color:var(--gold)}
 .blog-date{font-size:15px;font-weight:700;color:#fff;text-align:right}
 .blog-period{font-size:12px;color:var(--text-muted);text-align:right;margin-top:3px}
+
+/* ── 히어로 ── */
 .hero{background:linear-gradient(160deg,#111827 0%,#0d1628 50%,var(--navy) 100%);padding:52px 40px 44px;border-bottom:1px solid var(--navy-border);text-align:center}
-.hero-eyebrow{font-size:22px;letter-spacing:.15em;color:var(--gold);text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;justify-content:center;gap:12px;font-weight:700}
+.hero-eyebrow{font-size:22px;letter-spacing:.15em;color:var(--gold);margin-bottom:14px;display:flex;align-items:center;justify-content:center;gap:12px;font-weight:700}
 .hero-eyebrow::before,.hero-eyebrow::after{content:'';width:32px;height:1px;background:var(--gold)}
 .hero-title{font-size:clamp(32px,5vw,54px);font-weight:900;color:var(--cream);line-height:1.15;margin-bottom:12px}
 .hero-title em{color:var(--gold);font-style:italic}
-.hero-desc{font-size:16px;color:var(--text-muted);max-width:560px;margin:0 auto 28px;line-height:1.8}
+.hero-desc{font-size:16px;color:var(--cream-dim);max-width:560px;margin:0 auto 28px;line-height:1.8}
+
+/* ── 1페이지 헤드라인 그리드 ── */
 .headline-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:2px;max-width:960px;margin:0 auto;background:var(--navy-border);border:1px solid var(--navy-border)}
-.headline-item{background:rgba(31,50,96,.35);padding:20px 22px;display:flex;align-items:flex-start;gap:16px;transition:background .2s}
+.headline-item{background:rgba(31,50,96,.35);padding:20px 22px;text-decoration:none;display:block;transition:background .2s}
 .headline-item:hover{background:rgba(31,50,96,.65)}
-.hl-num{font-size:15px;font-weight:700;color:var(--gold);background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.3);min-width:34px;height:34px;border-radius:3px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:3px}
+.hl-inner{display:flex;align-items:center;gap:13px;width:100%}
+.hl-num{font-size:15px;font-weight:700;color:var(--gold);background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.3);min-width:34px;height:34px;border-radius:3px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .hl-content{flex:1}
-.hl-source{font-size:14px;color:var(--text-muted);margin-bottom:6px;font-weight:600}
-.hl-title{font-size:19px;font-weight:800;color:var(--cream);line-height:1.5;word-break:keep-all}
+.hl-source{font-size:14px;color:var(--gold-light);margin-bottom:6px;font-weight:600}
+.hl-title{font-size:19px;font-weight:800;color:var(--cream);line-height:1.5;word-break:keep-all;text-wrap:balance}
 .hl-title .kw{color:var(--gold)}
 .hl-tag{display:inline-block;font-size:12px;font-weight:700;padding:3px 10px;border-radius:2px;margin-top:8px}
 .tag-h{background:rgba(192,57,43,.15);color:#e74c3c;border:1px solid rgba(192,57,43,.3)}
 .tag-m{background:rgba(243,156,18,.12);color:#f39c12;border:1px solid rgba(243,156,18,.3)}
 .tag-i{background:rgba(52,152,219,.12);color:#5dade2;border:1px solid rgba(52,152,219,.3)}
+
+/* ── 메인 ── */
 .main-wrap{max-width:1100px;margin:0 auto;padding:52px 40px}
-.sec-head{display:flex;align-items:center;gap:14px;margin-bottom:24px;padding-bottom:12px;border-bottom:1px solid var(--navy-border)}
-.sec-icon{background:rgba(201,168,76,.1);border:1px solid var(--gold-dim);color:var(--gold);font-size:15px;font-weight:700;padding:5px 13px;flex-shrink:0}
-.sec-line{flex:1;height:1px;background:linear-gradient(to right,var(--navy-border),transparent)}
-.card-grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-bottom:48px}
+
+/* 섹션탭 숨김 */
+.sec-head{display:none}
+
+/* 카드 1열 (주제 1개 = 1페이지) */
+.card-grid-2{display:grid;grid-template-columns:1fr;gap:18px;margin-bottom:48px}
+
+/* ── 뉴스 카드 ── */
 .n-card{background:var(--navy-card);border:1px solid var(--navy-border);display:flex;flex-direction:column;position:relative;overflow:hidden;transition:border-color .25s,transform .25s}
 .n-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:4px;background:linear-gradient(to right,var(--gold-dim),var(--gold),var(--gold-dim))}
 .n-card:hover{border-color:var(--gold-dim);transform:translateY(-2px)}
@@ -49,28 +67,35 @@ body{background:var(--navy);color:var(--text-body);font-family:'Apple SD Gothic 
 .n-source-name{font-weight:700;color:var(--cream-dim)}
 .n-source-date{color:var(--text-muted)}
 .n-body{padding:16px 16px 0;flex:1}
-.n-risk{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;padding:4px 10px;margin-bottom:9px;border-radius:2px}
-.r-h{background:rgba(192,57,43,.15);color:#e74c3c;border:1px solid rgba(192,57,43,.3)}
-.r-m{background:rgba(243,156,18,.12);color:#f39c12;border:1px solid rgba(243,156,18,.3)}
-.r-i{background:rgba(52,152,219,.12);color:#5dade2;border:1px solid rgba(52,152,219,.3)}
-.n-cat{font-size:12px;color:var(--gold);letter-spacing:.06em;margin-bottom:7px;display:flex;align-items:center;gap:6px}
+
+/* 긴급 뱃지 숨김 → 주제번호 배지로 대체 */
+.n-risk{display:none}
+.n-topic-num{display:inline-block;font-size:12px;font-weight:700;color:var(--gold);margin-bottom:9px}
+
+.n-cat{font-size:14px;color:var(--gold);letter-spacing:.06em;margin-bottom:7px;display:flex;align-items:center;gap:6px}
 .n-cat::before{content:'';width:10px;height:1px;background:var(--gold);flex-shrink:0}
 .n-title{font-size:18px;font-weight:800;color:var(--cream);line-height:1.45;margin-bottom:12px;word-break:keep-all}
 .n-title .kw{color:var(--gold)}
+
 .n-bullets{list-style:none;display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
 .n-bullets li{font-size:14px;color:var(--text-body);padding-left:14px;position:relative;line-height:1.7;word-break:keep-all}
 .n-bullets li::before{content:'·';position:absolute;left:0;color:var(--gold);font-size:18px;line-height:1.3}
 .n-bullets li strong{color:var(--cream-dim);font-weight:600}
+
 .n-insight{background:rgba(201,168,76,.07);border:1px solid rgba(201,168,76,.2);border-left:4px solid var(--gold);padding:16px 18px}
-.n-insight-label{font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:8px}
-.n-insight-text{font-size:18px;color:var(--cream-dim);line-height:1.9;word-break:keep-all;font-weight:500}
-.n-insight-tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-.n-insight-tag{font-size:12px;color:var(--gold);background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.25);padding:3px 10px;border-radius:12px}
+.n-insight-label{font-size:16px;letter-spacing:.18em;color:var(--gold);font-weight:700;margin-bottom:8px}
+.n-insight-text{font-size:13px;color:var(--cream-dim);line-height:1.9;word-break:keep-all;font-weight:500}
+
+/* 해시태그 숨김 */
+.n-insight-tags{display:none}
+
 .n-footer{border-top:1px solid var(--navy-border);padding:10px 16px;margin-top:12px;display:flex;align-items:center;justify-content:space-between}
 .n-footer-wm{font-size:10px;color:rgba(201,168,76,.35);font-weight:600}
-.n-link{font-size:12px;font-weight:700;color:var(--gold);text-decoration:none;display:flex;align-items:center;gap:4px;transition:color .2s}
+.n-link{font-size:16px;font-weight:bold;color:var(--gold);text-decoration:none;display:flex;align-items:center;gap:4px;transition:color .2s}
 .n-link:hover{color:var(--gold-light)}
-.n-link::after{content:'→';font-size:14px}
+.n-link::after{content:'→';font-size:16px}
+
+/* ── 공유·푸터 ── */
 .share-bar{max-width:1100px;margin:0 auto 44px;padding:0 40px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .share-label{font-size:12px;color:var(--text-muted)}
 .share-btn{padding:9px 18px;font-size:13px;font-weight:700;border:none;border-radius:3px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:opacity .2s}
@@ -85,202 +110,278 @@ body{background:var(--navy);color:var(--text-body);font-family:'Apple SD Gothic 
 .footer-url{font-size:12px;color:rgba(201,168,76,.45);font-weight:600}
 .footer-copy{font-size:11px;color:rgba(201,168,76,.3);margin-top:6px;font-weight:700}
 .footer-disc{font-size:11px;color:var(--navy-border);max-width:480px;line-height:1.9}
-@media(max-width:780px){.blog-header,.hero,.main-wrap,.share-bar,.blog-footer{padding-left:20px;padding-right:20px}.card-grid-2{grid-template-columns:1fr}.headline-grid{grid-template-columns:1fr}.hero{padding-top:36px;padding-bottom:32px}}</style>
+
+@media(max-width:780px){
+  .blog-header,.hero,.main-wrap,.share-bar,.blog-footer{padding-left:20px;padding-right:20px}
+  .card-grid-2{grid-template-columns:1fr}
+  .headline-grid{grid-template-columns:1fr}
+  .hero{padding-top:36px;padding-bottom:32px}
+}</style>
 </head>
 <body>
+
 <header class="blog-header">
-  <div><div class="blog-logo">Today's Labor &amp; HR News</div><div class="blog-author">공인노무사 JP | Labor &amp; HR Weekly Brief</div></div>
-  <div><div class="wm-badge">© 공인노무사 JP</div><div class="blog-date" style="margin-top:6px">2026. 05. 13.</div><div class="blog-period">2026년 5월 둘째주</div></div>
+  <div>
+    <div class="blog-logo">Today's Labor &amp; HR News</div>
+    <div class="blog-author">공인노무사 JP | Labor &amp; HR Weekly Brief</div>
+  </div>
+  <div>
+    <div class="wm-badge">© 공인노무사 JP</div>
+    <div class="blog-date" style="margin-top:6px">2026. 05. 13.</div>
+    <div class="blog-period">2026년 5월 둘째주</div>
+  </div>
 </header>
+
+<!-- 1페이지: 메인 표지 -->
 <section class="hero">
   <div class="hero-eyebrow">2026년 5월 둘째주 · 노동·인사·HR 핵심 브리핑</div>
   <h1 class="hero-title">이번 주 <em>Labor &amp; HR</em> 이슈 8선</h1>
   <p class="hero-desc">사장님·HR 담당자가 반드시 알아야 할 이번 주 핵심 뉴스를<br>공인노무사 JP가 선별하고 깊이있는 실무 시사점을 정리했습니다.</p>
-  <div class="headline-grid"><a class="headline-item" href="#card1" style="text-decoration:none;display:flex;align-items:flex-start;gap:13px;">
-  <div class="hl-num">1</div>
-  <div class="hl-content">
-    <div class="hl-source">💡 JP 인사이트</div>
-    <div class="hl-title">알바생 갑자기 그만두면 손해배상 청구 가능할까?</div>
-    <span class="hl-tag tag-h">🔴 긴급</span>
+  <div class="headline-grid"><a class="headline-item" href="#card1">
+  <div class="hl-inner">
+    <div class="hl-num">1</div>
+    <div class="hl-content">
+      <div class="hl-source">📰 데일리안 · 2026.05.13</div>
+      <div class="hl-title">알바 한 명 뽑기도 부담스러운 이유는?</div>
+      <span class="hl-tag tag-h">고용위축</span>
+    </div>
   </div>
-</a><a class="headline-item" href="#card2" style="text-decoration:none;display:flex;align-items:flex-start;gap:13px;">
-  <div class="hl-num">2</div>
-  <div class="hl-content">
-    <div class="hl-source">💡 JP 인사이트</div>
-    <div class="hl-title"><span class="kw">퇴직금 중간정산</span>, 2026년에도 가능할까?</div>
-    <span class="hl-tag tag-h">🔴 긴급</span>
+</a><a class="headline-item" href="#card2">
+  <div class="hl-inner">
+    <div class="hl-num">2</div>
+    <div class="hl-content">
+      <div class="hl-source">📰 프레시안 · 2026.05.12</div>
+      <div class="hl-title">2026년 달라진 노동법, 사장님은 알고 계신가요?</div>
+      <span class="hl-tag tag-h">노동법 변화</span>
+    </div>
   </div>
-</a><a class="headline-item" href="#card3" style="text-decoration:none;display:flex;align-items:flex-start;gap:13px;">
-  <div class="hl-num">3</div>
-  <div class="hl-content">
-    <div class="hl-source">💡 JP 인사이트</div>
-    <div class="hl-title">5인 미만 사업장, 부당해고 구제신청 당하면?</div>
-    <span class="hl-tag tag-h">🔴 긴급</span>
+</a><a class="headline-item" href="#card3">
+  <div class="hl-inner">
+    <div class="hl-num">3</div>
+    <div class="hl-content">
+      <div class="hl-source">📰 노컷뉴스 · 2026.05.10</div>
+      <div class="hl-title">가짜 3.3% 계약과 포괄임금제, 이제 단속 대상입니다</div>
+      <span class="hl-tag tag-h">정부 단속</span>
+    </div>
   </div>
-</a><a class="headline-item" href="#card4" style="text-decoration:none;display:flex;align-items:flex-start;gap:13px;">
-  <div class="hl-num">4</div>
-  <div class="hl-content">
-    <div class="hl-source">💡 JP 인사이트</div>
-    <div class="hl-title">2026년 <span class="kw">일자리 안정자금</span>, 우리 가게도 받을 수 있나요?</div>
-    <span class="hl-tag tag-i">ℹ 정보</span>
+</a><a class="headline-item" href="#card4">
+  <div class="hl-inner">
+    <div class="hl-num">4</div>
+    <div class="hl-content">
+      <div class="hl-source">📰 경상일보 · 2026.05.13</div>
+      <div class="hl-title"><span class="kw">노란우산 방문상담</span>, 이제 우리 가게로 찾아옵니다</div>
+      <span class="hl-tag tag-i">지원제도</span>
+    </div>
   </div>
-</a><a class="headline-item" href="#card5" style="text-decoration:none;display:flex;align-items:flex-start;gap:13px;">
-  <div class="hl-num">5</div>
-  <div class="hl-content">
-    <div class="hl-source">💡 JP 인사이트</div>
-    <div class="hl-title">주 52시간제, 5인 미만도 2026년부터 적용된다?</div>
-    <span class="hl-tag tag-m">⚠ 주의</span>
+</a><a class="headline-item" href="#card5">
+  <div class="hl-inner">
+    <div class="hl-num">5</div>
+    <div class="hl-content">
+      <div class="hl-source">📰 뉴스1 · 2026.05.11</div>
+      <div class="hl-title">5인 미만 사업장, 근로기준법 전면 적용 초읽기</div>
+      <span class="hl-tag tag-h">5인 미만</span>
+    </div>
   </div>
-</a><a class="headline-item" href="#card6" style="text-decoration:none;display:flex;align-items:flex-start;gap:13px;">
-  <div class="hl-num">6</div>
-  <div class="hl-content">
-    <div class="hl-source">💡 JP 인사이트</div>
-    <div class="hl-title">키오스크·무인시스템 도입하면 인건비 절감 가능할까?</div>
-    <span class="hl-tag tag-i">ℹ 정보</span>
+</a><a class="headline-item" href="#card6">
+  <div class="hl-inner">
+    <div class="hl-num">6</div>
+    <div class="hl-content">
+      <div class="hl-source">📰 세정일보 · 2026.05.13</div>
+      <div class="hl-title">종소세 신고 전 꼭 확인해야 할 달라진 세법은?</div>
+      <span class="hl-tag tag-m">세무</span>
+    </div>
   </div>
-</a><a class="headline-item" href="#card7" style="text-decoration:none;display:flex;align-items:flex-start;gap:13px;">
-  <div class="hl-num">7</div>
-  <div class="hl-content">
-    <div class="hl-source">💡 JP 인사이트</div>
-    <div class="hl-title">알바생 주휴수당, 안 줘도 되는 경우는?</div>
-    <span class="hl-tag tag-h">🔴 긴급</span>
+</a><a class="headline-item" href="#card7">
+  <div class="hl-inner">
+    <div class="hl-num">7</div>
+    <div class="hl-content">
+      <div class="hl-source">📰 이투데이 · 2026.05.13</div>
+      <div class="hl-title">중장년 고용하면 받을 수 있는 지원금 총정리</div>
+      <span class="hl-tag tag-i">지원금</span>
+    </div>
   </div>
-</a><a class="headline-item" href="#card8" style="text-decoration:none;display:flex;align-items:flex-start;gap:13px;">
-  <div class="hl-num">8</div>
-  <div class="hl-content">
-    <div class="hl-source">💡 JP 인사이트</div>
-    <div class="hl-title">직원 근무태만, CCTV로 징계 가능할까?</div>
-    <span class="hl-tag tag-m">⚠ 주의</span>
+</a><a class="headline-item" href="#card8">
+  <div class="hl-inner">
+    <div class="hl-num">8</div>
+    <div class="hl-content">
+      <div class="hl-source">💡 공인노무사 JP</div>
+      <div class="hl-title">근로계약서 작성, 사장님이 꼭 알아야 할 5가지</div>
+      <span class="hl-tag tag-m">근로계약</span>
+    </div>
   </div>
 </a></div>
 </section>
-<main class="main-wrap"><div class="sec-head"><div class="sec-icon">① 노사 핫이슈</div><div class="sec-line"></div></div><div class="card-grid-2"><div class="n-card" id="card1">
+
+<!-- 2페이지 이후: 카드 상세 -->
+<main class="main-wrap"><div class="card-grid-2"><div class="n-card" id="card1">
   <div class="card-wm">© 공인노무사 JP</div>
-  <div class="n-source"><span class="n-source-name">💡 공인노무사 JP</span><span class="n-source-date">2026.05.13</span></div>
+  <div class="n-source">
+    <span class="n-source-name">📰 데일리안</span>
+    <span class="n-source-date">2026.05.13</span>
+  </div>
   <div class="n-body">
-    <div class="n-risk r-h">🔴 긴급</div>
-    <div class="n-cat">근로계약 실무</div>
-    <h2 class="n-title">알바생 갑자기 그만두면 손해배상 청구 가능할까?</h2>
-    <ul class="n-bullets"><li>근로기준법상 근로자는 퇴사 의사를 밝힌 후 30일이 경과하면 일방적으로 퇴사 가능합니다 (제34조)</li><li>사용자가 동의하지 않더라도 법적으로 유효한 퇴사이며, 무단결근으로 처리할 수 없습니다</li><li>손해배상 청구는 이론적으로 가능하나, 실제 손해액 입증이 어려워 현실적으로 어렵습니다</li><li>근로계약서에 위약금이나 손해배상 예정 조항을 넣는 것은 근로기준법 제20조 위반으로 무효입니다</li><li>예방책: 근로계약서에 '사직 시 최소 14일 전 통지' 조항을 명시하되, 강제할 수는 없음을 인지해야 합니다</li></ul>
+    <div class="n-topic-num">① 노사 핫이슈</div>
+    <div class="n-cat">고용위축</div>
+    <h2 class="n-title">알바 한 명 뽑기도 부담스러운 이유는?</h2>
+    <ul class="n-bullets"><li>외식업계를 중심으로 알바 고용을 줄이는 '고용위축' 현상이 확산 중입니다</li><li>정부가 5인 미만 사업장 노동실태 분석 연구용역을 5~10월까지 진행합니다</li><li>임금·노동시간 등 근로조건뿐만 아니라 사업주의 노동법 인식과 노무관리 애로사항까지 조사 대상입니다</li><li>영세사업장이 밀집한 업종을 중심으로 실태조사가 이루어져, 향후 정책 변화의 기초 자료가 될 예정입니다</li><li>5인 미만 사업장에 대한 근로기준법 확대 적용이 검토되면서 영세 사업주들의 부담이 가중되고 있습니다</li></ul>
     <div class="n-insight">
       <div class="n-insight-label">실무 시사점</div>
-      <div class="n-insight-text">영세사업장에서 직원이 갑자기 그만두면 실질적 타격이 큽니다. 법적 대응보다는 평소 근무환경 개선과 대체인력 풀 확보가 현실적 대안입니다. 퇴사자와 원만히 합의하여 인수인계 기간을 확보하는 것이 최선의 방법입니다.</div>
-      <div class="n-insight-tags"><span class="n-insight-tag">#알바생</span><span class="n-insight-tag">#갑자기</span><span class="n-insight-tag">#그만두면</span></div>
+      <div class="n-insight-text">정부의 실태조사는 향후 5인 미만 사업장에 대한 근로기준법 전면 적용의 전 단계입니다. 지금부터 근로계약서 작성, 임금대장 관리, 연장근로 수당 지급 등 기본적인 노무관리 체계를 갖춰두는 것이 필수입니다. 특히 외식업·소매업 등 영세업종 사장님들은 인건비 구조 재검토와 함께 정부 지원금 활용 방안을 미리 준비해야 합니다.</div>
     </div>
   </div>
-  <div class="n-footer"><span class="n-footer-wm">laborjp.tistory.com</span><a class="n-link" href="https://laborjp.tistory.com" target="_blank">자세히 보기</a></div>
-</div><div class="n-card" id="card2">
+  <div class="n-footer">
+    <span class="n-footer-wm">laborjp.tistory.com</span>
+    <a class="n-link" href="https://www.dailian.co.kr/news/view/1643276/?sc=Naver" target="_blank">자세히 보기</a>
+  </div>
+</div></div><div class="card-grid-2"><div class="n-card" id="card2">
   <div class="card-wm">© 공인노무사 JP</div>
-  <div class="n-source"><span class="n-source-name">💡 공인노무사 JP</span><span class="n-source-date">2026.05.13</span></div>
+  <div class="n-source">
+    <span class="n-source-name">📰 프레시안</span>
+    <span class="n-source-date">2026.05.12</span>
+  </div>
   <div class="n-body">
-    <div class="n-risk r-h">🔴 긴급</div>
-    <div class="n-cat">임금 체불 방지</div>
-    <h2 class="n-title"><span class="kw">퇴직금 중간정산</span>, 2026년에도 가능할까?</h2>
-    <ul class="n-bullets"><li>퇴직금 중간정산은 2012년 7월 26일부터 원칙적으로 금지되었습니다</li><li>예외적으로 허용되는 경우: ①무주택자의 주택구입, ②본인·배우자·부양가족의 6개월 이상 요양, ③파산선고·개인회생, ④천재지변 등 5가지 사유만 가능</li><li>사업주가 제안하거나 근로자 편의를 위해 임의로 중간정산하면 근로자퇴직급여보장법 위반으로 3년 이하 징역 또는 2천만원 이하 벌금입니다</li><li>허용 사유에 해당하더라도 반드시 증빙서류(부동산 매매계약서, 진단서 등)를 징구하여 보관해야 합니다</li><li>중간정산 후에는 계속근로연수가 새로 시작되며, 이전 기간은 퇴직금 산정에서 제외됩니다</li></ul>
+    <div class="n-topic-num">① 노사 핫이슈</div>
+    <div class="n-cat">노동법 변화</div>
+    <h2 class="n-title">2026년 달라진 노동법, 사장님은 알고 계신가요?</h2>
+    <ul class="n-bullets"><li>2026년 3월 10일부터 노란봉투법이 시행되어 원청의 사용자성이 확대되고 쟁의행위 손해배상이 제한됩니다</li><li>주 4.5일제 시범사업이 추진되면서 근로시간 관리 방식에 변화가 예상됩니다</li><li>5인 미만 사업장 근로기준법 확대 적용이 검토되어 노사관계의 근본적인 틀이 달라졌습니다</li><li>전북노사상생센터에서 최근 노동법 판례부터 실무 대응까지 포괄하는 실무교육을 실시했습니다</li><li>급변하는 노동환경에 대응하기 위한 사업주의 노동법 이해와 준비가 시급한 상황입니다</li></ul>
     <div class="n-insight">
       <div class="n-insight-label">실무 시사점</div>
-      <div class="n-insight-text">많은 사장님들이 직원 요청으로 선의로 중간정산해주었다가 나중에 법 위반으로 문제되는 경우가 많습니다. 반드시 법정 사유에 해당하는지 확인하고, 증빙서류를 철저히 보관하세요. 애매한 경우 전문가 상담을 받는 것이 안전합니다.</div>
-      <div class="n-insight-tags"><span class="n-insight-tag">#퇴직금</span><span class="n-insight-tag">#중간정산</span><span class="n-insight-tag">#년에도</span></div>
+      <div class="n-insight-text">노란봉투법 시행으로 하청업체를 사용하는 사업주도 원청 책임을 질 수 있게 되었습니다. 특히 배달대행, 용역업체 이용 시 근로조건 확인과 계약서 검토가 필수입니다. 5인 미만 사업장도 곧 근로기준법 전면 적용 대상이 될 수 있으므로, 지역 노사상생센터나 노무사 상담을 통해 현재 노무관리 수준을 점검하고 개선 계획을 수립해야 합니다.</div>
     </div>
   </div>
-  <div class="n-footer"><span class="n-footer-wm">laborjp.tistory.com</span><a class="n-link" href="https://laborjp.tistory.com" target="_blank">자세히 보기</a></div>
-</div></div><div class="sec-head"><div class="sec-icon">② 판례 · 단속</div><div class="sec-line"></div></div><div class="card-grid-2"><div class="n-card" id="card3">
+  <div class="n-footer">
+    <span class="n-footer-wm">laborjp.tistory.com</span>
+    <a class="n-link" href="https://www.pressian.com/pages/articles/2026051218190628788?utm_source=naver&utm_medium=search" target="_blank">자세히 보기</a>
+  </div>
+</div></div><div class="card-grid-2"><div class="n-card" id="card3">
   <div class="card-wm">© 공인노무사 JP</div>
-  <div class="n-source"><span class="n-source-name">💡 공인노무사 JP</span><span class="n-source-date">2026.05.13</span></div>
+  <div class="n-source">
+    <span class="n-source-name">📰 노컷뉴스</span>
+    <span class="n-source-date">2026.05.10</span>
+  </div>
   <div class="n-body">
-    <div class="n-risk r-h">🔴 긴급</div>
-    <div class="n-cat">5인 미만 노동법</div>
-    <h2 class="n-title">5인 미만 사업장, 부당해고 구제신청 당하면?</h2>
-    <ul class="n-bullets"><li>5인 미만 사업장은 근로기준법상 해고 예고, 해고 서면통지 의무가 적용되지 않습니다</li><li>하지만 근로기준법 제23조(부당해고 금지)는 5인 미만 사업장에도 적용됩니다 (2021년 대법원 판례 확립)</li><li>정당한 사유 없이 해고하면 부당해고 구제신청이 가능하며, 원직복직 명령이 나올 수 있습니다</li><li>5인 미만이라도 해고 시 최소한의 증거자료 확보 필요: ①근무태만 기록, ②경고장, ③업무지시 불이행 증거 등</li><li>구제명령 불복 시 중앙노동위→행정소송까지 최소 2년 이상 분쟁이 지속되며, 그간 임금 상당액을 배상해야 할 수 있습니다</li></ul>
+    <div class="n-topic-num">② 판례·단속</div>
+    <div class="n-cat">정부 단속</div>
+    <h2 class="n-title">가짜 3.3% 계약과 포괄임금제, 이제 단속 대상입니다</h2>
+    <ul class="n-bullets"><li>고용노동부가 '비정상의 정상화'를 선언하고 가짜 3.3 계약 대대적 단속에 나섰습니다</li><li>김영훈 고용노동부 장관은 프리랜서로 위장해 노동법 적용을 회피하는 가짜 3.3 계약을 명백한 위법 행위로 규정했습니다</li><li>포괄임금제 남용도 함께 단속 대상이 되어 현장의 임금 구조 투명화에 집중하고 있습니다</li><li>'고용노동 분야 정상화 과제 추진 TF' 회의를 통해 불법 행태에 대한 엄격한 단속 방침을 확정했습니다</li><li>현장의 불법 관행을 근절하기 위한 정부의 강력한 의지가 표명된 상황입니다</li></ul>
     <div class="n-insight">
       <div class="n-insight-label">실무 시사점</div>
-      <div class="n-insight-text">5인 미만이라고 함부로 해고할 수 있다는 것은 위험한 오해입니다. 특히 코로나 이후 노동인식이 높아져 소규모 사업장 근로자도 적극적으로 권리를 주장합니다. 해고 전 반드시 증거를 남기고, 가능하면 합의퇴사를 유도하는 것이 분쟁 예방의 핵심입니다.</div>
-      <div class="n-insight-tags"><span class="n-insight-tag">#미만</span><span class="n-insight-tag">#사업장</span><span class="n-insight-tag">#부당해고</span></div>
+      <div class="n-insight-text">실제 근로자인데 3.3% 프리랜서 계약으로 4대 보험과 퇴직금을 회피하는 관행은 이제 중대 위법사항입니다. 적발 시 최대 3년간 미납 4대 보험료 소급 납부와 퇴직금 지급 명령, 과태료까지 부과될 수 있습니다. 배달기사, 학원강사, 대리기사 등 프리랜서 계약 직원이 있다면 근무 실태를 재점검하고, 지휘·감독을 받거나 전속성이 있다면 즉시 근로계약으로 전환해야 합니다.</div>
     </div>
   </div>
-  <div class="n-footer"><span class="n-footer-wm">laborjp.tistory.com</span><a class="n-link" href="https://laborjp.tistory.com" target="_blank">자세히 보기</a></div>
-</div></div><div class="sec-head"><div class="sec-icon">③ 사장님 체크포인트</div><div class="sec-line"></div></div><div class="card-grid-2"><div class="n-card" id="card4">
+  <div class="n-footer">
+    <span class="n-footer-wm">laborjp.tistory.com</span>
+    <a class="n-link" href="https://www.nocutnews.co.kr/news/6514397?utm_source=naver&utm_medium=article&utm_campaign=20260510095142" target="_blank">자세히 보기</a>
+  </div>
+</div></div><div class="card-grid-2"><div class="n-card" id="card4">
   <div class="card-wm">© 공인노무사 JP</div>
-  <div class="n-source"><span class="n-source-name">💡 공인노무사 JP</span><span class="n-source-date">2026.05.13</span></div>
+  <div class="n-source">
+    <span class="n-source-name">📰 경상일보</span>
+    <span class="n-source-date">2026.05.13</span>
+  </div>
   <div class="n-body">
-    <div class="n-risk r-i">ℹ 정보</div>
-    <div class="n-cat">정부지원금</div>
-    <h2 class="n-title">2026년 <span class="kw">일자리 안정자금</span>, 우리 가게도 받을 수 있나요?</h2>
-    <ul class="n-bullets"><li>일자리 안정자금은 최저임금 인상에 따른 소상공인·영세사업주 부담 완화를 위한 정부 지원금입니다</li><li>지원대상: 30인 미만 사업장에서 월 보수 260만원 미만 근로자를 고용한 사업주 (2026년 기준)</li><li>지원금액: 근로자 1인당 월 최대 5만원 (주 40시간 기준, 단시간 근로자는 근로시간 비례 지급)</li><li>신청방법: 고용보험 홈페이지 또는 고용센터 방문 신청, 매월 또는 분기별 신청 가능</li><li>주의사항: 고용보험 가입 근로자만 해당, 체불임금이 있거나 고용보험료 체납 시 지급 제한</li></ul>
+    <div class="n-topic-num">③ 사장님 체크포인트</div>
+    <div class="n-cat">지원제도</div>
+    <h2 class="n-title"><span class="kw">노란우산 방문상담</span>, 이제 우리 가게로 찾아옵니다</h2>
+    <ul class="n-bullets"><li>중소기업중앙회가 소상공인을 직접 찾아가는 '노란우산 방문상담 서비스'를 본격 시작했습니다</li><li>노란우산은 연간 최대 600만원 소득공제가 가능한 소상공인 대표적 절세 상품입니다</li><li>폐업이나 노령 등 생계위협 시 퇴직금 성격의 자금을 마련할 수 있는 사업주 전용 제도입니다</li><li>1인 영업으로 가게를 비우기 어려운 소상공인을 위해 직접 방문하여 상담과 가입을 지원합니다</li><li>노란우산 홈페이지 또는 시중은행, 지방은행, 새마을금고 등에서도 가입 가능합니다</li></ul>
     <div class="n-insight">
       <div class="n-insight-label">실무 시사점</div>
-      <div class="n-insight-text">많은 소상공인들이 일자리 안정자금 존재를 모르거나, 신청 절차가 복잡할 것으로 생각해 포기합니다. 실제로는 온라인으로 간단히 신청 가능하며, 연간 수백만원의 인건비 절감 효과가 있습니다. 고용보험 가입과 정확한 임금대장 관리가 선행되어야 합니다.</div>
-      <div class="n-insight-tags"><span class="n-insight-tag">#일자리</span><span class="n-insight-tag">#안정자금</span><span class="n-insight-tag">#우리</span></div>
+      <div class="n-insight-text">연 매출 3억 이하 소상공인이라면 노란우산 가입은 필수입니다. 월 10만원 납부 시 연 120만원 소득공제로 실제 24~42만원의 세금을 절감할 수 있습니다. 특히 종합소득세 신고 시즌인 지금, 소득공제 누락을 방지하려면 5월 중 가입을 서두르는 것이 좋습니다. 방문상담 신청은 노란우산 홈페이지나 중기중앙회 지역본부를 통해 가능합니다.</div>
     </div>
   </div>
-  <div class="n-footer"><span class="n-footer-wm">laborjp.tistory.com</span><a class="n-link" href="https://laborjp.tistory.com" target="_blank">자세히 보기</a></div>
-</div></div><div class="sec-head"><div class="sec-icon">④ 5인 미만 사업장 필독 ⭐</div><div class="sec-line"></div></div><div class="card-grid-2"><div class="n-card" id="card5">
+  <div class="n-footer">
+    <span class="n-footer-wm">laborjp.tistory.com</span>
+    <a class="n-link" href="https://www.ksilbo.co.kr/news/articleView.html?idxno=1056587" target="_blank">자세히 보기</a>
+  </div>
+</div></div><div class="card-grid-2"><div class="n-card" id="card5">
   <div class="card-wm">© 공인노무사 JP</div>
-  <div class="n-source"><span class="n-source-name">💡 공인노무사 JP</span><span class="n-source-date">2026.05.13</span></div>
+  <div class="n-source">
+    <span class="n-source-name">📰 뉴스1</span>
+    <span class="n-source-date">2026.05.11</span>
+  </div>
   <div class="n-body">
-    <div class="n-risk r-m">⚠ 주의</div>
-    <div class="n-cat">근로시간 관리</div>
-    <h2 class="n-title">주 52시간제, 5인 미만도 2026년부터 적용된다?</h2>
-    <ul class="n-bullets"><li>현재 5인 미만 사업장은 근로기준법 제50조(근로시간 제한)가 적용되지 않아 주 52시간 제한이 없습니다</li><li>하지만 근로기준법 제53조(연장근로 제한) 개정안이 국회에서 논의 중이며, 단계적 확대 가능성이 제기됩니다</li><li>현행법상 5인 미만도 연장근로수당(1.5배), 야간·휴일근로수당은 지급해야 합니다</li><li>근로시간 입증 책임은 사용자에게 있으므로, 5인 미만이라도 출퇴근 기록 관리가 필수입니다</li><li>장시간 근로로 인한 산재 발생 시 사업주 책임이 가중되므로, 자발적 근로시간 관리가 권장됩니다</li></ul>
+    <div class="n-topic-num">④ 5인 미만 사업장 필독 ⭐</div>
+    <div class="n-cat">5인 미만</div>
+    <h2 class="n-title">5인 미만 사업장, 근로기준법 전면 적용 초읽기</h2>
+    <ul class="n-bullets"><li>노동부가 '5인 미만 사업장 노동실태 분석' 연구용역 입찰을 개시했습니다</li><li>연구는 5월부터 10월까지 약 6개월간 진행되며 본격적인 정책 검토의 기초자료가 됩니다</li><li>임금과 근로시간 등 근로조건뿐 아니라 사업주의 노동법 인식과 준수 수준을 조사합니다</li><li>노무관리 애로사항까지 포함되어 5인 미만 사업장의 종합적인 실태를 파악할 예정입니다</li><li>정부가 논의와 실태조사를 병행하면서 5인 미만 근로기준법 적용에 본격 시동을 걸었습니다</li></ul>
     <div class="n-insight">
       <div class="n-insight-label">실무 시사점</div>
-      <div class="n-insight-text">5인 미만 사업장은 주 52시간 제한이 없지만, 장시간 근로가 당연시되는 문화는 이제 더 이상 통하지 않습니다. 청년 구직자들은 근로조건을 중시하며, SNS를 통해 부당한 처우가 빠르게 확산됩니다. 인력 채용과 유지를 위해서라도 적정 근로시간 관리가 경쟁력입니다.</div>
-      <div class="n-insight-tags"><span class="n-insight-tag">#시간제</span><span class="n-insight-tag">#미만도</span><span class="n-insight-tag">#년부터</span></div>
+      <div class="n-insight-text">5인 미만 사업장도 곧 연차휴가, 해고예고, 부당해고 구제 등 근로기준법이 전면 적용될 가능성이 높습니다. 실태조사 결과에 따라 빠르면 2027년부터 단계적 적용이 시작될 수 있습니다. 지금부터 근로계약서 서면 작성, 임금명세서 교부, 연장근로 수당 지급 등 기본 노무관리를 습관화하고, 특히 구두 약속으로 채용한 직원이 있다면 즉시 서면 근로계약서를 작성해야 합니다.</div>
     </div>
   </div>
-  <div class="n-footer"><span class="n-footer-wm">laborjp.tistory.com</span><a class="n-link" href="https://laborjp.tistory.com" target="_blank">자세히 보기</a></div>
-</div></div><div class="sec-head"><div class="sec-icon">⑤ HR 동향</div><div class="sec-line"></div></div><div class="card-grid-2"><div class="n-card" id="card6">
+  <div class="n-footer">
+    <span class="n-footer-wm">laborjp.tistory.com</span>
+    <a class="n-link" href="https://www.news1.kr/economy/employment-labor/6162038" target="_blank">자세히 보기</a>
+  </div>
+</div></div><div class="card-grid-2"><div class="n-card" id="card6">
   <div class="card-wm">© 공인노무사 JP</div>
-  <div class="n-source"><span class="n-source-name">💡 공인노무사 JP</span><span class="n-source-date">2026.05.13</span></div>
+  <div class="n-source">
+    <span class="n-source-name">📰 세정일보</span>
+    <span class="n-source-date">2026.05.13</span>
+  </div>
   <div class="n-body">
-    <div class="n-risk r-i">ℹ 정보</div>
-    <div class="n-cat">HR 디지털화</div>
-    <h2 class="n-title">키오스크·무인시스템 도입하면 인건비 절감 가능할까?</h2>
-    <ul class="n-bullets"><li>외식·유통업을 중심으로 키오스크, 서빙로봇, 무인계산대 도입이 급증하고 있습니다</li><li>초기 투자비용: 키오스크 1대당 300~500만원, 서빙로봇 3000~5000만원, 월 유지비 별도</li><li>인건비 절감 효과: 홀서빙 인력 1~2명 감축 가능, 연간 3000~5000만원 절감 (최저임금 기준)</li><li>주의사항: 고령층 고객 불편, 초기 고객 이탈, 기계 고장 시 대응 인력 필요 등 부작용도 존재합니다</li><li>정부 지원: 소상공인 디지털 전환 지원사업을 통해 최대 80% 보조금 지원 가능 (중소벤처기업부)</li></ul>
+    <div class="n-topic-num">⑤ HR 동향</div>
+    <div class="n-cat">세무</div>
+    <h2 class="n-title">종소세 신고 전 꼭 확인해야 할 달라진 세법은?</h2>
+    <ul class="n-bullets"><li>2026년 종합소득세 신고부터 적용되는 주요 세법 개정사항을 반드시 확인해야 합니다</li><li>무형자산 상각방법에 '기업회계기준에 따른 상각방법'이 새롭게 추가되었습니다</li><li>기업이 직원에게 지급하는 출산 관련 지원금이 비과세 항목으로 포함되었습니다</li><li>창업중소기업 세액감면과 통합고용세액공제는 중복 적용이 불가능합니다</li><li>세법 개정사항을 놓치면 세액공제나 감면 혜택을 받지 못할 수 있어 주의가 필요합니다</li></ul>
     <div class="n-insight">
       <div class="n-insight-label">실무 시사점</div>
-      <div class="n-insight-text">무인화는 단순히 인건비 절감이 아니라 고객 경험 개선, 운영 효율화가 함께 고려되어야 합니다. 업종과 고객층 특성에 맞지 않는 무분별한 도입은 오히려 매출 감소로 이어질 수 있습니다. 부분 도입으로 시작하여 효과를 검증한 후 확대하는 것이 안전합니다.</div>
-      <div class="n-insight-tags"><span class="n-insight-tag">#키오스크</span><span class="n-insight-tag">#무인시스템</span><span class="n-insight-tag">#도입하면</span></div>
+      <div class="n-insight-text">통합고용세액공제를 받고 있다면 창업중소기업 세액감면은 받을 수 없으므로, 어느 쪽이 더 유리한지 세무사와 상담 후 선택해야 합니다. 직원 출산지원금(출산축하금, 육아휴직 지원금 등)을 지급했다면 비과세 적용으로 원천징수를 하지 않아도 되므로 급여 정산 시 반영하세요. 5월 종소세 신고 전 반드시 변경된 세법을 확인하여 불필요한 세금을 내지 않도록 주의해야 합니다.</div>
     </div>
   </div>
-  <div class="n-footer"><span class="n-footer-wm">laborjp.tistory.com</span><a class="n-link" href="https://laborjp.tistory.com" target="_blank">자세히 보기</a></div>
-</div></div><div class="sec-head"><div class="sec-icon">섹션 6</div><div class="sec-line"></div></div><div class="card-grid-2"><div class="n-card" id="card7">
+  <div class="n-footer">
+    <span class="n-footer-wm">laborjp.tistory.com</span>
+    <a class="n-link" href="https://www.taxtimes.co.kr/news/article.html?no=275112" target="_blank">자세히 보기</a>
+  </div>
+</div></div><div class="card-grid-2"><div class="n-card" id="card7">
   <div class="card-wm">© 공인노무사 JP</div>
-  <div class="n-source"><span class="n-source-name">💡 공인노무사 JP</span><span class="n-source-date">2026.05.13</span></div>
+  <div class="n-source">
+    <span class="n-source-name">📰 이투데이</span>
+    <span class="n-source-date">2026.05.13</span>
+  </div>
   <div class="n-body">
-    <div class="n-risk r-h">🔴 긴급</div>
-    <div class="n-cat">주휴수당</div>
-    <h2 class="n-title">알바생 주휴수당, 안 줘도 되는 경우는?</h2>
-    <ul class="n-bullets"><li>주휴수당은 1주 소정근로일을 개근한 근로자에게 유급 주휴일에 대한 수당으로 지급됩니다 (근로기준법 제55조)</li><li>지급 제외 가능한 경우: ①1주 15시간 미만 근무, ②소정근로일에 결근·지각·조퇴한 경우</li><li>계산방법: (1주 근로시간 ÷ 40시간) × 8시간 × 시급, 주 15시간 이상이면 최소 1일치 지급</li><li>많은 사장님들의 오해: '하루만 일하는 알바는 안 줘도 된다'는 것은 잘못된 상식입니다. 주 1회 8시간 근무도 주휴수당 대상입니다</li><li>미지급 시 제재: 3년 이하 징역 또는 3천만원 이하 벌금, 체불액의 2배 추가 배상 가능 (퇴직 후 3년간 청구 가능)</li></ul>
+    <div class="n-topic-num">⑤ HR 동향</div>
+    <div class="n-cat">지원금</div>
+    <h2 class="n-title">중장년 고용하면 받을 수 있는 지원금 총정리</h2>
+    <ul class="n-bullets"><li>서울시가 중장년 일자리 창출을 위한 기업 지원 통합 설명회를 개최했습니다</li><li>고용장려금 지원제도, 중장년 경력지원제, 사업주 훈련 등 다양한 지원제도를 한 번에 안내합니다</li><li>중소기업 AI 도입 지원 등 중장년 친화 근무환경 조성을 위한 프로그램도 포함됩니다</li><li>중장년 경력과 기업의 수요를 연결하는 매칭 구조로 실질적인 채용 성과를 목표로 합니다</li><li>향후 중장년 친화기업 발굴 및 일경험 지원금 제도 등 추가 지원책도 예정되어 있습니다</li></ul>
     <div class="n-insight">
       <div class="n-insight-label">실무 시사점</div>
-      <div class="n-insight-text">주휴수당은 소상공인들이 가장 많이 위반하는 항목이면서도, 근로자들이 가장 많이 신고하는 항목입니다. 특히 퇴사 후 일괄 청구하는 경우가 많아 예상치 못한 목돈이 나갈 수 있습니다. 근로계약서 작성 단계부터 정확한 시급 산정(주휴수당 포함)이 필수입니다.</div>
-      <div class="n-insight-tags"><span class="n-insight-tag">#알바생</span><span class="n-insight-tag">#주휴수당</span><span class="n-insight-tag">#줘도</span></div>
+      <div class="n-insight-text">만 50세 이상 중장년을 정규직으로 채용하면 1인당 월 80만원(최대 2년)의 고용장려금을 받을 수 있습니다. 특히 경력단절 여성이나 장기 실업자를 채용할 경우 추가 지원금이 있으니 반드시 확인하세요. 사업주 훈련 지원으로 직원 교육비도 환급받을 수 있어, 중장년 채용을 고려 중이라면 고용센터나 서울시 일자리 포털에서 상세 조건을 확인 후 신청하는 것이 좋습니다.</div>
     </div>
   </div>
-  <div class="n-footer"><span class="n-footer-wm">laborjp.tistory.com</span><a class="n-link" href="https://laborjp.tistory.com" target="_blank">자세히 보기</a></div>
-</div></div><div class="sec-head"><div class="sec-icon">섹션 7</div><div class="sec-line"></div></div><div class="card-grid-2"><div class="n-card" id="card8">
+  <div class="n-footer">
+    <span class="n-footer-wm">laborjp.tistory.com</span>
+    <a class="n-link" href="https://bravo.etoday.co.kr/view/atc_view/19241" target="_blank">자세히 보기</a>
+  </div>
+</div></div><div class="card-grid-2"><div class="n-card" id="card8">
   <div class="card-wm">© 공인노무사 JP</div>
-  <div class="n-source"><span class="n-source-name">💡 공인노무사 JP</span><span class="n-source-date">2026.05.13</span></div>
+  <div class="n-source">
+    <span class="n-source-name">💡 공인노무사 JP</span>
+    <span class="n-source-date">2026.05.13</span>
+  </div>
   <div class="n-body">
-    <div class="n-risk r-m">⚠ 주의</div>
-    <div class="n-cat">CCTV 증거능력</div>
-    <h2 class="n-title">직원 근무태만, CCTV로 징계 가능할까?</h2>
-    <ul class="n-bullets"><li>CCTV 영상은 개인정보보호법상 '개인정보'이며, 근로자 징계 목적의 무분별한 열람은 위법입니다</li><li>적법한 CCTV 활용 조건: ①설치 목적 고지(출입관리, 안전, 범죄예방 등), ②근로자 동의 또는 법령 근거, ③최소한의 범위 촬영</li><li>징계 증거로 사용 가능한 경우: 횡령·절도 등 범죄 혐의, 중대한 안전사고 조사, 고객 민원 사실확인 등 정당한 사유가 있을 때</li><li>근무태만(휴대폰 사용, 졸음 등) 정도로는 CCTV만으로 징계하면 부당징계로 판정될 가능성이 높습니다</li><li>권장 절차: ①구두 경고 → ②서면 경고장 → ③개선 기회 부여 → ④반복 시 징계, 각 단계별 증거 확보</li></ul>
+    <div class="n-topic-num">⑤ HR 동향</div>
+    <div class="n-cat">근로계약</div>
+    <h2 class="n-title">근로계약서 작성, 사장님이 꼭 알아야 할 5가지</h2>
+    <ul class="n-bullets"><li>근로계약서는 채용 즉시 서면으로 작성하고 반드시 사본을 근로자에게 교부해야 합니다</li><li>임금, 근로시간, 휴일, 연차 등 근로조건을 명확히 기재하지 않으면 500만원 이하 과태료가 부과됩니다</li><li>구두 약속만으로 채용하면 향후 임금·퇴직금 분쟁 시 사업주가 불리한 입장에 처할 수 있습니다</li><li>아르바이트, 단기 계약직도 예외 없이 근로계약서 작성 의무가 있으니 반드시 작성하세요</li><li>표준 근로계약서는 고용노동부 홈페이지에서 무료로 다운로드 가능하며, 업종별 샘플도 제공됩니다</li></ul>
     <div class="n-insight">
       <div class="n-insight-label">실무 시사점</div>
-      <div class="n-insight-text">CCTV는 만능 증거가 아닙니다. 최근 개인정보보호 의식이 높아지면서, CCTV 무단 열람만으로도 역으로 사업주가 과태료를 물거나 손해배상 소송을 당하는 사례가 늘고 있습니다. 징계는 반드시 단계적 절차와 다양한 증거를 종합하여 진행해야 법적 리스크를 피할 수 있습니다.</div>
-      <div class="n-insight-tags"><span class="n-insight-tag">#직원</span><span class="n-insight-tag">#근무태만</span><span class="n-insight-tag">#징계</span></div>
+      <div class="n-insight-text">근로계약서 미작성은 가장 흔한 노동법 위반 사례입니다. 특히 5인 미만 사업장도 근로계약서 작성 의무는 동일하게 적용됩니다. 계약서에는 임금 구성(기본급, 상여금, 수당 등)을 명확히 구분하고, 근로시간과 휴게시간, 주휴일을 구체적으로 명시해야 합니다. 나중에 '말로 약속했다'는 다툼을 방지하려면 채용 첫날 반드시 작성하고, 사업주와 근로자가 각각 서명한 후 1부씩 보관하세요.</div>
     </div>
   </div>
-  <div class="n-footer"><span class="n-footer-wm">laborjp.tistory.com</span><a class="n-link" href="https://laborjp.tistory.com" target="_blank">자세히 보기</a></div>
+  <div class="n-footer">
+    <span class="n-footer-wm">laborjp.tistory.com</span>
+    <a class="n-link" href="https://laborjp.tistory.com" target="_blank">자세히 보기</a>
+  </div>
 </div></div></main>
+
 <div class="share-bar">
   <span class="share-label">이 글 공유하기</span>
   <button class="share-btn share-kakao" onclick="shareKakao()">💬 카카오톡</button>
   <button class="share-btn share-copy" onclick="copyLink()">🔗 링크 복사</button>
   <span id="copy-msg">✅ 링크 복사 완료!</span>
 </div>
+
 <footer class="blog-footer">
   <div class="blog-footer-inner">
     <div>
@@ -292,6 +393,7 @@ body{background:var(--navy);color:var(--text-body);font-family:'Apple SD Gothic 
     <div class="footer-disc">본 브리핑은 정보 제공 목적으로 작성된 자료입니다.<br>구체적인 사안은 전문가 상담을 권장합니다.<br>문의: laborjp.tistory.com</div>
   </div>
 </footer>
+
 <script>
 function copyLink(){navigator.clipboard.writeText(window.location.href).then(()=>{const m=document.getElementById('copy-msg');m.style.display='inline';setTimeout(()=>{m.style.display='none';},2500);})}
 function shareKakao(){const u=encodeURIComponent(window.location.href);const t=encodeURIComponent('[노동·HR 주간 브리핑] 2026년 5월 둘째주 — 공인노무사 JP');window.open('https://sharer.kakao.com/talk/friends/picker/link?url='+u+'&text='+t,'_blank')}
