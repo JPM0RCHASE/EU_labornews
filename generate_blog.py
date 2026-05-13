@@ -523,3 +523,8 @@ with open(LATEST, "w", encoding="utf-8") as f:
     f.write(HTML)
 print(f"✅ 최신 파일 갱신: {LATEST}")
 print("🎉 완료! 티스토리 iframe URL: https://eu-labornews.vercel.app/blog/latest.html")
+# 3) 티스토리 붙여넣기용 iframe 코드 파일 생성
+IFRAME_CODE = f'<iframe src="https://eu-labornews.vercel.app/blog/blog_{DATE_STR}.html" width="100%" height="5000px" frameborder="0" style="display:block;border:none;"></iframe>'
+with open(f"blog/iframe_{DATE_STR}.txt", "w", encoding="utf-8") as f:
+    f.write(IFRAME_CODE)
+print(f"✅ iframe 코드 생성: blog/iframe_{DATE_STR}.txt")
