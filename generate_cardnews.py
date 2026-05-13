@@ -27,7 +27,7 @@ FOLDER   = DATE_STR
 NEWS_FILE = f"labornews_{DATE_STR}.html"
 SEND_FILE = f"send_{DATE_STR}.html"
 VERCEL_URL = f"https://eu-labornews.vercel.app/{FOLDER}/{NEWS_FILE}"
-THUMBNAIL_URL = "https://eu-labornews.vercel.app/thumbnail_telegram.svg"
+THUMBNAIL_URL = "https://eu-labornews.vercel.app/thumbnail_telegram.png"
 OG_IMAGE   = "https://eu-labornews.vercel.app/thumbnail.svg"
 
 os.makedirs(FOLDER, exist_ok=True)
