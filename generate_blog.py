@@ -1,82 +1,255 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>노동·HR 주간 브리핑 2026년 5월 둘째주 | 공인노무사 JP</title>
-<meta name="description" content="2026년 5월 둘째주 노동·인사·HR 이슈 8건. 사장님·HR 담당자 필독.">
-<meta name="keywords" content="노동법,인사노무,HR,공인노무사JP,5인미만사업장,임금체불,부당해고">
-<meta name="author" content="공인노무사 JP">
-<meta property="og:title" content="노동·HR 주간 브리핑 2026년 5월 둘째주 | 공인노무사 JP">
-<meta property="og:type" content="article">
-<style>
-:root{
-  --navy:#0a0f1e;
-  --navy-mid:#111827;
-  --navy-card:#141d2e;
-  --navy-border:#1f3260;
-  --gold:#c9a84c;
-  --gold-dim:#9b7d36;
-  --gold-light:#e2c278;
-  --cream:#f5f0e8;
-  --cream-dim:#ccc4b0;
-  --text-body:#c8ccd8;
-  --text-muted:#7a8299
-}
+"""
+JP Labor & HR Blog - 주간 블로그 카드뉴스 생성
+매주 월요일 오전 7시 자동 실행
+- Naver API 7일 이내 뉴스 수집
+- Claude API 깊이있는 카드뉴스 생성
+- 5인 미만 사업장 섹션 필수 포함
+- 워터마크 포함 HTML 생성
+"""
+
+import os, re, json, requests
+from datetime import datetime, timezone, timedelta
+import anthropic
+
+ANTHROPIC_API_KEY   = os.environ["ANTHROPIC_API_KEY"]
+NAVER_CLIENT_ID     = os.environ["NAVER_CLIENT_ID"]
+NAVER_CLIENT_SECRET = os.environ["NAVER_CLIENT_SECRET"]
+
+KST      = timezone(timedelta(hours=9))
+TODAY    = datetime.now(KST)
+DATE_STR    = TODAY.strftime("%Y%m%d")
+DATE_LABEL  = TODAY.strftime("%Y. %m. %d.")
+WEEKDAY     = ["월","화","수","목","금","토","일"][TODAY.weekday()]
+WEEK_NUM    = (TODAY.day - 1) // 7 + 1
+WEEK_KO     = ["첫","둘","셋","넷","다섯"][WEEK_NUM - 1]
+WEEK_LABEL  = f"{TODAY.year}년 {TODAY.month}월 {WEEK_KO}째주"
+
+os.makedirs("blog", exist_ok=True)
+OUTPUT = f"blog/blog_{DATE_STR}.html"
+print(f"[{DATE_LABEL}] 블로그 카드뉴스 생성 시작...")
+
+# ── Naver 뉴스 수집 ──────────────────────────────────
+KEYWORDS = [
+    # 사장님·자영업자 직접 관련
+    "5인미만 사업장 노동법","주휴수당 알바","퇴직금 소상공인",
+    "가짜 프리랜서 3.3 단속","고용지원금 중소기업","근로계약서 작성",
+    "직원 해고 절차","손해배상 직원 퇴사",
+    # 노동법 핵심
+    "임금체불 단속","부당해고 판결","중대재해 처벌",
+    "고용노동부 정책","최저임금","직장내괴롭힘",
+    # AI 사회 이슈
+    "AI 일자리 대체","인공지능 채용 HR","챗GPT 노동시장",
+    "플랫폼 노동자","디지털 전환 고용",
+    # 기타
+    "산업재해","육아휴직 중소기업","외국인 근로자",
+]
+
+headers = {"X-Naver-Client-Id": NAVER_CLIENT_ID, "X-Naver-Client-Secret": NAVER_CLIENT_SECRET}
+seven_days_ago = TODAY - timedelta(days=7)
+collected, seen = [], set()
+
+for kw in KEYWORDS:
+    try:
+        resp = requests.get(
+            "https://openapi.naver.com/v1/search/news.json",
+            headers=headers, params={"query": kw, "sort": "date", "display": 5}, timeout=10
+        )
+        for item in resp.json().get("items", []):
+            try:
+                pub_dt = datetime.strptime(item.get("pubDate",""), "%a, %d %b %Y %H:%M:%S %z").astimezone(KST)
+                if pub_dt >= seven_days_ago:
+                    title = re.sub(r"<[^>]+>", "", item.get("title",""))
+                    key = title[:20]
+                    if key not in seen:
+                        seen.add(key)
+                        collected.append({
+                            "title": title,
+                            "link": item.get("originallink") or item.get("link",""),
+                            "description": re.sub(r"<[^>]+>", "", item.get("description","")),
+                            "pubDate": pub_dt.strftime("%Y.%m.%d"),
+                            "keyword": kw,
+                        })
+            except Exception:
+                continue
+    except Exception as e:
+        print(f"키워드 '{kw}' 오류: {e}")
+
+print(f"7일 이내 뉴스 {len(collected)}건 수집")
+news_pool = collected[:25]
+
+# ── Claude API 카드뉴스 생성 ─────────────────────────
+client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+
+news_text = "\n\n".join([
+    f"[{i+1}] {n['title']}\n날짜:{n['pubDate']} | 링크:{n['link']}\n요약:{n['description']}"
+    for i, n in enumerate(news_pool)
+]) if news_pool else "수집된 뉴스 없음"
+
+PROMPT = f"""당신은 공인노무사이자 HR 전문가입니다. 오늘은 {DATE_LABEL} {WEEKDAY}요일입니다.
+
+아래 수집된 뉴스에서 중소·영세 사업장 사장님과 자영업자에게 실질적으로 도움이 되는 뉴스를 선별하여 블로그용 카드뉴스 8건을 작성하세요.
+
+⚠ 핵심 원칙 (반드시 준수):
+- 반드시 위 수집된 뉴스 목록에서만 선별할 것
+- 수집된 뉴스 외 임의로 뉴스를 생성하는 것 절대 금지
+- 부족한 섹션은 공인노무사 JP의 실무 인사이트로 대체 (is_insight_card: true)
+- 인사이트 카드에는 뉴스 URL 대신 반드시 https://laborjp.tistory.com 사용
+- 제목은 반드시 질문형 또는 사장님 관점의 실용적 표현으로 작성
+  예) "알바생 갑자기 그만두면 손해배상 가능할까?" "퇴직금, 꼭 줘야 하나요?"
+
+수집된 뉴스:
+{{news_text}}
+
+【고정 섹션 4개 - 반드시 포함】
+섹션1 "이번 주 사장님 필독": 2건 (사장님에게 직접 영향 주는 정책·단속·판례)
+섹션2 "5인 미만 사업장 필독 ⭐": 1건 (소상공인·자영업자 노동법 핵심 이슈)
+섹션3 "정부 지원금·고용정책": 1건 (사장님이 받을 수 있는 지원금·보조금·정책)
+
+【유동 섹션 4개 - Claude 자유 선정】
+섹션4: 이번 주 가장 화제인 노동·HR 이슈
+섹션5: AI·디지털 전환·플랫폼 등 사회적 이슈 ⭐반드시 포함
+섹션6~7: 그 주 수집된 뉴스 중 사장님·자영업자에게 유용한 주제 자유 선정
+  (주휴수당, 해고절차, 퇴직금, CCTV징계, 외국인근로자, 육아휴직 등)
+
+【작성 기준】
+- 블로그용이므로 불릿 포인트 5개 이상 상세하게
+- 실무 시사점은 구체적이고 즉시 실행 가능한 내용으로
+- 전문 용어보다 사장님이 이해하기 쉬운 언어 사용
+
+JSON만 응답. 다른 텍스트 절대 금지:
+{{
+  "week_label": "{WEEK_LABEL}",
+  "news": [
+    {{
+      "rank": 1,
+      "section_num": 1,
+      "section": "노사 핫이슈",
+      "source": "언론사명",
+      "date": "2026.05.11",
+      "url": "https://실제기사URL",
+      "risk_level": "high",
+      "risk_label": "🔴 긴급",
+      "category": "카테고리명",
+      "title": "카드 제목",
+      "keyword": "강조할핵심키워드",
+      "bullets": [
+        "상세 내용 1 — 구체적 수치나 법조항 포함",
+        "상세 내용 2",
+        "상세 내용 3",
+        "상세 내용 4",
+        "상세 내용 5"
+      ],
+      "insight": "HR 실무자를 위한 구체적이고 실행 가능한 시사점. 2~3문장 이상.",
+      "is_insight_card": false
+    }}
+  ]
+}}
+
+risk_level: high(🔴), med(⚠), info(ℹ) 중 선택
+총 8건, section_num 1~5 분배 필수"""
+
+print("Claude API 호출 중...")
+response = client.messages.create(
+    model="claude-sonnet-4-5",
+    max_tokens=8000,
+    system="You are a Korean labor law expert. Always respond with valid JSON only. Never include any text outside the JSON object. Never use single quotes inside JSON strings. Escape all special characters properly.",
+    messages=[{"role": "user", "content": PROMPT}]
+)
+
+raw = response.content[0].text.strip()
+
+# JSON 안전 파싱 - 다단계 시도
+def safe_parse_json(text):
+    # 1단계: 마크다운 제거
+    text = re.sub(r"```json|```", "", text).strip()
+
+    # 2단계: 직접 파싱 시도
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        pass
+
+    # 3단계: 첫 { 부터 마지막 } 까지 추출
+    start = text.find('{')
+    end   = text.rfind('}')
+    if start != -1 and end != -1:
+        try:
+            return json.loads(text[start:end+1])
+        except json.JSONDecodeError:
+            pass
+
+    # 4단계: 문제 문자 제거 후 재시도
+    cleaned = re.sub(r'[\x00-\x1f\x7f]', ' ', text[start:end+1]) if start != -1 else text
+    try:
+        return json.loads(cleaned)
+    except json.JSONDecodeError:
+        pass
+
+    # 5단계: 기본 템플릿 반환 (오류 방지용)
+    print("⚠ JSON 파싱 실패 — 기본 템플릿 사용")
+    return {
+        "week_label": WEEK_LABEL,
+        "news": [{
+            "rank": i+1,
+            "section_num": [1,1,2,2,3,3,4,5][i],
+            "section": ["노사 핫이슈","노사 핫이슈","판례·단속","판례·단속","사장님 체크포인트","사장님 체크포인트","5인 미만 사업장 필독","HR 동향"][i],
+            "source": "공인노무사 JP",
+            "date": TODAY.strftime("%Y.%m.%d"),
+            "url": "https://laborjp.tistory.com",
+            "risk_level": "info",
+            "risk_label": "ℹ 참고",
+            "category": "노동법 실무",
+            "title": f"이번 주 노동·HR 이슈 {i+1}",
+            "keyword": "노동법",
+            "bullets": ["뉴스 수집 중 오류가 발생했습니다.", "다음 주 브리핑을 확인해 주세요.", "문의: laborjp.tistory.com"],
+            "insight": "구체적인 사안은 공인노무사 JP에게 문의하세요.",
+            "is_insight_card": True
+        } for i in range(8)]
+    }
+
+data = safe_parse_json(raw)
+
+news_list  = data["news"]
+week_label = data.get("week_label", WEEK_LABEL)
+print(f"카드뉴스 {len(news_list)}건 생성 완료")
+
+# ── HTML 생성 ────────────────────────────────────────
+RISK_CLS = {"high":"r-h","med":"r-m","info":"r-i"}
+TAG_CLS  = {"high":"tag-h","med":"tag-m","info":"tag-i"}
+SEC_LABEL = {1:"① 노사 핫이슈",2:"② 판례 · 단속",3:"③ 사장님 체크포인트",4:"④ 5인 미만 사업장 필독 ⭐",5:"⑤ HR 동향"}
+
+CSS = """:root{--navy:#0a0f1e;--navy-mid:#111827;--navy-card:#141d2e;--navy-border:#1f3260;--gold:#c9a84c;--gold-dim:#9b7d36;--gold-light:#e2c278;--cream:#f5f0e8;--cream-dim:#ccc4b0;--text-body:#c8ccd8;--text-muted:#7a8299}
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:var(--navy);color:var(--text-body);font-family:'Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif;font-size:16px;line-height:1.75}
-
-/* ── 블로그 헤더 ── */
 .blog-header{background:var(--navy-mid);border-bottom:2px solid var(--gold);padding:16px 40px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
 .blog-logo{font-size:20px;font-weight:700;color:var(--gold)}
 .blog-author{font-size:13px;color:var(--text-muted);margin-top:3px}
 .wm-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.35);border-radius:3px;padding:4px 10px;font-size:11px;font-weight:700;color:var(--gold)}
 .blog-date{font-size:15px;font-weight:700;color:#fff;text-align:right}
 .blog-period{font-size:12px;color:var(--text-muted);text-align:right;margin-top:3px}
-
-/* ── HERO ── */
 .hero{background:linear-gradient(160deg,#111827 0%,#0d1628 50%,var(--navy) 100%);padding:52px 40px 44px;border-bottom:1px solid var(--navy-border);text-align:center}
 .hero-eyebrow{font-size:22px;letter-spacing:.15em;color:var(--gold);text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;justify-content:center;gap:12px;font-weight:700}
 .hero-eyebrow::before,.hero-eyebrow::after{content:'';width:32px;height:1px;background:var(--gold)}
 .hero-title{font-size:clamp(32px,5vw,54px);font-weight:900;color:var(--cream);line-height:1.15;margin-bottom:12px}
 .hero-title em{color:var(--gold);font-style:italic}
-
-/* [변경1] 부제 설명 가시성 개선: --text-muted → --cream-dim */
-.hero-desc{font-size:16px;color:var(--cream-dim);max-width:560px;margin:0 auto 28px;line-height:1.8}
-
-/* ── 헤드라인 그리드 ── */
+.hero-desc{font-size:16px;color:var(--text-muted);max-width:560px;margin:0 auto 28px;line-height:1.8}
 .headline-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:2px;max-width:960px;margin:0 auto;background:var(--navy-border);border:1px solid var(--navy-border)}
-.headline-item{background:rgba(31,50,96,.35);padding:20px 22px;display:flex;align-items:flex-start;gap:16px;transition:background .2s;text-decoration:none}
+.headline-item{background:rgba(31,50,96,.35);padding:20px 22px;display:flex;align-items:flex-start;gap:16px;transition:background .2s}
 .headline-item:hover{background:rgba(31,50,96,.65)}
-
-/* [변경3] 카드번호 ↔ 카드제목 수직 중앙 정렬 */
-.hl-inner{display:flex;align-items:center;gap:13px;width:100%}
-.hl-num{font-size:15px;font-weight:700;color:var(--gold);background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.3);min-width:34px;height:34px;border-radius:3px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.hl-num{font-size:15px;font-weight:700;color:var(--gold);background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.3);min-width:34px;height:34px;border-radius:3px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:3px}
 .hl-content{flex:1}
-
-/* [변경2] 라벨 가시성 개선: 흰색 → gold-light */
-.hl-source{font-size:14px;color:var(--gold-light);margin-bottom:6px;font-weight:600}
-
-/* [변경4] 제목 2줄 균등 분포: text-wrap:balance */
-.hl-title{font-size:19px;font-weight:800;color:var(--cream);line-height:1.5;word-break:keep-all;text-wrap:balance}
+.hl-source{font-size:14px;color:var(--text-muted);margin-bottom:6px;font-weight:600}
+.hl-title{font-size:19px;font-weight:800;color:var(--cream);line-height:1.5;word-break:keep-all}
 .hl-title .kw{color:var(--gold)}
-
-/* [변경5] 뱃지 = 카테고리 소제목과 동일한 텍스트 */
 .hl-tag{display:inline-block;font-size:12px;font-weight:700;padding:3px 10px;border-radius:2px;margin-top:8px}
 .tag-h{background:rgba(192,57,43,.15);color:#e74c3c;border:1px solid rgba(192,57,43,.3)}
 .tag-m{background:rgba(243,156,18,.12);color:#f39c12;border:1px solid rgba(243,156,18,.3)}
 .tag-i{background:rgba(52,152,219,.12);color:#5dade2;border:1px solid rgba(52,152,219,.3)}
-
-/* ── 메인 래퍼 ── */
 .main-wrap{max-width:1100px;margin:0 auto;padding:52px 40px}
-
-/* [변경1-2페이지] 섹션 탭 삭제 */
-.sec-head{display:none}
-
-/* [변경3-2페이지] 카드 1열, 1페이지당 1개 */
-.card-grid-2{display:grid;grid-template-columns:1fr;gap:18px;margin-bottom:48px}
-
-/* ── 뉴스 카드 ── */
+.sec-head{display:flex;align-items:center;gap:14px;margin-bottom:24px;padding-bottom:12px;border-bottom:1px solid var(--navy-border)}
+.sec-icon{background:rgba(201,168,76,.1);border:1px solid var(--gold-dim);color:var(--gold);font-size:15px;font-weight:700;padding:5px 13px;flex-shrink:0}
+.sec-line{flex:1;height:1px;background:linear-gradient(to right,var(--navy-border),transparent)}
+.card-grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-bottom:48px}
 .n-card{background:var(--navy-card);border:1px solid var(--navy-border);display:flex;flex-direction:column;position:relative;overflow:hidden;transition:border-color .25s,transform .25s}
 .n-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:4px;background:linear-gradient(to right,var(--gold-dim),var(--gold),var(--gold-dim))}
 .n-card:hover{border-color:var(--gold-dim);transform:translateY(-2px)}
@@ -85,52 +258,28 @@ body{background:var(--navy);color:var(--text-body);font-family:'Apple SD Gothic 
 .n-source-name{font-weight:700;color:var(--cream-dim)}
 .n-source-date{color:var(--text-muted)}
 .n-body{padding:16px 16px 0;flex:1}
-
-/* [변경1-2페이지] 긴급 뱃지 삭제 */
-.n-risk{display:none}
-
-/* [변경1-2페이지] 주제 번호 배지 (긴급 뱃지 자리, 금색 12px) */
-.n-topic-num{
-  display:inline-block;
-  font-size:12px;
-  font-weight:700;
-  color:var(--gold);
-  margin-bottom:9px;
-}
-
-/* [변경2-2페이지] 카테고리 소제목 14px */
-.n-cat{font-size:14px;color:var(--gold);letter-spacing:.06em;margin-bottom:7px;display:flex;align-items:center;gap:6px}
+.n-risk{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;padding:4px 10px;margin-bottom:9px;border-radius:2px}
+.r-h{background:rgba(192,57,43,.15);color:#e74c3c;border:1px solid rgba(192,57,43,.3)}
+.r-m{background:rgba(243,156,18,.12);color:#f39c12;border:1px solid rgba(243,156,18,.3)}
+.r-i{background:rgba(52,152,219,.12);color:#5dade2;border:1px solid rgba(52,152,219,.3)}
+.n-cat{font-size:12px;color:var(--gold);letter-spacing:.06em;margin-bottom:7px;display:flex;align-items:center;gap:6px}
 .n-cat::before{content:'';width:10px;height:1px;background:var(--gold);flex-shrink:0}
-
 .n-title{font-size:18px;font-weight:800;color:var(--cream);line-height:1.45;margin-bottom:12px;word-break:keep-all}
 .n-title .kw{color:var(--gold)}
-
-/* [변경4-2페이지] 본문 불릿 14px */
 .n-bullets{list-style:none;display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
 .n-bullets li{font-size:14px;color:var(--text-body);padding-left:14px;position:relative;line-height:1.7;word-break:keep-all}
 .n-bullets li::before{content:'·';position:absolute;left:0;color:var(--gold);font-size:18px;line-height:1.3}
 .n-bullets li strong{color:var(--cream-dim);font-weight:600}
-
 .n-insight{background:rgba(201,168,76,.07);border:1px solid rgba(201,168,76,.2);border-left:4px solid var(--gold);padding:16px 18px}
-
-/* [변경5-2페이지] 실무 시사점 제목 16px */
-.n-insight-label{font-size:16px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:8px}
-
-/* [변경6-2페이지] 실무 시사점 본문 13px */
-.n-insight-text{font-size:13px;color:var(--cream-dim);line-height:1.9;word-break:keep-all;font-weight:500}
-
-/* [변경7-2페이지] 해시태그 삭제 */
-.n-insight-tags{display:none}
-
+.n-insight-label{font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:8px}
+.n-insight-text{font-size:18px;color:var(--cream-dim);line-height:1.9;word-break:keep-all;font-weight:500}
+.n-insight-tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.n-insight-tag{font-size:12px;color:var(--gold);background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.25);padding:3px 10px;border-radius:12px}
 .n-footer{border-top:1px solid var(--navy-border);padding:10px 16px;margin-top:12px;display:flex;align-items:center;justify-content:space-between}
 .n-footer-wm{font-size:10px;color:rgba(201,168,76,.35);font-weight:600}
-
-/* [변경8-2페이지] 자세히 보기 16px, bold */
-.n-link{font-size:16px;font-weight:bold;color:var(--gold);text-decoration:none;display:flex;align-items:center;gap:4px;transition:color .2s}
+.n-link{font-size:12px;font-weight:700;color:var(--gold);text-decoration:none;display:flex;align-items:center;gap:4px;transition:color .2s}
 .n-link:hover{color:var(--gold-light)}
-.n-link::after{content:'→';font-size:16px}
-
-/* ── 공유 바 & 푸터 ── */
+.n-link::after{content:'→';font-size:14px}
 .share-bar{max-width:1100px;margin:0 auto 44px;padding:0 40px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .share-label{font-size:12px;color:var(--text-muted)}
 .share-btn{padding:9px 18px;font-size:13px;font-weight:700;border:none;border-radius:3px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:opacity .2s}
@@ -145,402 +294,97 @@ body{background:var(--navy);color:var(--text-body);font-family:'Apple SD Gothic 
 .footer-url{font-size:12px;color:rgba(201,168,76,.45);font-weight:600}
 .footer-copy{font-size:11px;color:rgba(201,168,76,.3);margin-top:6px;font-weight:700}
 .footer-disc{font-size:11px;color:var(--navy-border);max-width:480px;line-height:1.9}
+@media(max-width:780px){.blog-header,.hero,.main-wrap,.share-bar,.blog-footer{padding-left:20px;padding-right:20px}.card-grid-2{grid-template-columns:1fr}.headline-grid{grid-template-columns:1fr}.hero{padding-top:36px;padding-bottom:32px}}"""
 
-@media(max-width:780px){
-  .blog-header,.hero,.main-wrap,.share-bar,.blog-footer{padding-left:20px;padding-right:20px}
-  .card-grid-2{grid-template-columns:1fr}
-  .headline-grid{grid-template-columns:1fr}
-  .hero{padding-top:36px;padding-bottom:32px}
-}
-</style>
+def make_card(n):
+    bullets = "".join(f"<li>{b}</li>" for b in n["bullets"])
+    rc = RISK_CLS.get(n["risk_level"], "r-i")
+    kw = n.get("keyword","")
+    title_html = n["title"].replace(kw, f'<span class="kw">{kw}</span>') if kw and kw in n["title"] else n["title"]
+    # ② 언론사명 항상 표시 (인사이트 카드도 JP 명의로)
+    src = f"💡 공인노무사 JP" if n.get("is_insight_card") else f"📰 {n['source']}"
+    # ③ JP실무노트도 자세히보기 링크로 (인사이트는 tistory로)
+    card_url = "https://laborjp.tistory.com" if n.get("is_insight_card") else n["url"]
+    link = f'<a class="n-link" href="{card_url}" target="_blank">자세히 보기</a>'
+    # ④ 실무 시사점 키워드 3개 생성
+    words = re.findall(r'[가-힣]{2,5}', n["title"])
+    tags = list(dict.fromkeys(words))[:3]
+    tags_html = "".join(f'<span class="n-insight-tag">#{t}</span>' for t in tags)
+    return f"""<div class="n-card" id="card{n['rank']}">
+  <div class="card-wm">© 공인노무사 JP</div>
+  <div class="n-source"><span class="n-source-name">{src}</span><span class="n-source-date">{n['date']}</span></div>
+  <div class="n-body">
+    <div class="n-risk {rc}">{n['risk_label']}</div>
+    <div class="n-cat">{n['category']}</div>
+    <h2 class="n-title">{title_html}</h2>
+    <ul class="n-bullets">{bullets}</ul>
+    <div class="n-insight">
+      <div class="n-insight-label">실무 시사점</div>
+      <div class="n-insight-text">{n['insight']}</div>
+      <div class="n-insight-tags">{tags_html}</div>
+    </div>
+  </div>
+  <div class="n-footer"><span class="n-footer-wm">laborjp.tistory.com</span>{link}</div>
+</div>"""
+
+from collections import defaultdict
+sec_groups = defaultdict(list)
+for n in news_list:
+    sec_groups[n["section_num"]].append(n)
+
+sections_html = ""
+for sn in sorted(sec_groups.keys()):
+    label = SEC_LABEL.get(sn, f"섹션 {sn}")
+    cards = "".join(make_card(n) for n in sec_groups[sn])
+    sections_html += f'<div class="sec-head"><div class="sec-icon">{label}</div><div class="sec-line"></div></div><div class="card-grid-2">{cards}</div>'
+
+headlines_html = ""
+for n in news_list:
+    tc = TAG_CLS.get(n["risk_level"],"tag-i")
+    kw = n.get("keyword","")
+    th = n["title"].replace(kw, f'<span class="kw">{kw}</span>') if kw and kw in n["title"] else n["title"]
+    src = "💡 JP 인사이트" if n.get("is_insight_card") else f"📰 {n['source']} · {n['date']}"
+    link_url = f"#card{n['rank']}"
+    headlines_html += f"""<a class="headline-item" href="{link_url}" style="text-decoration:none;display:flex;align-items:flex-start;gap:13px;">
+  <div class="hl-num">{n['rank']}</div>
+  <div class="hl-content">
+    <div class="hl-source">{src}</div>
+    <div class="hl-title">{th}</div>
+    <span class="hl-tag {tc}">{n['risk_label']}</span>
+  </div>
+</a>"""
+
+HTML = f"""<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>노동·HR 주간 브리핑 {week_label} | 공인노무사 JP</title>
+<meta name="description" content="{week_label} 노동·인사·HR 이슈 8건. 사장님·HR 담당자 필독.">
+<meta name="keywords" content="노동법,인사노무,HR,공인노무사JP,5인미만사업장,임금체불,부당해고">
+<meta name="author" content="공인노무사 JP">
+<meta property="og:title" content="노동·HR 주간 브리핑 {week_label} | 공인노무사 JP">
+<meta property="og:type" content="article">
+<style>{CSS}</style>
 </head>
 <body>
-
-<!-- ══ 블로그 헤더 ══ -->
 <header class="blog-header">
-  <div>
-    <div class="blog-logo">Today's Labor &amp; HR News</div>
-    <div class="blog-author">공인노무사 JP | Labor &amp; HR Weekly Brief</div>
-  </div>
-  <div>
-    <div class="wm-badge">© 공인노무사 JP</div>
-    <div class="blog-date" style="margin-top:6px">2026. 05. 13.</div>
-    <div class="blog-period">2026년 5월 둘째주</div>
-  </div>
+  <div><div class="blog-logo">Today's Labor &amp; HR News</div><div class="blog-author">공인노무사 JP | Labor &amp; HR Weekly Brief</div></div>
+  <div><div class="wm-badge">© 공인노무사 JP</div><div class="blog-date" style="margin-top:6px">{DATE_LABEL}</div><div class="blog-period">{week_label}</div></div>
 </header>
-
-<!-- ══ 1페이지: 메인 표지 ══ -->
 <section class="hero">
-  <div class="hero-eyebrow">2026년 5월 둘째주 · 노동·인사·HR 핵심 브리핑</div>
+  <div class="hero-eyebrow">{week_label} · 노동·인사·HR 핵심 브리핑</div>
   <h1 class="hero-title">이번 주 <em>Labor &amp; HR</em> 이슈 8선</h1>
   <p class="hero-desc">사장님·HR 담당자가 반드시 알아야 할 이번 주 핵심 뉴스를<br>공인노무사 JP가 선별하고 깊이있는 실무 시사점을 정리했습니다.</p>
-
-  <div class="headline-grid">
-
-    <!-- 카드 1: 뱃지 = n-cat "근로계약 실무" -->
-    <a class="headline-item" href="#card1">
-      <div class="hl-inner">
-        <div class="hl-num">1</div>
-        <div class="hl-content">
-          <!-- ※ 아래 언론사명을 실제 출처로 교체하세요 -->
-          <div class="hl-source">💡 고용노동부 · 2026.05.13</div>
-          <div class="hl-title">알바생 갑자기 퇴사하면 손해배상 청구 가능할까?</div>
-          <span class="hl-tag tag-h">근로계약 실무</span>
-        </div>
-      </div>
-    </a>
-
-    <!-- 카드 2: 뱃지 = n-cat "해고·징계 실무" -->
-    <a class="headline-item" href="#card2">
-      <div class="hl-inner">
-        <div class="hl-num">2</div>
-        <div class="hl-content">
-          <div class="hl-source">💡 한국경제 · 2026.05.13</div>
-          <div class="hl-title">직원 해고 전 반드시 확인해야 할 3가지 절차</div>
-          <span class="hl-tag tag-h">해고·징계 실무</span>
-        </div>
-      </div>
-    </a>
-
-    <!-- 카드 3: 뱃지 = n-cat "5인 미만 특례" -->
-    <a class="headline-item" href="#card3">
-      <div class="hl-inner">
-        <div class="hl-num">3</div>
-        <div class="hl-content">
-          <div class="hl-source">💡 매일경제 · 2026.05.13</div>
-          <div class="hl-title">5인 미만 사업장도 꼭 지켜야 할 노동법은?</div>
-          <span class="hl-tag tag-h">5인 미만 특례</span>
-        </div>
-      </div>
-    </a>
-
-    <!-- 카드 4: 뱃지 = n-cat "고용지원금" -->
-    <a class="headline-item" href="#card4">
-      <div class="hl-inner">
-        <div class="hl-num">4</div>
-        <div class="hl-content">
-          <div class="hl-source">💡 중소기업뉴스 · 2026.05.13</div>
-          <div class="hl-title">중소기업 사장님이 받을 수 있는 고용지원금 총정리</div>
-          <span class="hl-tag tag-i">고용지원금</span>
-        </div>
-      </div>
-    </a>
-
-    <!-- 카드 5: 뱃지 = n-cat "연차휴가" -->
-    <a class="headline-item" href="#card5">
-      <div class="hl-inner">
-        <div class="hl-num">5</div>
-        <div class="hl-content">
-          <div class="hl-source">💡 노동법률 · 2026.05.13</div>
-          <div class="hl-title">알바생도 연차휴가 줘야 하나요? 계산법은?</div>
-          <span class="hl-tag tag-m">연차휴가</span>
-        </div>
-      </div>
-    </a>
-
-    <!-- 카드 6: 뱃지 = n-cat "근태관리 디지털화" -->
-    <a class="headline-item" href="#card6">
-      <div class="hl-inner">
-        <div class="hl-num">6</div>
-        <div class="hl-content">
-          <div class="hl-source">💡 IT조선 · 2026.05.13</div>
-          <div class="hl-title">종이 근태관리 이제 그만! 디지털 전환 꿀팁</div>
-          <span class="hl-tag tag-i">근태관리 디지털화</span>
-        </div>
-      </div>
-    </a>
-
-    <!-- 카드 7: 뱃지 = n-cat "퇴직금" -->
-    <a class="headline-item" href="#card7">
-      <div class="hl-inner">
-        <div class="hl-num">7</div>
-        <div class="hl-content">
-          <div class="hl-source">💡 연합뉴스 · 2026.05.13</div>
-          <div class="hl-title">퇴직금, 꼭 줘야 하나요? 계산법 완벽 정리</div>
-          <span class="hl-tag tag-h">퇴직금</span>
-        </div>
-      </div>
-    </a>
-
-    <!-- 카드 8: 뱃지 = n-cat "주휴수당" -->
-    <a class="headline-item" href="#card8">
-      <div class="hl-inner">
-        <div class="hl-num">8</div>
-        <div class="hl-content">
-          <div class="hl-source">💡 경향신문 · 2026.05.13</div>
-          <div class="hl-title">주휴수당 안 줘도 되는 경우는? 계산 실수 주의</div>
-          <span class="hl-tag tag-h">주휴수당</span>
-        </div>
-      </div>
-    </a>
-
-  </div>
+  <div class="headline-grid">{headlines_html}</div>
 </section>
-
-<!-- ══ 2페이지 이후: 카드 상세 ══ -->
-<main class="main-wrap">
-
-  <!-- ── 카드 1 ── -->
-  <div class="card-grid-2">
-    <div class="n-card" id="card1">
-      <div class="card-wm">© 공인노무사 JP</div>
-      <div class="n-source">
-        <span class="n-source-name">💡 공인노무사 JP</span>
-        <span class="n-source-date">2026.05.13</span>
-      </div>
-      <div class="n-body">
-        <!-- 주제 번호 (긴급 뱃지 자리, 금색 12px) -->
-        <div class="n-topic-num">① 노사 핫이슈</div>
-        <div class="n-cat">근로계약 실무</div>
-        <h2 class="n-title">알바생 갑자기 퇴사하면 손해배상 청구 가능할까?</h2>
-        <ul class="n-bullets">
-          <li>근로계약서 미작성 시 500만원 이하 과태료 부과 — 5인 미만 사업장도 동일 적용</li>
-          <li>계약기간, 근무시간, 임금, 휴게시간 등 법정 필수 기재사항 11개 반드시 명시해야 함</li>
-          <li>구두 약속만으로는 법적 효력 없음 — 분쟁 발생 시 사업주 입증책임 부담</li>
-          <li>알바생 급작스런 퇴사로 인한 손해는 계약서에 위약금 조항 있어도 청구 어려움 — 근로기준법 제20조 위반</li>
-          <li>교육비·제복비 등 실제 발생한 비용은 합리적 범위 내에서 청구 가능하나 미리 약정 필요</li>
-        </ul>
-        <div class="n-insight">
-          <div class="n-insight-label">실무 시사점</div>
-          <div class="n-insight-text">근로계약서는 사업주 보호를 위한 최소한의 안전장치입니다. 특히 알바생 채용 시 근무시작일, 계약기간, 업무내용을 명확히 기재하고 반드시 서명을 받으세요. 급작스런 퇴사로 인한 손해배상은 현실적으로 어려우므로, 예방이 최선입니다.</div>
-        </div>
-      </div>
-      <div class="n-footer">
-        <span class="n-footer-wm">laborjp.tistory.com</span>
-        <!-- ※ 아래 href를 실제 뉴스 본문 URL로 교체하세요 -->
-        <a class="n-link" href="https://laborjp.tistory.com/entry/알바생-갑자기-퇴사" target="_blank">자세히 보기</a>
-      </div>
-    </div>
-  </div>
-
-  <!-- ── 카드 2 ── -->
-  <div class="card-grid-2">
-    <div class="n-card" id="card2">
-      <div class="card-wm">© 공인노무사 JP</div>
-      <div class="n-source">
-        <span class="n-source-name">💡 공인노무사 JP</span>
-        <span class="n-source-date">2026.05.13</span>
-      </div>
-      <div class="n-body">
-        <div class="n-topic-num">② 노사 핫이슈</div>
-        <div class="n-cat">해고·징계 실무</div>
-        <h2 class="n-title">직원 해고 전 반드시 확인해야 할 3가지 절차</h2>
-        <ul class="n-bullets">
-          <li>정당한 사유 없는 해고는 부당해고로 인정 — 최소 3개월분 임금 상당 보상금 지급 의무</li>
-          <li>해고 30일 전 예고 필수, 미예고 시 30일분 통상임금 지급 — 5인 미만 사업장도 동일 적용</li>
-          <li>취업규칙이 있는 경우 징계절차 준수 필수 — 사전 소명기회 부여하지 않으면 절차상 하자</li>
-          <li>성과 부진을 이유로 한 해고는 개선기회 부여, 경고장 발부 등 선행조치 필수</li>
-          <li>즉시 해고 가능한 경우는 횡령·폭행 등 중대한 비위행위로 고용노동부 인정서 받은 경우에 한함</li>
-        </ul>
-        <div class="n-insight">
-          <div class="n-insight-label">실무 시사점</div>
-          <div class="n-insight-text">부당해고 판정 시 복직 명령과 함께 해고기간 임금 전액을 지급해야 하므로 금전적 부담이 큽니다. 해고는 최후의 수단이며, 경고-시정요구-징계의 단계적 절차를 문서로 남기는 것이 핵심입니다. 5인 미만도 해고예고는 반드시 지켜야 합니다.</div>
-        </div>
-      </div>
-      <div class="n-footer">
-        <span class="n-footer-wm">laborjp.tistory.com</span>
-        <a class="n-link" href="https://laborjp.tistory.com/entry/직원-해고-절차" target="_blank">자세히 보기</a>
-      </div>
-    </div>
-  </div>
-
-  <!-- ── 카드 3 ── -->
-  <div class="card-grid-2">
-    <div class="n-card" id="card3">
-      <div class="card-wm">© 공인노무사 JP</div>
-      <div class="n-source">
-        <span class="n-source-name">💡 공인노무사 JP</span>
-        <span class="n-source-date">2026.05.13</span>
-      </div>
-      <div class="n-body">
-        <div class="n-topic-num">③ 판례·단속</div>
-        <div class="n-cat">5인 미만 특례</div>
-        <h2 class="n-title">5인 미만 사업장도 꼭 지켜야 할 노동법은?</h2>
-        <ul class="n-bullets">
-          <li>최저임금, 주휴수당, 연차휴가, 퇴직금은 5인 미만도 100% 동일 적용 — 위반 시 형사처벌 대상</li>
-          <li>해고예고 30일 전 통보 의무, 4대보험 가입 의무 — 상시근로자 1명 이상이면 적용</li>
-          <li>부당해고 구제신청 가능 — 5인 미만도 정당한 사유 없는 해고는 불법</li>
-          <li>근로계약서 서면 작성·교부 의무 — 위반 시 500만원 이하 과태료</li>
-          <li>연장·야간·휴일근로 가산수당, 연차미사용수당은 5인 미만 사업장 적용 제외됨</li>
-        </ul>
-        <div class="n-insight">
-          <div class="n-insight-label">실무 시사점</div>
-          <div class="n-insight-text">5인 미만 사업장이라도 기본적인 노동법 의무는 동일하게 적용됩니다. 특히 최저임금, 주휴수당, 퇴직금은 규모와 관계없이 반드시 지켜야 하며, 위반 시 노동청 진정 대상이 됩니다. 연장근로수당 등 일부 규정만 제외될 뿐입니다.</div>
-        </div>
-      </div>
-      <div class="n-footer">
-        <span class="n-footer-wm">laborjp.tistory.com</span>
-        <a class="n-link" href="https://laborjp.tistory.com/entry/5인미만-사업장-노동법" target="_blank">자세히 보기</a>
-      </div>
-    </div>
-  </div>
-
-  <!-- ── 카드 4 ── -->
-  <div class="card-grid-2">
-    <div class="n-card" id="card4">
-      <div class="card-wm">© 공인노무사 JP</div>
-      <div class="n-source">
-        <span class="n-source-name">💡 공인노무사 JP</span>
-        <span class="n-source-date">2026.05.13</span>
-      </div>
-      <div class="n-body">
-        <div class="n-topic-num">④ 사장님 체크포인트</div>
-        <div class="n-cat">고용지원금</div>
-        <h2 class="n-title">중소기업 사장님이 받을 수 있는 고용지원금 총정리</h2>
-        <ul class="n-bullets">
-          <li>청년·고령자·장애인 채용 시 1인당 월 80~120만원 최대 1년간 지원 — 고용증대세제와 중복 수령 가능</li>
-          <li>일자리 안정자금: 월보수 270만원 미만 근로자 1인당 월 5~11만원 지원 — 자동 신청 가능</li>
-          <li>두루누리 사회보험료 지원: 월보수 260만원 미만 근로자 사회보험료 80~90% 지원</li>
-          <li>재직자 직업훈련 지원: 직원 교육훈련비 1인당 최대 200만원 환급 — 우선지원대상기업 100% 지원</li>
-          <li>고용유지지원금: 경영악화 시 휴업·휴직 실시하면 1인당 일 6.6만원 지원</li>
-        </ul>
-        <div class="n-insight">
-          <div class="n-insight-label">실무 시사점</div>
-          <div class="n-insight-text">고용지원금은 신청만 하면 받을 수 있는데도 모르고 지나치는 경우가 많습니다. 특히 두루누리 사회보험료 지원은 자동신청이 가능하며, 청년 채용 시 고용장려금과 세제혜택을 함께 받으면 인건비 부담을 크게 줄일 수 있습니다.</div>
-        </div>
-      </div>
-      <div class="n-footer">
-        <span class="n-footer-wm">laborjp.tistory.com</span>
-        <a class="n-link" href="https://laborjp.tistory.com/entry/중소기업-고용지원금" target="_blank">자세히 보기</a>
-      </div>
-    </div>
-  </div>
-
-  <!-- ── 카드 5 ── -->
-  <div class="card-grid-2">
-    <div class="n-card" id="card5">
-      <div class="card-wm">© 공인노무사 JP</div>
-      <div class="n-source">
-        <span class="n-source-name">💡 공인노무사 JP</span>
-        <span class="n-source-date">2026.05.13</span>
-      </div>
-      <div class="n-body">
-        <div class="n-topic-num">⑤ 5인 미만 사업장 필독 ⭐</div>
-        <div class="n-cat">연차휴가</div>
-        <h2 class="n-title">알바생도 연차휴가 줘야 하나요? 계산법은?</h2>
-        <ul class="n-bullets">
-          <li>주 15시간 이상 근무하는 알바생도 1년 근무 시 15일 연차휴가 발생 — 단시간 근로자도 동일</li>
-          <li>1년 미만 근무자는 1개월 개근 시 1일 연차 발생 — 11개월 근무 시 최대 11일 발생</li>
-          <li>연차휴가 미사용 시 수당으로 지급 의무 — 1일 통상임금 기준으로 계산</li>
-          <li>주 15시간 미만 초단시간 근로자는 연차휴가 발생하지 않음</li>
-          <li>연차수당 미지급 시 3년간 소급 청구 가능 — 퇴직 후에도 청구권 유효</li>
-        </ul>
-        <div class="n-insight">
-          <div class="n-insight-label">실무 시사점</div>
-          <div class="n-insight-text">많은 사장님들이 알바생은 연차가 없다고 오해하시는데, 주 15시간 이상 근무하면 정규직과 동일하게 연차가 발생합니다. 특히 퇴직 시 미사용 연차수당 정산을 빠뜨리면 나중에 노동청 진정으로 이어질 수 있으니 주의하세요.</div>
-        </div>
-      </div>
-      <div class="n-footer">
-        <span class="n-footer-wm">laborjp.tistory.com</span>
-        <a class="n-link" href="https://laborjp.tistory.com/entry/알바생-연차휴가" target="_blank">자세히 보기</a>
-      </div>
-    </div>
-  </div>
-
-  <!-- ── 카드 6 ── -->
-  <div class="card-grid-2">
-    <div class="n-card" id="card6">
-      <div class="card-wm">© 공인노무사 JP</div>
-      <div class="n-source">
-        <span class="n-source-name">💡 공인노무사 JP</span>
-        <span class="n-source-date">2026.05.13</span>
-      </div>
-      <div class="n-body">
-        <div class="n-topic-num">⑥ HR 동향</div>
-        <div class="n-cat">근태관리 디지털화</div>
-        <h2 class="n-title">종이 근태관리 이제 그만! 디지털 전환 꿀팁</h2>
-        <ul class="n-bullets">
-          <li>전자근로계약서 작성 시 서면 교부 의무 이행으로 인정 — 카카오톡·이메일 전송도 유효</li>
-          <li>모바일 근태관리 앱 활용 시 출퇴근 기록 자동화 — 분쟁 발생 시 증거자료로 활용 가능</li>
-          <li>급여명세서 전자 발급 가능 — 근로자 동의 시 이메일·문자 발송으로 교부 의무 이행</li>
-          <li>4대보험 토탈서비스 이용 시 취득·상실신고 자동화 — 사업주 업무 부담 경감</li>
-          <li>클라우드 기반 인사관리 시스템 도입 시 연차·휴가 자동 계산 — 실수로 인한 법 위반 예방</li>
-        </ul>
-        <div class="n-insight">
-          <div class="n-insight-label">실무 시사점</div>
-          <div class="n-insight-text">디지털 전환은 큰 비용 없이도 가능합니다. 전자근로계약서, 모바일 근태앱 등 무료 도구를 활용하면 서류 보관 부담이 줄고, 법 위반 리스크도 예방할 수 있습니다. 특히 급여명세서 전자 발급은 종이 인쇄 비용도 절감되어 일석이조입니다.</div>
-        </div>
-      </div>
-      <div class="n-footer">
-        <span class="n-footer-wm">laborjp.tistory.com</span>
-        <a class="n-link" href="https://laborjp.tistory.com/entry/근태관리-디지털전환" target="_blank">자세히 보기</a>
-      </div>
-    </div>
-  </div>
-
-  <!-- ── 카드 7 ── -->
-  <div class="card-grid-2">
-    <div class="n-card" id="card7">
-      <div class="card-wm">© 공인노무사 JP</div>
-      <div class="n-source">
-        <span class="n-source-name">💡 공인노무사 JP</span>
-        <span class="n-source-date">2026.05.13</span>
-      </div>
-      <div class="n-body">
-        <div class="n-topic-num">⑦ 퇴직금 핫이슈</div>
-        <div class="n-cat">퇴직금</div>
-        <h2 class="n-title">퇴직금, 꼭 줘야 하나요? 계산법 완벽 정리</h2>
-        <ul class="n-bullets">
-          <li>1년 이상 근무한 근로자는 퇴직금 지급 의무 — 5인 미만 사업장, 알바생도 동일 적용</li>
-          <li>계속근로기간 1년에 대해 30일분 평균임금 지급 — 3년 근무 시 약 3개월치 임금</li>
-          <li>주 15시간 미만 초단시간 근로자만 퇴직금 지급 의무 없음</li>
-          <li>퇴직금 미지급 시 14일 이내 지급 의무 위반 시 3년 이하 징역 또는 3천만원 이하 벌금</li>
-          <li>연봉에 퇴직금 포함하는 포괄임금계약은 무효 — 별도 지급 원칙</li>
-        </ul>
-        <div class="n-insight">
-          <div class="n-insight-label">실무 시사점</div>
-          <div class="n-insight-text">퇴직금은 근로자의 노후 보장을 위한 필수 제도로, 5인 미만 사업장도 예외 없이 적용됩니다. 특히 퇴직금 미지급은 형사처벌 대상이므로 반드시 퇴직 후 14일 이내 정산해야 합니다. 매월 1/12씩 적립하는 DC형 퇴직연금 가입을 추천합니다.</div>
-        </div>
-      </div>
-      <div class="n-footer">
-        <span class="n-footer-wm">laborjp.tistory.com</span>
-        <a class="n-link" href="https://laborjp.tistory.com/entry/퇴직금-계산법" target="_blank">자세히 보기</a>
-      </div>
-    </div>
-  </div>
-
-  <!-- ── 카드 8 ── -->
-  <div class="card-grid-2">
-    <div class="n-card" id="card8">
-      <div class="card-wm">© 공인노무사 JP</div>
-      <div class="n-source">
-        <span class="n-source-name">💡 공인노무사 JP</span>
-        <span class="n-source-date">2026.05.13</span>
-      </div>
-      <div class="n-body">
-        <div class="n-topic-num">⑧ 주휴수당 핫이슈</div>
-        <div class="n-cat">주휴수당</div>
-        <h2 class="n-title">주휴수당 안 줘도 되는 경우는? 계산 실수 주의</h2>
-        <ul class="n-bullets">
-          <li>주 15시간 이상 근무자가 1주 소정근로일 개근 시 유급휴일 1일 부여 — 이것이 주휴수당</li>
-          <li>주 5일 하루 8시간 근무 시 주휴수당 포함 시급×48시간이 주급 — 계산 실수 주의</li>
-          <li>주 15시간 미만 초단시간 근로자는 주휴수당 없음 — 유일한 예외</li>
-          <li>결근·지각·조퇴 시 주휴수당 미지급 가능하나 연차 사용은 결근 아님</li>
-          <li>주휴수당 미지급 시 최대 3년 소급 청구 가능 — 퇴직 후에도 청구권 유효</li>
-        </ul>
-        <div class="n-insight">
-          <div class="n-insight-label">실무 시사점</div>
-          <div class="n-insight-text">주휴수당은 최저임금 계산에도 포함되므로 반드시 지급해야 합니다. 많은 사장님들이 주휴수당을 별도 수당으로 오해하시는데, 주급제 급여에 이미 포함된 개념입니다. 주 15시간 이상 근무자는 무조건 주휴수당이 발생하므로 급여 설계 시 반드시 고려하세요.</div>
-        </div>
-      </div>
-      <div class="n-footer">
-        <span class="n-footer-wm">laborjp.tistory.com</span>
-        <a class="n-link" href="https://laborjp.tistory.com/entry/주휴수당-계산" target="_blank">자세히 보기</a>
-      </div>
-    </div>
-  </div>
-
-</main>
-
-<!-- ── 공유 바 ── -->
+<main class="main-wrap">{sections_html}</main>
 <div class="share-bar">
   <span class="share-label">이 글 공유하기</span>
   <button class="share-btn share-kakao" onclick="shareKakao()">💬 카카오톡</button>
   <button class="share-btn share-copy" onclick="copyLink()">🔗 링크 복사</button>
   <span id="copy-msg">✅ 링크 복사 완료!</span>
 </div>
-
-<!-- ── 푸터 ── -->
 <footer class="blog-footer">
   <div class="blog-footer-inner">
     <div>
@@ -552,20 +396,13 @@ body{background:var(--navy);color:var(--text-body);font-family:'Apple SD Gothic 
     <div class="footer-disc">본 브리핑은 정보 제공 목적으로 작성된 자료입니다.<br>구체적인 사안은 전문가 상담을 권장합니다.<br>문의: laborjp.tistory.com</div>
   </div>
 </footer>
-
 <script>
-function copyLink(){
-  navigator.clipboard.writeText(window.location.href).then(()=>{
-    const m=document.getElementById('copy-msg');
-    m.style.display='inline';
-    setTimeout(()=>{m.style.display='none';},2500);
-  });
-}
-function shareKakao(){
-  const u=encodeURIComponent(window.location.href);
-  const t=encodeURIComponent('[노동·HR 주간 브리핑] 2026년 5월 둘째주 — 공인노무사 JP');
-  window.open('https://sharer.kakao.com/talk/friends/picker/link?url='+u+'&text='+t,'_blank');
-}
+function copyLink(){{navigator.clipboard.writeText(window.location.href).then(()=>{{const m=document.getElementById('copy-msg');m.style.display='inline';setTimeout(()=>{{m.style.display='none';}},2500);}})}}
+function shareKakao(){{const u=encodeURIComponent(window.location.href);const t=encodeURIComponent('[노동·HR 주간 브리핑] {week_label} — 공인노무사 JP');window.open('https://sharer.kakao.com/talk/friends/picker/link?url='+u+'&text='+t,'_blank')}}
 </script>
 </body>
-</html>
+</html>"""
+
+with open(OUTPUT, "w", encoding="utf-8") as f:
+    f.write(HTML)
+print(f"✅ 완료: {OUTPUT}")
