@@ -9,25 +9,31 @@ JP Labor News - 텔레그램 일간 카드뉴스 생성
 import os, re, json, requests, urllib.parse
 from datetime import datetime, timezone, timedelta
 import anthropic
+
 ANTHROPIC_API_KEY   = os.environ["ANTHROPIC_API_KEY"]
 NAVER_CLIENT_ID     = os.environ["NAVER_CLIENT_ID"]
 NAVER_CLIENT_SECRET = os.environ["NAVER_CLIENT_SECRET"]
 TELEGRAM_BOT_TOKEN  = os.environ["TELEGRAM_BOT_TOKEN"]
 TELEGRAM_CHAT_ID    = os.environ["TELEGRAM_CHAT_ID"]
+
 KST      = timezone(timedelta(hours=9))
 TODAY    = datetime.now(KST)
 DATE_STR    = TODAY.strftime("%Y%m%d")
 DATE_LABEL  = TODAY.strftime("%Y. %m. %d.")
 WEEKDAY     = ["월","화","수","목","금","토","일"][TODAY.weekday()]
+
 FOLDER   = DATE_STR
 NEWS_FILE = f"labornews_{DATE_STR}.html"
 SEND_FILE = f"send_{DATE_STR}.html"
 VERCEL_URL = f"https://eu-labornews.vercel.app/{FOLDER}/{NEWS_FILE}"
-THUMBNAIL_URL = "https://eu-labornews.vercel.app/thumbnail_telegram.png"
-# ✅ 수정: 카톡 캐시 우회 — 날짜를 쿼리스트링으로 붙여 매일 새 이미지로 인식
-OG_IMAGE   = f"https://eu-labornews.vercel.app/thumbnail_telegram.png?v={DATE_STR}"
+
+# ✅ 카톡·텔레그램 캐시 우회: 날짜를 쿼리스트링으로 붙여 매일 새 이미지로 인식
+# THUMBNAIL_URL(원본)은 제거하고 OG_IMAGE로 통일
+OG_IMAGE = f"https://eu-labornews.vercel.app/thumbnail_telegram.png?v={DATE_STR}"
+
 os.makedirs(FOLDER, exist_ok=True)
 print(f"[{DATE_LABEL}] 텔레그램 카드뉴스 생성 시작...")
+
 # ── Naver 뉴스 수집 ──────────────────────────────────
 KEYWORDS = [
     "노란봉투법","노조법 개정","원청 사용자성 교섭",
@@ -39,9 +45,11 @@ KEYWORDS = [
     "레미콘 시멘트 가격","골재 건설자재",
     "HR 인사관리 채용","리더십 조직문화",
 ]
+
 headers = {"X-Naver-Client-Id": NAVER_CLIENT_ID, "X-Naver-Client-Secret": NAVER_CLIENT_SECRET}
 seven_days_ago = TODAY - timedelta(days=7)
 collected, seen = [], set()
+
 for kw in KEYWORDS:
     try:
         resp = requests.get(
@@ -67,38 +75,48 @@ for kw in KEYWORDS:
                 continue
     except Exception as e:
         print(f"키워드 '{kw}' 오류: {e}")
+
 print(f"7일 이내 뉴스 {len(collected)}건 수집")
 news_pool = collected[:20]
+
 # ── Claude API 카드뉴스 생성 ─────────────────────────
 client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+
 news_text = "\n\n".join([
     f"[{i+1}] {n['title']}\n날짜:{n['pubDate']} | 링크:{n['link']}\n요약:{n['description']}"
     for i, n in enumerate(news_pool)
 ]) if news_pool else "수집된 뉴스 없음"
+
 PROMPT = f"""당신은 공인노무사이자 HR 전문가입니다. 오늘은 {DATE_LABEL} {WEEKDAY}요일입니다.
 아래 수집된 뉴스에서 5건을 선별하여 텔레그램 카드뉴스를 작성하세요.
+
 수집된 뉴스:
 {news_text}
+
 【필수 순서 - 반드시 준수】
 1번: 노란봉투법·노조법 개정·원청 사용자성 관련 뉴스 ⭐ 반드시 1순위
 2번: 삼성·SK·현대차·LG 등 주요 대기업 노사·임금·파업 관련 뉴스 ⭐ 반드시 2순위 (삼성·SK·현대 기사 없으면 다른 주요 대기업으로 대체)
 3번: 인사·노무·임금·산재·노동부 관련 핵심 이슈
 4번: 건설경기·건자재·시멘트·레미콘·골재·건설수주 관련 뉴스 ⭐ 반드시 포함 (유진기업 핵심 업무)
 5번: HR·인사관리·리더십 동향 (단, 돌봄·요양·서비스업 주제는 제외)
+
 ※ 1번(노란봉투법)과 2번(대기업) 뉴스가 없으면 공인노무사 JP 실무 인사이트로 대체
 ※ 4번 건설·건자재 뉴스가 없으면 건설업 노무·임금 관련 이슈로 대체
 ※ 돌봄·요양·복지서비스·음식점·소매업 관련 뉴스는 절대 포함하지 말 것
 ※ 5인 미만 사업장 관련 내용은 제외
+
 【언론사 우선순위 - 반드시 준수】
 1순위: 조선일보, 중앙일보, 동아일보, 연합뉴스, YTN, MBC, KBS, SBS
 2순위: 한겨레, 경향신문, 한국경제, 매일경제, 서울경제, 헤럴드경제
 3순위: 기타 언론사 (매일노동뉴스, 부산일보, 경남신문 등 지역·전문지)
 ※ 동일 주제라면 반드시 상위 언론사 기사를 선택할 것
 ※ 지역 언론사·전문지 기사는 메이저 언론사 기사가 없을 때만 사용
+
 【작성 기준】
 - 텔레그램용이므로 핵심만 간결하게 불릿 3개
 - 실무 시사점은 1~2문장으로 짧고 임팩트 있게
 - rank 순서는 반드시 위 순서대로 1~5
+
 JSON만 응답. 다른 텍스트 절대 금지:
 {{
   "news": [
@@ -121,6 +139,7 @@ JSON만 응답. 다른 텍스트 절대 금지:
 risk_level: high(🔴), med(⚠), info(ℹ)
 is_construction: 건설/건자재 관련이면 true
 총 5건, rank 1~5 순서 고정"""
+
 print("Claude API 호출 중...")
 response = client.messages.create(
     model="claude-sonnet-4-5",
@@ -134,11 +153,14 @@ try:
 except json.JSONDecodeError:
     match = re.search(r'\{.*\}', raw, re.DOTALL)
     data = json.loads(match.group()) if match else {"news":[]}
+
 news_list = data["news"]
 print(f"카드뉴스 {len(news_list)}건 생성 완료")
+
 # ── HTML 생성 ────────────────────────────────────────
 RISK_CLS = {"high":"risk-high","med":"risk-med","info":"risk-info"}
 TAG_CLS  = {"high":"tag-high","med":"tag-med","info":"tag-info"}
+
 CSS = """:root{--navy:#0a0f1e;--navy-card:#141d2e;--navy-border:#1f3260;--gold:#c9a84c;--gold-dim:#9b7d36;--cream:#f5f0e8;--cream-dim:#ccc4b0;--text-body:#c8ccd8;--text-muted:#7a8299;--base:17px}
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:var(--navy);color:var(--text-body);font-family:'Apple SD Gothic Neo','Malgun Gothic',sans-serif;font-size:var(--base);line-height:1.7;max-width:640px;margin:0 auto}
@@ -189,6 +211,7 @@ body{background:var(--navy);color:var(--text-body);font-family:'Apple SD Gothic 
 .footer{border-top:1px solid var(--navy-border);background:#111827;padding:24px 20px;text-align:center;margin-top:16px}
 .footer-logo{font-size:14px;font-weight:700;color:var(--gold);margin-bottom:6px}
 .footer-disc{font-size:11px;color:var(--text-muted);line-height:1.8}"""
+
 headlines_html = ""
 for n in news_list:
     tc = TAG_CLS.get(n["risk_level"],"tag-info")
@@ -202,6 +225,7 @@ for n in news_list:
     <span class="headline-tag {tc}">{n['risk_label']}</span>
   </div>
 </a>"""
+
 cards_html = ""
 for n in news_list:
     bullets = "".join(f"<li>{b}</li>" for b in n["bullets"])
@@ -218,6 +242,7 @@ for n in news_list:
   </div>
   <div class="read-more"><span class="wm-small">© JP Labor News</span><a href="{n['url']}" target="_blank">자세히 보기</a></div>
 </div>"""
+
 NEWS_HTML = f"""<!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -253,19 +278,24 @@ NEWS_HTML = f"""<!DOCTYPE html>
 </footer>
 </body>
 </html>"""
-# send 페이지 (수동 발송용 — 유지)
+
+# send 페이지 (수동 발송용)
 tg_lines = [f"📋 오늘의 인사노무 브리핑 — {DATE_LABEL} ({WEEKDAY})\n"]
 for n in news_list:
     emoji = ["1️⃣","2️⃣","3️⃣","4️⃣","5️⃣"][n["rank"]-1]
     tg_lines.append(f"{emoji} {n['title']}")
 tg_lines.append(f"\n🔗 전체 카드뉴스:\n{VERCEL_URL}")
 tg_text = "\n".join(tg_lines)
+
+# ✅ 수정: THUMBNAIL_URL → OG_IMAGE (캐시 우회 쿼리스트링 포함)
 tg_photo_url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendPhoto"
-tg_api_url = f"{tg_photo_url}?chat_id={urllib.parse.quote(str(TELEGRAM_CHAT_ID))}&photo={urllib.parse.quote(THUMBNAIL_URL)}&caption={urllib.parse.quote(tg_text[:1024])}"
+tg_api_url = f"{tg_photo_url}?chat_id={urllib.parse.quote(str(TELEGRAM_CHAT_ID))}&photo={urllib.parse.quote(OG_IMAGE)}&caption={urllib.parse.quote(tg_text[:1024])}"
+
 items_html = "".join(
     f'<div class="news-item"><span class="news-num">{n["rank"]}</span>{n["title"]}</div>'
     for n in news_list
 )
+
 SEND_HTML = f"""<!DOCTYPE html>
 <html lang="ko">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>텔레그램 발송</title>
@@ -281,17 +311,19 @@ SEND_HTML = f"""<!DOCTYPE html>
   <div class="notice">버튼을 클릭하면 텔레그램으로<br>헤드라인과 카드뉴스 링크가 전송됩니다.</div>
 </div></body>
 </html>"""
+
 # 파일 저장
 with open(f"{FOLDER}/{NEWS_FILE}", "w", encoding="utf-8") as f:
     f.write(NEWS_HTML)
 with open(f"{FOLDER}/{SEND_FILE}", "w", encoding="utf-8") as f:
     f.write(SEND_HTML)
-# ✅ sendPhoto + 캡션에 링크만 (썸네일 직접 전송)
+
+# ✅ 수정: THUMBNAIL_URL → OG_IMAGE (캐시 우회 쿼리스트링 포함)
 resp = requests.post(
     f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendPhoto",
     data={
         "chat_id": TELEGRAM_CHAT_ID,
-        "photo": THUMBNAIL_URL,
+        "photo": OG_IMAGE,   # ← 핵심 수정 포인트
         "caption": VERCEL_URL,
         "parse_mode": "HTML",
     },
@@ -301,4 +333,5 @@ if resp.json().get("ok"):
     print("✅ 텔레그램 발송 성공!")
 else:
     print(f"❌ 텔레그램 발송 실패: {resp.text}")
+
 print(f"✅ 완료: {FOLDER}/{NEWS_FILE}")
