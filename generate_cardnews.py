@@ -286,12 +286,13 @@ with open(f"{FOLDER}/{NEWS_FILE}", "w", encoding="utf-8") as f:
     f.write(NEWS_HTML)
 with open(f"{FOLDER}/{SEND_FILE}", "w", encoding="utf-8") as f:
     f.write(SEND_HTML)
-# ✅ 변경 2: sendPhoto → sendMessage + URL만 전송 (OG 미리보기 자동 생성)
+# ✅ 변경 2: sendPhoto + 캡션에 링크만 (썸네일 직접 전송)
 resp = requests.post(
-    f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage",
+    f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendPhoto",
     data={
         "chat_id": TELEGRAM_CHAT_ID,
-        "text": VERCEL_URL,   # URL만 보내면 텔레그램이 OG 태그 읽어 미리보기 자동 생성
+        "photo": THUMBNAIL_URL,   # 썸네일 직접 전송
+        "caption": VERCEL_URL,    # 캡션에 링크만
         "parse_mode": "HTML",
     },
     timeout=10
