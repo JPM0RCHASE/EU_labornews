@@ -1,0 +1,42 @@
+name: Weekly Newsletter (JP Labor Letter)
+
+on:
+  schedule:
+    # 일요일 22:00 UTC = 월요일 07:00 KST
+    - cron: '0 22 * * 0'
+  workflow_dispatch:
+
+jobs:
+  generate-newsletter:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: 레포지토리 체크아웃
+        uses: actions/checkout@v4
+
+      - name: Python 설치
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 패키지 설치
+        run: pip install anthropic requests
+
+      - name: 주간 뉴스레터 생성 및 Maily 발송
+        env:
+          ANTHROPIC_API_KEY:    ${{ secrets.ANTHROPIC_API_KEY }}
+          NAVER_CLIENT_ID:      ${{ secrets.NAVER_CLIENT_ID }}
+          NAVER_CLIENT_SECRET:  ${{ secrets.NAVER_CLIENT_SECRET }}
+          MAILY_API_KEY:        ${{ secrets.MAILY_API_KEY }}
+          MAILY_PROJECT_ID:     ${{ secrets.MAILY_PROJECT_ID }}
+        run: python generate_newsletter.py
+
+      - name: GitHub에 자동 커밋
+        run: |
+          git config --global user.email "action@github.com"
+          git config --global user.name "GitHub Actions"
+          git add newsletter/
+          git diff --staged --quiet || git commit -m "Auto: $(date +'%Y%m%d') JP Labor Letter 주간 뉴스레터 생성"
+          git push origin main
