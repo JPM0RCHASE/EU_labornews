@@ -30,10 +30,12 @@ import anthropic
 ANTHROPIC_API_KEY   = os.environ["ANTHROPIC_API_KEY"]
 NAVER_CLIENT_ID     = os.environ["NAVER_CLIENT_ID"]
 NAVER_CLIENT_SECRET = os.environ["NAVER_CLIENT_SECRET"]
-MAILY_API_KEY       = os.environ.get("MAILY_API_KEY", "")
-MAILY_PROJECT_ID    = os.environ.get("MAILY_PROJECT_ID", "")
-KAKAO_JS_KEY        = os.environ.get("KAKAO_JS_KEY", "")
-KAKAO_CHAT_URL      = "https://open.kakao.com/o/gOaNVSwi"   # 공인노무사JP 오픈채팅방
+MAILY_API_KEY        = os.environ.get("MAILY_API_KEY", "")
+MAILY_PROJECT_ID     = os.environ.get("MAILY_PROJECT_ID", "")
+KAKAO_JS_KEY         = os.environ.get("KAKAO_JS_KEY", "")
+KAKAO_CHAT_URL       = "https://open.kakao.com/o/gOaNVSwi"   # 공인노무사JP 오픈채팅방
+TELEGRAM_BOT_TOKEN   = os.environ.get("TELEGRAM_BOT_TOKEN", "")
+TELEGRAM_CHAT_ID     = os.environ.get("TELEGRAM_CHAT_ID", "")
 
 # ── 날짜 설정 ─────────────────────────────────────────
 KST        = timezone(timedelta(hours=9))
@@ -869,6 +871,46 @@ ok = generate_png(OUTPUT, PNG_OUTPUT)
 if ok:
     shutil.copy2(PNG_OUTPUT, PNG_LATEST)
     print(f"✅ PNG 최신 파일 갱신: {PNG_LATEST}")
+
+# ── 텔레그램 발송 ─────────────────────────────────────
+def send_telegram_png(png_path: str) -> None:
+    if not TELEGRAM_BOT_TOKEN:
+        print("⚠ TELEGRAM_BOT_TOKEN 없음 — 텔레그램 발송 건너뜀")
+        return
+    if not TELEGRAM_CHAT_ID:
+        print("⚠ TELEGRAM_CHAT_ID 없음 — 텔레그램 발송 건너뜀")
+        return
+    if not os.path.exists(png_path):
+        print("⚠ PNG 파일 없음 — 텔레그램 발송 건너뜀")
+        return
+
+    caption = (
+        f"📋 인사 노무 브리핑 — {WEEK_LABEL}\n"
+        f"━━━━━━━━━━━━━━━━━━\n"
+        f"이번 주 인사·노무·정책 핵심 뉴스를 정리했습니다.\n\n"
+        f"🔗 전체 보기: {VERCEL_URL}\n"
+        f"💬 무료 상담: {KAKAO_CHAT_URL}"
+    )
+
+    try:
+        url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendPhoto"
+        with open(png_path, "rb") as f:
+            resp = requests.post(
+                url,
+                data={"chat_id": TELEGRAM_CHAT_ID, "caption": caption[:1024]},
+                files={"photo": f},
+                timeout=30,
+            )
+        if resp.status_code == 200:
+            print("✅ 텔레그램 발송 성공!")
+        else:
+            print(f"❌ 텔레그램 발송 실패: HTTP {resp.status_code}\n{resp.text[:300]}")
+    except Exception as e:
+        print(f"❌ 텔레그램 API 오류: {e}")
+
+
+if ok:
+    send_telegram_png(PNG_OUTPUT)
 
 print(f"🎉 완료! 웹 URL: {VERCEL_URL}")
 if ok:

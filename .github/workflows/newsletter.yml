@@ -26,7 +26,7 @@ jobs:
           pip install anthropic requests playwright
           playwright install chromium --with-deps
 
-      - name: 주간 뉴스레터 생성 + PNG 변환 + Maily 발송
+      - name: 주간 뉴스레터 생성 + PNG 변환 + Maily 발송 + 텔레그램 발송
         env:
           ANTHROPIC_API_KEY:    ${{ secrets.ANTHROPIC_API_KEY }}
           NAVER_CLIENT_ID:      ${{ secrets.NAVER_CLIENT_ID }}
@@ -34,6 +34,8 @@ jobs:
           MAILY_API_KEY:        ${{ secrets.MAILY_API_KEY }}
           MAILY_PROJECT_ID:     ${{ secrets.MAILY_PROJECT_ID }}
           KAKAO_JS_KEY:         ${{ secrets.KAKAO_JS_KEY }}
+          TELEGRAM_BOT_TOKEN:   ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID:     ${{ secrets.TELEGRAM_CHAT_ID }}
         run: python generate_newsletter.py
 
       - name: GitHub에 자동 커밋 (HTML + PNG)
