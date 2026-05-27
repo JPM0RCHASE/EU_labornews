@@ -62,9 +62,17 @@ body{background:var(--navy);color:var(--text-body);font-family:'Apple SD Gothic 
 .read-more a{font-size:13px;font-weight:700;color:var(--gold);text-decoration:none;display:flex;align-items:center;gap:6px}
 .read-more a::after{content:'→';font-size:15px}
 .wm-small{font-size:10px;color:rgba(201,168,76,.3);font-weight:600}
-.footer{border-top:1px solid var(--navy-border);background:#111827;padding:24px 20px;text-align:center;margin-top:16px}
+.footer{border-top:1px solid var(--navy-border);background:#111827;padding:24px 20px;text-align:center;margin-top:0}
 .footer-logo{font-size:14px;font-weight:700;color:var(--gold);margin-bottom:6px}
-.footer-disc{font-size:11px;color:var(--text-muted);line-height:1.8}</style>
+.footer-disc{font-size:11px;color:var(--text-muted);line-height:1.8}
+.share-bar{background:#111827;border-top:1px solid var(--navy-border);padding:14px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;position:sticky;bottom:0;z-index:90}
+.share-label{font-size:12px;color:var(--text-muted)}
+.share-btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;font-size:13px;font-weight:700;border:none;border-radius:4px;cursor:pointer;text-decoration:none;transition:opacity .2s}
+.share-btn:hover{opacity:.82}
+.share-copy{background:var(--navy-border);color:var(--cream)}
+.share-kakao{background:#FEE500;color:#3A1D1D}
+.share-telegram{background:#0088cc;color:#fff}
+#copy-msg{font-size:12px;color:var(--gold);display:none;white-space:nowrap}</style>
 </head>
 <body>
 <header class="header"><div class="header-logo">Today's Labor News</div><div class="header-date">2026. 05. 27.</div></header>
@@ -160,10 +168,22 @@ body{background:var(--navy);color:var(--text-body);font-family:'Apple SD Gothic 
   </div>
   <div class="read-more"><span class="wm-small">© JP Labor News</span><a href="https://www.seoul.co.kr/news/economy/industry/2026/05/27/20260527032002?wlog_tag3=naver" target="_blank">자세히 보기</a></div>
 </div>
-<div style="height:24px"></div>
+<div class="share-bar">
+  <span class="share-label">공유하기</span>
+  <button class="share-btn share-copy" onclick="copyLink()">🔗 링크 복사</button>
+  <span id="copy-msg">✅ 링크 복사됨!</span>
+  <button class="share-btn share-kakao" onclick="shareKakao()">💬 카카오톡</button>
+  <a class="share-btn share-telegram" href="https://t.me/share/url?url=https%3A%2F%2Feu-labornews.vercel.app%2F20260527%2Flabornews_20260527.html&text=%5BJP%20Labor%20Letter%5D%202026.%2005.%2027.%20%EB%85%B8%EB%8F%99%C2%B7HR%20%ED%95%B5%EC%8B%AC%20%EB%B8%8C%EB%A6%AC%ED%95%91%20%E2%80%94%20%EA%B3%B5%EC%9D%B8%EB%85%B8%EB%AC%B4%EC%82%AC%20JP" target="_blank" rel="noopener">✈️ 텔레그램</a>
+</div>
 <footer class="footer">
   <div class="footer-logo">JP Labor News</div>
   <div class="footer-disc">Powered by Claude AI · 자동 생성<br>본 카드뉴스는 정보 제공 목적입니다.<br>© 2026 JP Labor News</div>
 </footer>
+<script>
+function copyLink(){var url='https://eu-labornews.vercel.app/20260527/labornews_20260527.html';if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(url).then(function(){showCopyMsg();}).catch(function(){fallbackCopy(url);});}else{fallbackCopy(url);}}
+function fallbackCopy(url){var ta=document.createElement('textarea');ta.value=url;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.focus();ta.select();try{document.execCommand('copy');showCopyMsg();}catch(e){}document.body.removeChild(ta);}
+function showCopyMsg(){var m=document.getElementById('copy-msg');m.style.display='inline';setTimeout(function(){m.style.display='none';},2500);}
+function shareKakao(){if(typeof Kakao==='undefined'||!Kakao.isInitialized()){alert('카카오 공유는 KAKAO_JS_KEY 설정 후 사용 가능합니다.');return;}Kakao.Share.sendDefault({objectType:'feed',content:{title:'[JP Labor Letter] — 공인노무사 JP',description:'2026. 05. 27. 노동·HR 핵심 브리핑',link:{mobileWebUrl:'https://eu-labornews.vercel.app/20260527/labornews_20260527.html',webUrl:'https://eu-labornews.vercel.app/20260527/labornews_20260527.html'}},buttons:[{title:'카드뉴스 보기',link:{mobileWebUrl:'https://eu-labornews.vercel.app/20260527/labornews_20260527.html',webUrl:'https://eu-labornews.vercel.app/20260527/labornews_20260527.html'}}]});}
+</script>
 </body>
 </html>
