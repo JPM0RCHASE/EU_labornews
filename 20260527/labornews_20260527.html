@@ -6,7 +6,7 @@
 <title>Today's Labor News — 2026. 05. 27. | 공인노무사 JP</title>
 <meta name="description" content="오늘의 인사노무 핵심 브리핑. 노동법·노사·HR 이슈 5건.">
 <meta property="og:title" content="Today's Labor News — 2026. 05. 27. | 공인노무사 JP">
-<meta property="og:description" content="노란봉투법·대기업 노사·임금체불·건설경기 등 오늘의 핵심 이슈 5건">
+<meta property="og:description" content="노란봉투법·대기업 노사·임금체불·고용노동부 등 오늘의 핵심 이슈 5건">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://eu-labornews.vercel.app/20260527/labornews_20260527.html">
 <meta property="og:image" content="https://eu-labornews.vercel.app/thumbnail_telegram.png?v=20260527">
@@ -15,6 +15,7 @@
 <meta property="og:site_name" content="JP Labor News">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://eu-labornews.vercel.app/thumbnail_telegram.png?v=20260527">
+<script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js" integrity="sha384-TiCUE00h649CAMonG018J2ujOgDKW/kVWlChEuu4jK2vxfAAD0eZxzCKakxg55G4" crossorigin="anonymous"></script>
 <style>:root{--navy:#0a0f1e;--navy-card:#141d2e;--navy-border:#1f3260;--gold:#c9a84c;--gold-dim:#9b7d36;--cream:#f5f0e8;--cream-dim:#ccc4b0;--text-body:#c8ccd8;--text-muted:#7a8299;--base:17px}
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:var(--navy);color:var(--text-body);font-family:'Apple SD Gothic Neo','Malgun Gothic',sans-serif;font-size:var(--base);line-height:1.7;max-width:640px;margin:0 auto}
@@ -38,7 +39,6 @@ body{background:var(--navy);color:var(--text-body);font-family:'Apple SD Gothic 
 .tag-high{background:rgba(192,57,43,.15);color:#e74c3c;border:1px solid rgba(192,57,43,.3)}
 .tag-med{background:rgba(243,156,18,.12);color:#f39c12;border:1px solid rgba(243,156,18,.3)}
 .tag-info{background:rgba(52,152,219,.12);color:#5dade2;border:1px solid rgba(52,152,219,.3)}
-.tag-construction{background:rgba(46,125,50,.15);color:#66bb6a;border:1px solid rgba(46,125,50,.3)}
 .news-card{background:var(--navy-card);border:1px solid var(--navy-border);margin:16px 16px 0;border-radius:4px;overflow:hidden;position:relative}
 .news-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:4px;background:linear-gradient(to right,var(--gold-dim),var(--gold),var(--gold-dim))}
 .source-bar{display:flex;align-items:center;justify-content:space-between;background:rgba(31,50,96,.7);border-bottom:1px solid var(--navy-border);padding:8px 16px;margin-top:4px}
@@ -62,7 +62,28 @@ body{background:var(--navy);color:var(--text-body);font-family:'Apple SD Gothic 
 .read-more a{font-size:13px;font-weight:700;color:var(--gold);text-decoration:none;display:flex;align-items:center;gap:6px}
 .read-more a::after{content:'→';font-size:15px}
 .wm-small{font-size:10px;color:rgba(201,168,76,.3);font-weight:600}
-.footer{border-top:1px solid var(--navy-border);background:#111827;padding:24px 20px;text-align:center;margin-top:16px}
+/* ── 공유 바 ── */
+.share-bar{
+  background:#111827;border-top:1px solid var(--navy-border);
+  padding:14px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  margin-top:16px;
+  /* 모바일 하단 sticky */
+  position:sticky;bottom:0;z-index:90;
+}
+.share-label{font-size:12px;color:var(--text-muted);margin-right:2px}
+.share-btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:9px 16px;font-size:13px;font-weight:700;
+  border:none;border-radius:4px;cursor:pointer;
+  text-decoration:none;transition:opacity .2s;
+}
+.share-btn:hover{opacity:.82}
+.share-copy{background:var(--navy-border);color:var(--cream)}
+.share-kakao{background:#FEE500;color:#3A1D1D}
+.share-telegram{background:#0088cc;color:#fff}
+#copy-msg{font-size:12px;color:var(--gold);display:none;white-space:nowrap}
+/* ── 푸터 ── */
+.footer{border-top:1px solid var(--navy-border);background:#111827;padding:24px 20px;text-align:center;margin-top:0}
 .footer-logo{font-size:14px;font-weight:700;color:var(--gold);margin-bottom:6px}
 .footer-disc{font-size:11px;color:var(--text-muted);line-height:1.8}</style>
 </head>
@@ -76,36 +97,36 @@ body{background:var(--navy);color:var(--text-body);font-family:'Apple SD Gothic 
   <div class="headline-num">1</div>
   <div class="headline-content">
     <div class="headline-source">📰 중앙일보 · 2026.05.27</div>
-    <div class="headline-title">노란봉투법 분쟁 장기화…포스코·SK에너지 등 재심 10건 접수</div>
+    <div class="headline-title">포스코·SK에너지·인국공, 노란봉투법 재심 돌입</div>
     <span class="headline-tag tag-high">🔴 핵심 이슈</span>
   </div>
 </a><a class="headline-item" href="#news2">
   <div class="headline-num">2</div>
   <div class="headline-content">
-    <div class="headline-source">📰 YTN · 2026.05.27</div>
-    <div class="headline-title">삼성전자 '최대 6억원 성과급' 합의안 투표 결과 오늘 발표</div>
+    <div class="headline-source">📰 연합뉴스 · 2026.05.27</div>
+    <div class="headline-title">삼성전자 '최대 6억 성과급' 합의안 투표 결과 발표</div>
     <span class="headline-tag tag-high">🔴 핵심 이슈</span>
   </div>
 </a><a class="headline-item" href="#news3">
   <div class="headline-num">3</div>
   <div class="headline-content">
-    <div class="headline-source">📰 연합뉴스 · 2026.05.27</div>
-    <div class="headline-title">울산동부노동지청 초대 청장 '노란봉투법 안착·산재예방 집중'</div>
-    <span class="headline-tag tag-med">⚠ 주요 동향</span>
+    <div class="headline-source">📰 경향신문 · 2026.05.27</div>
+    <div class="headline-title">조선·철강업계, 원·하청 연대로 성과급 요구 확대</div>
+    <span class="headline-tag tag-high">🔴 핵심 이슈</span>
   </div>
 </a><a class="headline-item" href="#news4">
   <div class="headline-num">4</div>
   <div class="headline-content">
-    <div class="headline-source">📰 노동plus · 2026.05.26</div>
-    <div class="headline-title">포스코 원청 사용자성 인정…제조업 협력사 교섭 구조 변화</div>
-    <span class="headline-tag tag-construction">⚠ 주요 동향</span>
+    <div class="headline-source">📰 레이버투데이 · 2026.05.27</div>
+    <div class="headline-title">양당, 5인 미만 사업장 근로기준법 적용 공통공약</div>
+    <span class="headline-tag tag-med">⚠ 주의</span>
   </div>
 </a><a class="headline-item" href="#news5">
   <div class="headline-num">5</div>
   <div class="headline-content">
-    <div class="headline-source">📰 서울경제 · 2026.05.27</div>
-    <div class="headline-title">SK·현대차 등 10대 그룹, K-뉴딜 아카데미로 청년 1만명 훈련</div>
-    <span class="headline-tag tag-info">ℹ 참고 정보</span>
+    <div class="headline-source">📰 서울신문 · 2026.05.27</div>
+    <div class="headline-title">산업·노동부, K-뉴딜 아카데미 10대그룹 참여 확대</div>
+    <span class="headline-tag tag-info">ℹ 참고</span>
   </div>
 </a></div>
 </section>
@@ -114,56 +135,108 @@ body{background:var(--navy);color:var(--text-body);font-family:'Apple SD Gothic 
   <div class="card-inner">
     <div class="risk-tag risk-high">🔴 핵심 이슈</div>
     <div class="card-category">노란봉투법</div>
-    <h2 class="card-title">노란봉투법 분쟁 장기화…포스코·SK에너지 등 재심 10건 접수</h2>
-    <ul class="bullet-list"><li>중노위 접수된 노란봉투법 관련 재심 사건 총 10건, 포스코·SK에너지·인천국제공항공사 등 주요 기업 포함</li><li>경북지노위, 포스코 원청 사용자성 인정하며 금속노조의 교섭 단위 분리 신청 인용</li><li>원·하청 교섭 범위를 둘러싼 노사 갈등 확대, 법 해석 기준 정립까지 장기 분쟁 예상</li></ul>
-    <div class="insight"><div class="insight-label">실무 시사점</div><div class="insight-text">노란봉투법 시행 3개월차, 원청 사용자성 인정 범위를 둘러싼 재심 사건이 급증하면서 기업별 대응 전략 수립이 시급합니다.</div></div>
+    <h2 class="card-title">포스코·SK에너지·인국공, 노란봉투법 재심 돌입</h2>
+    <ul class="bullet-list"><li>중노위 접수 노란봉투법 재심 사건 10건 돌파, 포스코·SK에너지·인천국제공항공사 등 대기업 포함</li><li>경북지노위, 포스코 원청 사용자성 인정 후 재심 진행 중…하청노조 직접교섭 요구 확대</li><li>백화점·면세점 영업시간도 원청교섭 대상, 서울지노위 '노동조건 중대영향력' 기준 적용</li></ul>
+    <div class="insight"><div class="insight-label">실무 시사점</div><div class="insight-text">노란봉투법 시행 후 원청 사용자성 인정 범위가 확대되며 재심 사건 급증. 원·하청 교섭 대응 체계 재정비 및 법률 검토 시급.</div></div>
   </div>
   <div class="read-more"><span class="wm-small">© JP Labor News</span><a href="https://www.joongang.co.kr/article/25431509" target="_blank">자세히 보기</a></div>
 </div><div class="news-card" id="news2">
-  <div class="source-bar"><span class="source-name">📰 YTN</span><span class="source-date">2026.05.27</span></div>
+  <div class="source-bar"><span class="source-name">📰 연합뉴스</span><span class="source-date">2026.05.27</span></div>
   <div class="card-inner">
     <div class="risk-tag risk-high">🔴 핵심 이슈</div>
     <div class="card-category">대기업 노사</div>
-    <h2 class="card-title">삼성전자 '최대 6억원 성과급' 합의안 투표 결과 오늘 발표</h2>
-    <ul class="bullet-list"><li>삼성전자 노조, DS부문 최대 6억원 성과급 포함 잠정합의안 투표 결과 오전 10시 발표</li><li>사상 첫 총파업 이후 임금체계·성과급 산정 방식 둘러싼 장기 협상 마무리 단계</li><li>DS와 DX 부문 간 성과급 격차로 노노 갈등·주주 반발 등 복합 쟁점 발생</li></ul>
-    <div class="insight"><div class="insight-label">실무 시사점</div><div class="insight-text">삼성전자 합의안이 업계 성과급 기준으로 작용할 전망이며, 부문별 격차 조정 방식은 향후 대기업 성과급 설계의 주요 참고 사례가 될 것입니다.</div></div>
+    <h2 class="card-title">삼성전자 '최대 6억 성과급' 합의안 투표 결과 발표</h2>
+    <ul class="bullet-list"><li>삼성전자 노조 성과급 합의안 투표 결과 오전 발표, 가결 시 총파업 위기 일단 해소</li><li>DS(반도체)·DX(가전) 간 성과급 격차로 노노갈등 심화, DX 단독 쟁의 가능성 제기</li><li>업계 '성과주의 원칙 무너졌다' 비판, 삼성바이오로직스 등 계열사 노사협상 새 기준될 전망</li></ul>
+    <div class="insight"><div class="insight-label">실무 시사점</div><div class="insight-text">대기업 성과급 협상이 정치적 부담과 결합하며 성과주의 약화 우려. 계열사 연쇄 요구 가능성 대비 필요.</div></div>
   </div>
   <div class="read-more"><span class="wm-small">© JP Labor News</span><a href="https://www.ytn.co.kr/_ln/0102_202605270915467349" target="_blank">자세히 보기</a></div>
 </div><div class="news-card" id="news3">
-  <div class="source-bar"><span class="source-name">📰 연합뉴스</span><span class="source-date">2026.05.27</span></div>
+  <div class="source-bar"><span class="source-name">📰 경향신문</span><span class="source-date">2026.05.27</span></div>
   <div class="card-inner">
-    <div class="risk-tag risk-med">⚠ 주요 동향</div>
-    <div class="card-category">노동행정</div>
-    <h2 class="card-title">울산동부노동지청 초대 청장 '노란봉투법 안착·산재예방 집중'</h2>
-    <ul class="bullet-list"><li>김상중 초대 울산동부노동지청장, '노동 1번지'에서 안정적 노사관계 유지와 산재예방 강조</li><li>고위험 작업장·중대재해 발생 사업장 대상 엄정한 법 집행과 집중 감독 예고</li><li>노란봉투법 현장 안착을 위한 노력과 영세 소규모 사업장 지원 병행</li></ul>
-    <div class="insight"><div class="insight-label">실무 시사점</div><div class="insight-text">노동당국의 노란봉투법 안착 의지와 중대재해 집중 감독 강화로 제조업 밀집 지역 사업장의 선제적 법규 점검이 필요합니다.</div></div>
+    <div class="risk-tag risk-high">🔴 핵심 이슈</div>
+    <div class="card-category">노사관계</div>
+    <h2 class="card-title">조선·철강업계, 원·하청 연대로 성과급 요구 확대</h2>
+    <ul class="bullet-list"><li>조선업계 수주 증가로 정규직 노조 성과급 요구, 노란봉투법 시행 후 하청노조도 원청 직접교섭 동참</li><li>금속노조 포스코 상대 원청 교섭 단위 분리 신청 인용, 하청노조 교섭권 법적 근거 강화</li><li>대기업 초과이윤 배분 요구에 원·하청 연대 결합, 올해 하투 규모 예년보다 확대 전망</li></ul>
+    <div class="insight"><div class="insight-label">실무 시사점</div><div class="insight-text">노란봉투법으로 하청노조 교섭력 강화되며 원·하청 연대 투쟁 확산. 제조업 원청의 교섭 부담 급증 예상.</div></div>
   </div>
-  <div class="read-more"><span class="wm-small">© JP Labor News</span><a href="https://www.yna.co.kr/view/AKR20260526151100057?input=1195m" target="_blank">자세히 보기</a></div>
+  <div class="read-more"><span class="wm-small">© JP Labor News</span><a href="https://www.khan.co.kr/article/202605270600121" target="_blank">자세히 보기</a></div>
 </div><div class="news-card" id="news4">
-  <div class="source-bar"><span class="source-name">📰 노동plus <span style="font-size:10px;background:rgba(46,125,50,.15);color:#66bb6a;border:1px solid rgba(46,125,50,.3);padding:2px 6px;border-radius:2px">🏗 건설·건자재</span></span><span class="source-date">2026.05.26</span></div>
+  <div class="source-bar"><span class="source-name">📰 레이버투데이</span><span class="source-date">2026.05.27</span></div>
   <div class="card-inner">
-    <div class="risk-tag risk-med">⚠ 주요 동향</div>
-    <div class="card-category">제조업</div>
-    <h2 class="card-title">포스코 원청 사용자성 인정…제조업 협력사 교섭 구조 변화</h2>
-    <ul class="bullet-list"><li>경북지노위, 금속노조의 포스코 상대 원청 교섭 요구에 사용자성 인정하며 교섭 단위 분리 신청 인용</li><li>HD건설기계 등 주요 제조업체의 협력사 교섭 구조 재편 가능성 확대</li><li>제조업 원청의 하청 노동조건 결정 권한에 대한 법적 책임 범위 구체화</li></ul>
-    <div class="insight"><div class="insight-label">실무 시사점</div><div class="insight-text">제조업 원청 기업의 사용자성 인정 사례 확대로 건설·플랜트 등 다단계 하도급 구조 산업의 교섭 대응 체계 재정비가 시급합니다.</div></div>
+    <div class="risk-tag risk-med">⚠ 주의</div>
+    <div class="card-category">국회 입법</div>
+    <h2 class="card-title">양당, 5인 미만 사업장 근로기준법 적용 공통공약</h2>
+    <ul class="bullet-list"><li>여야 지방선거 공통공약에 '5인 미만 사업장 근로기준법 전면 적용' 포함, 향후 법안 구체화 예정</li><li>국민의힘, 개정 노조법(노란봉투법) 재개정 공약화…원청 사용자성·교섭범위 명확화 추진</li><li>노동계 '노조법 후퇴 저지' vs 경영계 '사용자 개념 과도한 확대' 정면 충돌</li></ul>
+    <div class="insight"><div class="insight-label">실무 시사점</div><div class="insight-text">5인 미만 사업장 근로기준법 적용 시 영세사업장 인사관리 부담 증가. 노조법 재개정 논의로 제도 변동성 지속.</div></div>
   </div>
-  <div class="read-more"><span class="wm-small">© JP Labor News</span><a href="https://www.laborplus.co.kr/news/articleView.html?idxno=40897" target="_blank">자세히 보기</a></div>
+  <div class="read-more"><span class="wm-small">© JP Labor News</span><a href="https://www.labortoday.co.kr/news/articleView.html?idxno=234608" target="_blank">자세히 보기</a></div>
 </div><div class="news-card" id="news5">
-  <div class="source-bar"><span class="source-name">📰 서울경제</span><span class="source-date">2026.05.27</span></div>
+  <div class="source-bar"><span class="source-name">📰 서울신문</span><span class="source-date">2026.05.27</span></div>
   <div class="card-inner">
-    <div class="risk-tag risk-info">ℹ 참고 정보</div>
-    <div class="card-category">인사관리</div>
-    <h2 class="card-title">SK·현대차 등 10대 그룹, K-뉴딜 아카데미로 청년 1만명 훈련</h2>
-    <ul class="bullet-list"><li>산업부·노동부, SK·현대차·KB국민은행 등 10대 그룹 참여 'K-뉴딜 아카데미' 기업·청년 간담회 개최</li><li>15~34세 미취업 청년 1만명 대상 직업훈련, 장기 실업 등 취약 청년 우대</li><li>참여 기업 훈련비·청년 훈련수당 지급으로 노동시장 진입 지원</li></ul>
-    <div class="insight"><div class="insight-label">실무 시사점</div><div class="insight-text">대기업 주도 청년 직업훈련 사업 확대는 중소·중견기업의 인력 확보 전략에도 참고할 수 있는 정부 지원 모델입니다.</div></div>
+    <div class="risk-tag risk-info">ℹ 참고</div>
+    <div class="card-category">인재양성</div>
+    <h2 class="card-title">산업·노동부, K-뉴딜 아카데미 10대그룹 참여 확대</h2>
+    <ul class="bullet-list"><li>산업부·고용노동부, SK·현대차·KB 등 10대그룹 참여 'K-뉴딜 아카데미' 기업·청년 간담회 개최</li><li>15~34세 미취업 청년 1만명 대상 직업훈련, 장기실업 취약청년 우대…기업 훈련비·청년 수당 지급</li><li>대기업 휴머노이드 로봇·AI 도입 가속화로 신규채용 감소 우려 속 훈련 프로그램 주목</li></ul>
+    <div class="insight"><div class="insight-label">실무 시사점</div><div class="insight-text">대기업 무인화 확대로 신규채용 축소 전망. 정부 주도 직업훈련 프로그램 활용한 인력 확보 전략 검토 필요.</div></div>
   </div>
   <div class="read-more"><span class="wm-small">© JP Labor News</span><a href="https://www.seoul.co.kr/news/economy/industry/2026/05/27/20260527032002?wlog_tag3=naver" target="_blank">자세히 보기</a></div>
 </div>
-<div style="height:24px"></div>
+
+<!-- ── 공유 바: 마지막 카드 아래, 푸터 위 ── -->
+<div class="share-bar">
+  <span class="share-label">공유하기</span>
+  <button class="share-btn share-copy" onclick="copyLink()">🔗 링크 복사</button>
+  <span id="copy-msg">✅ 링크 복사됨!</span>
+  <button class="share-btn share-kakao" onclick="shareKakao()">💬 카카오톡</button>
+  <a class="share-btn share-telegram" href="https://t.me/share/url?url=https%3A//eu-labornews.vercel.app/20260527/labornews_20260527.html&text=%5BJP%20Labor%20Letter%5D%202026.%2005.%2027.%20%EB%85%B8%EB%8F%99%C2%B7HR%20%ED%95%B5%EC%8B%AC%20%EB%B8%8C%EB%A6%AC%ED%95%91%20%E2%80%94%20%EA%B3%B5%EC%9D%B8%EB%85%B8%EB%AC%B4%EC%82%AC%20JP" target="_blank" rel="noopener">✈️ 텔레그램</a>
+</div>
+
 <footer class="footer">
   <div class="footer-logo">JP Labor News</div>
   <div class="footer-disc">Powered by Claude AI · 자동 생성<br>본 카드뉴스는 정보 제공 목적입니다.<br>© 2026 JP Labor News</div>
 </footer>
+
+<script>
+
+  if (typeof Kakao !== 'undefined') {
+    if (!Kakao.isInitialized()) { Kakao.init('d9aebc68a07b969a791ba9bd2f1f7207'); }
+  }
+
+function copyLink() {
+  var url = 'https://eu-labornews.vercel.app/20260527/labornews_20260527.html';
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(url).then(function() { showCopyMsg(); }).catch(function() { fallbackCopy(url); });
+  } else {
+    fallbackCopy(url);
+  }
+}
+function fallbackCopy(url) {
+  var ta = document.createElement('textarea');
+  ta.value = url; ta.style.position = 'fixed'; ta.style.opacity = '0';
+  document.body.appendChild(ta); ta.focus(); ta.select();
+  try { document.execCommand('copy'); showCopyMsg(); } catch(e) {}
+  document.body.removeChild(ta);
+}
+function showCopyMsg() {
+  var m = document.getElementById('copy-msg');
+  m.style.display = 'inline';
+  setTimeout(function() { m.style.display = 'none'; }, 2500);
+}
+function shareKakao() {
+  if (typeof Kakao === 'undefined' || !Kakao.isInitialized()) {
+    window.open('https://t.me/share/url?url=https%3A//eu-labornews.vercel.app/20260527/labornews_20260527.html&text=%5BJP%20Labor%20Letter%5D%202026.%2005.%2027.%20%EB%85%B8%EB%8F%99%C2%B7HR%20%ED%95%B5%EC%8B%AC%20%EB%B8%8C%EB%A6%AC%ED%95%91%20%E2%80%94%20%EA%B3%B5%EC%9D%B8%EB%85%B8%EB%AC%B4%EC%82%AC%20JP', '_blank'); return;
+  }
+  Kakao.Share.sendDefault({
+    objectType: 'feed',
+    content: {
+      title: '[JP Labor Letter] — 공인노무사 JP',
+      description: '오늘의 인사노무 핵심 브리핑 · 2026. 05. 27.',
+      imageUrl: 'https://eu-labornews.vercel.app/thumbnail_telegram.png?v=20260527',
+      link: { mobileWebUrl: 'https://eu-labornews.vercel.app/20260527/labornews_20260527.html', webUrl: 'https://eu-labornews.vercel.app/20260527/labornews_20260527.html' },
+    },
+    buttons: [{ title: '카드뉴스 보기', link: { mobileWebUrl: 'https://eu-labornews.vercel.app/20260527/labornews_20260527.html', webUrl: 'https://eu-labornews.vercel.app/20260527/labornews_20260527.html' } }],
+  });
+}
+</script>
 </body>
 </html>
