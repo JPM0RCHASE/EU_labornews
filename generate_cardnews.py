@@ -227,23 +227,20 @@ body{background:var(--navy);color:var(--text-body);font-family:'Apple SD Gothic 
 /* ── 공유 바 ── */
 .share-bar{
   background:#111827;border-top:1px solid var(--navy-border);
-  padding:14px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;
-  margin-top:16px;
-  /* 모바일 하단 sticky */
+  padding:12px 16px 10px;
   position:sticky;bottom:0;z-index:90;
 }
-.share-label{font-size:12px;color:var(--text-muted);margin-right:2px}
+.share-row{display:flex;gap:10px;}
 .share-btn{
-  display:inline-flex;align-items:center;gap:6px;
-  padding:9px 16px;font-size:13px;font-weight:700;
-  border:none;border-radius:4px;cursor:pointer;
+  flex:1;display:flex;align-items:center;justify-content:center;gap:6px;
+  padding:13px 0;font-size:15px;font-weight:700;
+  border:none;border-radius:6px;cursor:pointer;
   text-decoration:none;transition:opacity .2s;
 }
 .share-btn:hover{opacity:.82}
 .share-copy{background:var(--navy-border);color:var(--cream)}
 .share-kakao{background:#FEE500;color:#3A1D1D}
-.share-telegram{background:#0088cc;color:#fff}
-#copy-msg{font-size:12px;color:var(--gold);display:none;white-space:nowrap}
+#copy-msg{font-size:12px;color:var(--gold);display:none;text-align:center;padding-top:6px;}
 /* ── 푸터 ── */
 .footer{border-top:1px solid var(--navy-border);background:#111827;padding:24px 20px;text-align:center;margin-top:0}
 .footer-logo{font-size:14px;font-weight:700;color:var(--gold);margin-bottom:6px}
@@ -312,11 +309,11 @@ NEWS_HTML = f"""<!DOCTYPE html>
 
 <!-- ── 공유 바: 마지막 카드 아래, 푸터 위 ── -->
 <div class="share-bar">
-  <span class="share-label">공유하기</span>
-  <button class="share-btn share-copy" onclick="copyLink()">🔗 링크 복사</button>
-  <span id="copy-msg">✅ 링크 복사됨!</span>
-  {KAKAO_BTN_HTML}
-  <a class="share-btn share-telegram" href="{TG_SHARE_URL}" target="_blank" rel="noopener">✈️ 텔레그램</a>
+  <div class="share-row">
+    <button class="share-btn share-copy" onclick="copyLink()">🔗 링크 복사</button>
+    <button class="share-btn share-kakao" onclick="shareKakao()">💬 카카오톡</button>
+  </div>
+  <div id="copy-msg">✅ 링크 복사됨!</div>
 </div>
 
 <footer class="footer">
