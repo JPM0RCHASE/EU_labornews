@@ -3,386 +3,520 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>JP Labor Letter 2026년 5월 넷째주 | 공인노무사 JP</title>
-<meta name="description" content="2026년 5월 넷째주 노동·HR·건설 핵심 이슈. 공인노무사 JP 주간 뉴스레터.">
-<meta property="og:title" content="JP Labor Letter 2026년 5월 넷째주 | 공인노무사 JP">
+<title>노동 브리핑 2026년 5월 넷째주 | 공인노무사JP의 뉴스레터</title>
+<meta name="description" content="2026년 5월 넷째주 노동·HR·정책 핵심 이슈. 공인노무사JP의 주간 뉴스레터.">
+<meta property="og:title" content="노동 브리핑 2026년 5월 넷째주 | 공인노무사JP">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://eu-labornews.vercel.app/newsletter/newsletter_20260527.html">
+<meta property="og:description" content="2026년 5월 넷째주 노동·HR·정책 핵심 이슈. 공인노무사JP의 주간 뉴스레터.">
+<script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js" integrity="sha384-TiCUE00h649CAMonG018J2ujOgDKW/kVWlChEuu4jK2vxfAAD0eZxzCKakxg55G4" crossorigin="anonymous"></script>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+  /* ── Google Fonts ── */
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&display=swap');
+  @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+  /* ── 리셋 & 베이스 ── */
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
   body {
-    background: #f4f4f6;
-    font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif;
-    font-size: 16px; line-height: 1.75; color: #1a1a2e;
+    background: #f2f2f2;
+    font-family: 'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif;
+    font-size: 15px; line-height: 1.75; color: #111;
   }
-  .email-wrap { max-width: 640px; margin: 0 auto; background: #ffffff; }
+  .email-wrap { max-width: 600px; margin: 0 auto; background: #fff; }
 
-  /* 헤더 */
+  /* ── 상단 그린 바 ── */
+  .top-bar { height: 5px; background: #1a6b3a; }
+
+  /* ── 헤더 ── */
   .nl-header {
-    background: #0a0f1e; padding: 24px 32px;
-    border-bottom: 3px solid #c9a84c;
+    padding: 28px 32px 20px;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex; align-items: flex-end; justify-content: space-between;
   }
-  .nl-logo { font-size: 20px; font-weight: 900; color: #c9a84c; }
-  .nl-tagline { font-size: 12px; color: #7a8299; margin-top: 3px; }
-  .nl-date { font-size: 13px; color: #c8ccd8; margin-top: 6px; }
+  .nl-brand {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 28px; font-weight: 900; color: #111;
+    letter-spacing: -.01em; line-height: 1;
+  }
+  .nl-brand span { color: #1a6b3a; }
+  .nl-issue {
+    font-size: 11px; color: #666; text-align: right; line-height: 1.6;
+  }
 
-  /* 히어로 */
+  /* ── 히어로 ── */
   .nl-hero {
-    background: linear-gradient(135deg, #111827 0%, #0d1628 100%);
-    padding: 36px 32px; text-align: center; border-bottom: 1px solid #1f3260;
+    padding: 32px 32px 28px;
+    border-bottom: 3px solid #111;
   }
-  .nl-hero-eyebrow {
-    font-size: 12px; letter-spacing: .18em; color: #c9a84c;
-    text-transform: uppercase; margin-bottom: 14px; font-weight: 700;
+  .nl-hero-kicker {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 10px; font-weight: 700; letter-spacing: .2em;
+    color: #1a6b3a; text-transform: uppercase; margin-bottom: 14px;
+  }
+  .nl-hero-kicker::before,
+  .nl-hero-kicker::after {
+    content: ''; flex: 0 0 28px; height: 1.5px; background: #1a6b3a;
   }
   .nl-hero-title {
-    font-size: 28px; font-weight: 900; color: #f5f0e8;
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 32px; font-weight: 900; color: #111;
     line-height: 1.2; margin-bottom: 12px; word-break: keep-all;
   }
-  .nl-hero-title em { color: #c9a84c; font-style: normal; }
-  .nl-hero-sub { font-size: 14px; color: #7a8299; line-height: 1.8; }
+  .nl-hero-title em { color: #1a6b3a; font-style: italic; }
+  .nl-hero-sub { font-size: 13px; color: #555; line-height: 1.8; }
 
-  /* 섹션 공통 */
-  .nl-section { padding: 32px 32px 8px; border-bottom: 1px solid #e8e8f0; }
-  .nl-section:last-of-type { border-bottom: none; }
-  .sec-label {
-    display: inline-flex; align-items: center; gap: 8px;
-    font-size: 11px; font-weight: 700; letter-spacing: .14em;
-    color: #c9a84c; text-transform: uppercase; margin-bottom: 20px;
-    padding-bottom: 10px; border-bottom: 1px solid #e8e8f0; width: 100%;
+  /* ── 섹션 공통 ── */
+  .nl-section { padding: 32px 32px 24px; border-bottom: 1px solid #e0e0e0; }
+
+  /* ── Kicker (Wired 스타일) ── */
+  .kicker {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 10px; font-weight: 700; letter-spacing: .2em;
+    color: #1a6b3a; text-transform: uppercase; margin-bottom: 20px;
+    white-space: nowrap;
   }
-  .sec-label::before { content: ''; width: 18px; height: 2px; background: #c9a84c; }
+  .kicker::before { content: ''; flex: 0 0 20px; height: 1.5px; background: #1a6b3a; }
+  .kicker::after  { content: ''; flex: 1;         height: 1.5px; background: #1a6b3a; }
 
-  /* 섹션 1: Top 3 뉴스 카드 */
+  /* ── 섹션 1: Top 3 뉴스 카드 ── */
   .news-card-nl {
-    border: 1px solid #e0e0ea; border-radius: 6px;
-    margin-bottom: 20px; overflow: hidden;
+    border: 1px solid #e0e0e0;
+    margin-bottom: 18px;
   }
-  .news-card-nl:last-child { margin-bottom: 8px; }
+  .news-card-nl:last-child { margin-bottom: 0; }
   .nc-header {
-    display: flex; align-items: center; justify-content: space-between;
-    background: #f8f8fc; padding: 10px 16px;
-    border-bottom: 1px solid #e0e0ea;
+    display: flex; align-items: center; gap: 10px;
+    background: #fafafa; padding: 9px 14px;
+    border-bottom: 1px solid #e0e0e0;
   }
   .nc-rank {
-    font-size: 12px; font-weight: 700; color: #c9a84c;
-    background: rgba(201,168,76,.1); border: 1px solid rgba(201,168,76,.3);
-    width: 24px; height: 24px; border-radius: 3px;
-    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 900; color: #1a6b3a;
+    min-width: 22px; text-align: center;
   }
-  .nc-source { font-size: 12px; color: #888; }
-  .nc-date { font-size: 12px; color: #aaa; }
-  .nc-body { padding: 16px; }
+  .nc-source { font-size: 11px; color: #666; flex: 1; }
+  .nc-date { font-size: 11px; color: #999; }
+  .nc-body { padding: 16px 14px; }
   .nc-category {
-    font-size: 11px; font-weight: 700; color: #c9a84c;
-    letter-spacing: .08em; margin-bottom: 6px;
+    font-size: 10px; font-weight: 700; color: #1a6b3a;
+    letter-spacing: .1em; text-transform: uppercase; margin-bottom: 6px;
   }
   .nc-title {
-    font-size: 17px; font-weight: 800; color: #1a1a2e;
+    font-size: 16px; font-weight: 800; color: #111;
     line-height: 1.4; margin-bottom: 10px; word-break: keep-all;
   }
-  .nc-summary { font-size: 14px; color: #4a4a6a; line-height: 1.8; margin-bottom: 12px; }
+  .nc-summary { font-size: 13px; color: #444; line-height: 1.8; margin-bottom: 12px; }
   .nc-insight {
-    background: rgba(201,168,76,.06); border-left: 3px solid #c9a84c;
-    padding: 12px 14px; border-radius: 0 4px 4px 0;
+    border-left: 2px solid #1a6b3a;
+    padding: 10px 12px;
+    background: #f7fbf8;
   }
   .nc-insight-label {
-    font-size: 10px; font-weight: 700; color: #c9a84c;
-    letter-spacing: .15em; text-transform: uppercase; margin-bottom: 5px;
+    font-size: 9px; font-weight: 700; color: #1a6b3a;
+    letter-spacing: .18em; text-transform: uppercase; margin-bottom: 4px;
   }
-  .nc-insight-text { font-size: 13px; color: #333355; line-height: 1.8; }
+  .nc-insight-text { font-size: 12px; color: #333; line-height: 1.8; }
   .nc-footer {
-    padding: 10px 16px; background: #f8f8fc;
-    border-top: 1px solid #e0e0ea; text-align: right;
+    padding: 8px 14px; background: #fafafa;
+    border-top: 1px solid #e0e0e0; text-align: right;
   }
   .nc-link {
-    font-size: 13px; font-weight: 700; color: #c9a84c;
-    text-decoration: none;
+    font-size: 12px; font-weight: 700; color: #1a6b3a; text-decoration: none;
   }
   .nc-link::after { content: ' →'; }
 
-  /* 섹션 2: 5인 미만 */
+  /* ── 섹션 2: 5인 미만 ── */
   .five-card {
-    background: linear-gradient(135deg, #fff8e1, #fffde7);
-    border: 1px solid #f0c040; border-radius: 6px;
-    padding: 24px; margin-bottom: 12px;
+    border: 1px solid #e0e0e0;
+    padding: 20px; margin-bottom: 12px;
   }
   .five-badge {
-    display: inline-block; background: #e65100; color: #fff;
-    font-size: 11px; font-weight: 700; padding: 3px 10px;
-    border-radius: 3px; margin-bottom: 12px; letter-spacing: .05em;
+    display: inline-block; background: #1a6b3a; color: #fff;
+    font-size: 10px; font-weight: 700; padding: 3px 9px;
+    letter-spacing: .06em; margin-bottom: 10px;
   }
-  .five-title { font-size: 18px; font-weight: 900; color: #1a1a2e; margin-bottom: 4px; }
-  .five-sub { font-size: 13px; color: #666; margin-bottom: 16px; }
+  .five-title { font-size: 17px; font-weight: 900; color: #111; margin-bottom: 2px; word-break: keep-all; }
+  .five-sub { font-size: 12px; color: #666; margin-bottom: 16px; }
+  .checklist-divider { border: none; border-top: 3px solid #111; margin-bottom: 14px; }
   .five-points { list-style: none; margin-bottom: 16px; }
   .five-points li {
-    font-size: 14px; color: #2a2a4a; padding: 8px 0 8px 20px;
-    border-bottom: 1px solid rgba(240,192,64,.3); position: relative;
+    font-size: 13px; color: #222; padding: 9px 0 9px 22px;
+    border-bottom: 1px solid #e0e0e0; position: relative;
     line-height: 1.7;
   }
   .five-points li:last-child { border-bottom: none; }
   .five-points li::before {
     content: '✓'; position: absolute; left: 0;
-    color: #e65100; font-weight: 900; font-size: 13px;
+    color: #1a6b3a; font-weight: 900; font-size: 12px; top: 10px;
   }
   .five-tip {
-    background: rgba(230,81,0,.06); border: 1px solid rgba(230,81,0,.2);
-    border-left: 3px solid #e65100; padding: 12px 14px; border-radius: 0 4px 4px 0;
-    font-size: 13px; color: #3a1a00; line-height: 1.8;
+    border-left: 2px solid #1a6b3a; padding: 10px 12px;
+    background: #f7fbf8;
+    font-size: 12px; color: #333; line-height: 1.8;
   }
   .five-tip-label {
-    font-size: 10px; font-weight: 700; color: #e65100;
-    letter-spacing: .14em; text-transform: uppercase; margin-bottom: 5px;
+    font-size: 9px; font-weight: 700; color: #1a6b3a;
+    letter-spacing: .16em; text-transform: uppercase; margin-bottom: 4px;
   }
 
-  /* 섹션 3: 건설·자재 */
-  .const-card {
-    background: linear-gradient(135deg, #e8f5e9, #f1f8e9);
-    border: 1px solid #81c784; border-radius: 6px;
-    padding: 24px; margin-bottom: 12px;
+  /* ── 섹션 3: 정부·노동부·국회 ── */
+  .gov-card {
+    border: 1px solid #e0e0e0;
+    padding: 20px; margin-bottom: 12px;
   }
-  .const-badge {
-    display: inline-block; background: #2e7d32; color: #fff;
-    font-size: 11px; font-weight: 700; padding: 3px 10px;
-    border-radius: 3px; margin-bottom: 12px;
+  .gov-badge {
+    display: inline-block; background: #111; color: #fff;
+    font-size: 10px; font-weight: 700; padding: 3px 9px;
+    letter-spacing: .06em; margin-bottom: 10px;
   }
-  .const-title { font-size: 18px; font-weight: 900; color: #1a1a2e; margin-bottom: 4px; }
-  .const-sub { font-size: 13px; color: #666; margin-bottom: 16px; }
-  .const-bullets { list-style: none; margin-bottom: 16px; }
-  .const-bullets li {
-    font-size: 14px; color: #1a3a1a; padding: 7px 0 7px 20px;
-    border-bottom: 1px solid rgba(129,199,132,.3); position: relative;
-    line-height: 1.7;
+  .gov-title { font-size: 17px; font-weight: 900; color: #111; margin-bottom: 2px; word-break: keep-all; }
+  .gov-sub { font-size: 12px; color: #666; margin-bottom: 16px; }
+  .gov-bullets { list-style: none; margin-bottom: 16px; }
+  .gov-bullets li {
+    font-size: 13px; color: #222; padding: 9px 0 9px 18px;
+    border-bottom: 1px solid #e0e0e0; position: relative; line-height: 1.7;
   }
-  .const-bullets li:last-child { border-bottom: none; }
-  .const-bullets li::before {
+  .gov-bullets li:last-child { border-bottom: none; }
+  .gov-bullets li::before {
     content: '▸'; position: absolute; left: 0;
-    color: #2e7d32; font-size: 13px;
+    color: #1a6b3a; font-size: 12px; top: 10px;
   }
-  .const-insight {
-    background: rgba(46,125,50,.06); border: 1px solid rgba(46,125,50,.2);
-    border-left: 3px solid #2e7d32; padding: 12px 14px; border-radius: 0 4px 4px 0;
-    font-size: 13px; color: #1a3a1a; line-height: 1.8;
+  .gov-insight {
+    border-left: 2px solid #111; padding: 10px 12px;
+    background: #f8f8f8;
+    font-size: 12px; color: #333; line-height: 1.8;
   }
-  .const-insight-label {
-    font-size: 10px; font-weight: 700; color: #2e7d32;
-    letter-spacing: .14em; text-transform: uppercase; margin-bottom: 5px;
+  .gov-insight-label {
+    font-size: 9px; font-weight: 700; color: #555;
+    letter-spacing: .16em; text-transform: uppercase; margin-bottom: 4px;
   }
 
-  /* 섹션 4: JP's Weekly Insight */
+  /* ── 섹션 4: JP's Weekly QA ── */
   .qa-wrap {
-    background: #0a0f1e; border-radius: 6px;
+    border: 1.5px solid #111;
     padding: 24px; margin-bottom: 12px;
+    background: #fff;
   }
   .qa-label {
-    font-size: 11px; font-weight: 700; color: #c9a84c;
-    letter-spacing: .18em; text-transform: uppercase; margin-bottom: 14px;
+    font-size: 10px; font-weight: 700; color: #1a6b3a;
+    letter-spacing: .2em; text-transform: uppercase; margin-bottom: 12px;
   }
   .qa-q {
-    font-size: 17px; font-weight: 800; color: #f5f0e8;
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 18px; font-weight: 700; color: #111;
     line-height: 1.45; margin-bottom: 18px; word-break: keep-all;
   }
-  .qa-q::before { content: '"'; color: #c9a84c; font-size: 22px; margin-right: 4px; }
-  .qa-q::after  { content: '"'; color: #c9a84c; font-size: 22px; margin-left: 4px; }
-  .qa-a-label { font-size: 11px; font-weight: 700; color: #c9a84c; margin-bottom: 10px; letter-spacing: .1em; }
-  .qa-paragraph { font-size: 14px; color: #c8ccd8; line-height: 1.9; margin-bottom: 10px; }
+  .qa-q::before { content: 'C'; color: #1a6b3a; font-size: 24px; margin-right: 2px; line-height: 0; vertical-align: -4px; }
+  .qa-q::after  { content: 'D'; color: #1a6b3a; font-size: 24px; margin-left: 2px; line-height: 0; vertical-align: -4px; }
+  .qa-a-label { font-size: 10px; font-weight: 700; color: #555; margin-bottom: 10px; letter-spacing: .12em; }
+  .qa-paragraph { font-size: 13px; color: #333; line-height: 1.9; margin-bottom: 10px; }
   .qa-paragraph:last-of-type { margin-bottom: 0; }
   .qa-cta {
-    margin-top: 16px; padding-top: 16px;
-    border-top: 1px solid #1f3260;
-    font-size: 13px; color: #c9a84c; font-weight: 700;
+    margin-top: 18px; padding-top: 16px;
+    border-top: 1px solid #e0e0e0;
+    font-size: 13px;
   }
 
-  /* 섹션 5: CTA */
+  /* ── 섹션 5A: 실무 캘린더 ── */
+  .cal-table {
+    width: 100%; border-collapse: collapse; margin-top: 4px;
+  }
+  .cal-table th {
+    font-size: 10px; font-weight: 700; letter-spacing: .1em;
+    color: #fff; background: #1a6b3a;
+    padding: 8px 12px; text-align: left;
+  }
+  .cal-table td {
+    font-size: 13px; padding: 10px 12px;
+    border-bottom: 1px solid #e0e0e0; vertical-align: top;
+    line-height: 1.6; color: #222;
+  }
+  .cal-table tr:last-child td { border-bottom: none; }
+  .cal-table td.cal-date {
+    font-weight: 700; color: #1a6b3a; white-space: nowrap;
+    width: 80px;
+  }
+  .cal-table td.cal-note {
+    font-size: 11px; color: #777;
+  }
+
+  /* ── 섹션 5C: HR 숫자 ── */
+  .stats-grid {
+    display: flex; gap: 12px; flex-wrap: wrap; margin-top: 4px;
+  }
+  .stat-card {
+    flex: 1; min-width: 140px;
+    border: 1.5px solid #111;
+    padding: 18px 14px;
+    background: #fff;
+  }
+  .stat-number {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 28px; font-weight: 900; color: #1a6b3a;
+    line-height: 1; margin-bottom: 6px;
+  }
+  .stat-label {
+    font-size: 12px; font-weight: 700; color: #111;
+    margin-bottom: 6px;
+  }
+  .stat-context { font-size: 11px; color: #666; line-height: 1.6; }
+
+  /* ── CTA 섹션 ── */
   .cta-section {
-    background: linear-gradient(135deg, #0a0f1e, #111827);
+    background: #1a6b3a;
     padding: 36px 32px; text-align: center;
   }
-  .cta-logo { font-size: 16px; font-weight: 700; color: #c9a84c; margin-bottom: 8px; }
-  .cta-headline { font-size: 22px; font-weight: 900; color: #f5f0e8; margin-bottom: 8px; line-height: 1.3; }
-  .cta-sub { font-size: 13px; color: #7a8299; margin-bottom: 24px; line-height: 1.8; }
+  .cta-eyebrow {
+    font-size: 10px; font-weight: 700; letter-spacing: .2em;
+    color: rgba(255,255,255,.65); text-transform: uppercase; margin-bottom: 12px;
+  }
+  .cta-headline {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 24px; font-weight: 900; color: #fff;
+    margin-bottom: 12px; line-height: 1.3; word-break: keep-all;
+  }
+  .cta-sub { font-size: 12px; color: rgba(255,255,255,.8); margin-bottom: 24px; line-height: 1.9; }
   .cta-btn {
-    display: inline-block; background: #c9a84c; color: #0a0f1e;
-    font-size: 15px; font-weight: 900; padding: 16px 36px;
-    border-radius: 4px; text-decoration: none; letter-spacing: .03em;
+    display: inline-block; background: #fff; color: #1a6b3a;
+    font-size: 14px; font-weight: 900; padding: 14px 32px;
+    text-decoration: none; letter-spacing: .03em; border: none;
   }
-  .cta-btn:hover { background: #e2c278; }
-  .cta-note { font-size: 11px; color: #4a5569; margin-top: 14px; }
+  .cta-btn:hover { background: #f0f8f0; }
+  .cta-note { font-size: 11px; color: rgba(255,255,255,.55); margin-top: 12px; }
 
-  /* 공유 바 */
+  /* ── 공유 바 ── */
   .share-bar {
-    background: #111827; border-top: 1px solid #1f3260;
-    padding: 14px 32px; display: flex; align-items: center;
-    gap: 10px; flex-wrap: wrap;
-    position: sticky; bottom: 0; z-index: 90;
+    background: #111; border-top: 1px solid #333;
+    padding: 12px 20px; position: sticky; bottom: 0; z-index: 90;
   }
-  .share-label { font-size: 12px; color: #7a8299; }
+  .share-row { display: flex; gap: 10px; }
   .share-btn {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 9px 16px; font-size: 13px; font-weight: 700;
-    border: none; border-radius: 4px; cursor: pointer;
-    text-decoration: none; transition: opacity .2s;
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    gap: 6px; padding: 13px 0; font-size: 14px; font-weight: 700;
+    border: none; cursor: pointer; text-decoration: none; transition: opacity .2s;
   }
-  .share-btn:hover { opacity: .82; }
-  .share-copy     { background: #1f3260; color: #f5f0e8; }
-  .share-kakao    { background: #FEE500; color: #3A1D1D; }
-  .share-telegram { background: #0088cc; color: #fff; }
-  #nl-copy-msg { font-size: 12px; color: #c9a84c; display: none; white-space: nowrap; }
+  .share-btn:hover { opacity: .85; }
+  .share-copy  { background: #333; color: #fff; }
+  .share-kakao { background: #FEE500; color: #3A1D1D; }
+  #nl-copy-msg { font-size: 11px; color: #7dbb9a; display: none; text-align: center; padding-top: 6px; }
 
-  /* 푸터 */
+  /* ── 푸터 ── */
   .nl-footer {
-    background: #111827; padding: 24px 32px;
-    border-top: 1px solid #1f3260; text-align: center;
+    padding: 20px 32px;
+    border-top: 3px solid #111;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 8px;
+    background: #fff;
   }
-  .nf-logo { font-size: 14px; font-weight: 700; color: #c9a84c; margin-bottom: 4px; }
-  .nf-url { font-size: 11px; color: rgba(201,168,76,.4); margin-bottom: 10px; }
-  .nf-disc { font-size: 11px; color: #4a5569; line-height: 1.8; }
+  .nf-left { font-size: 12px; color: #555; line-height: 1.7; }
+  .nf-brand { font-weight: 700; color: #111; }
+  .nf-right a {
+    font-size: 12px; font-weight: 700; color: #1a6b3a; text-decoration: none;
+  }
+  .nf-right a::after { content: ' →'; }
 
-  /* 반응형 */
+  /* ── 반응형 ── */
   @media (max-width: 600px) {
-    .nl-section, .nl-hero, .nl-header, .cta-section, .nl-footer { padding-left: 18px; padding-right: 18px; }
-    .nl-hero-title { font-size: 22px; }
-    .cta-headline { font-size: 18px; }
+    .nl-header, .nl-hero, .nl-section, .cta-section, .nl-footer {
+      padding-left: 16px; padding-right: 16px;
+    }
+    .nl-hero-title { font-size: 26px; }
+    .cta-headline { font-size: 20px; }
+    .stats-grid { flex-direction: column; }
+    .stat-card { min-width: unset; }
+    .nl-header { flex-direction: column; align-items: flex-start; gap: 6px; }
+    .nl-issue { text-align: left; }
   }
 </style>
 </head>
 <body>
 <div class="email-wrap">
 
+<!-- 상단 그린 바 -->
+<div class="top-bar"></div>
+
 <!-- 헤더 -->
 <div class="nl-header">
-  <div class="nl-logo">JP Labor Letter</div>
-  <div class="nl-tagline">공인노무사 JP | 주간 노동·HR·건설 브리핑</div>
-  <div class="nl-date">2026. 05. 27. 수요일 · 2026년 5월 넷째주</div>
+  <div class="nl-brand">노동 <span>브리핑</span></div>
+  <div class="nl-issue">
+    공인노무사JP의 뉴스레터<br>
+    2026. 05. 27. &middot; 2026년 5월 넷째주
+  </div>
 </div>
 
 <!-- 히어로 -->
 <div class="nl-hero">
-  <div class="nl-hero-eyebrow">2026년 5월 넷째주 · 주간 뉴스레터</div>
+  <div class="nl-hero-kicker">2026년 5월 넷째주 · 주간 뉴스레터</div>
   <h1 class="nl-hero-title">이번 주 꼭 알아야 할<br><em>Labor &amp; HR</em> 이슈</h1>
-  <p class="nl-hero-sub">공인노무사 JP가 선별한 핵심 뉴스 · 5인 미만 이슈 · 건설 동향 · JP 인사이트</p>
+  <p class="nl-hero-sub">공인노무사 JP가 선별한 핵심 뉴스 · 5인 미만 이슈 · 정책동향 · 실무 캘린더</p>
 </div>
 
 <!-- 섹션 1: Top 3 뉴스 -->
 <div class="nl-section">
-  <div class="sec-label">Section 1 · 이번 주 꼭 읽어야 할 뉴스 Top 3</div>
+  <div class="kicker">Section 01 &nbsp;·&nbsp; 이번 주 꼭 읽어야 할 뉴스 Top 3</div>
   <div class="news-card-nl">
   <div class="nc-header">
-    <div class="nc-rank">1</div>
-    <span class="nc-source">📰 경향신문</span>
+    <span class="nc-rank">No.1</span>
+    <span class="nc-source">📰 뉴시스</span>
     <span class="nc-date">2026.05.27</span>
   </div>
   <div class="nc-body">
-    <div class="nc-category">노란봉투법</div>
-    <h3 class="nc-title">노란봉투법 시행 후 하청노조의 원청 교섭, 어디까지 가능한가?</h3>
-    <p class="nc-summary">노란봉투법 시행 이후 대기업 노조의 초과이윤 배분 요구에 하청노조의 원청 교섭 요구까지 결합되면서 올해 하반기 교섭 규모가 예년보다 크게 확대될 전망이다. 조선업계에서는 정규직 노조뿐 아니라 하청 노조도 원청을 상대로 직접 교섭에 나서고 있어 사측 부담이 가중되고 있다.</p>
+    <div class="nc-category">노동정책</div>
+    <h3 class="nc-title">노동장관 "초과이윤 배분 기준, 정부 아닌 사회적 대화로"</h3>
+    <p class="nc-summary">김영훈 고용노동부 장관은 27일 출입기자 차담회에서 삼성전자 노사 합의를 계기로 대기업 초과이윤 재분배 논의를 사회적 대화로 풀어가겠다고 밝혔다. 노란봉투법이 성과급 요구를 부추겼다는 지적에 대해서는 "이해하기 어렵다"며 반박했다.</p>
     <div class="nc-insight">
-      <div class="nc-insight-label">JP 인사이트</div>
-      <div class="nc-insight-text">원청 사용자는 하청노동자의 채용·징계·임금 등에 실질적 영향력을 행사하는지 여부로 판단됩니다. 서울지노위는 백화점·면세점의 영업시간 결정권도 노동조건에 중대한 영향을 미치는 사용자성으로 인정했으므로, 원청 기업은 교섭 대상 범위를 사전에 법률 검토해야 합니다.</div>
+      <div class="nc-insight-label">JP Insight</div>
+      <div class="nc-insight-text">정부가 초과이윤 배분 문제를 노사정 대화로 전환하면서, 향후 대기업 임금교섭에서 영업이익·순이익 연동형 성과급 요구가 더욱 확산될 가능성이 높습니다. 중소기업은 대기업 임금 인상에 따른 연쇄 인상 압력과 인력 유출 리스크에 대비해야 합니다.</div>
     </div>
   </div>
   <div class="nc-footer">
-    <a class="nc-link" href="https://www.khan.co.kr/article/202605270600121" target="_blank">원문 보기</a>
+    <a class="nc-link" href="https://www.newsis.com/view/NISX20260527_0003645730" target="_blank">원문 보기</a>
   </div>
 </div><div class="news-card-nl">
   <div class="nc-header">
-    <div class="nc-rank">2</div>
-    <span class="nc-source">📰 중앙일보</span>
+    <span class="nc-rank">No.2</span>
+    <span class="nc-source">📰 뉴데일리</span>
     <span class="nc-date">2026.05.27</span>
   </div>
   <div class="nc-body">
-    <div class="nc-category">노조법 개정</div>
-    <h3 class="nc-title">포스코·SK에너지·인천공항, 노란봉투법 재심 신청 10건 돌파</h3>
-    <p class="nc-summary">중앙노동위원회에 따르면 5월 20일까지 개정 노조법 관련 재심 사건이 총 10건 접수됐다. 포스코, SK에너지, 인천국제공항공사 등 주요 기업들이 지방노동위원회의 원청 사용자성 인정 결정에 불복해 재심을 청구하며 법적 분쟁이 장기화되고 있다.</p>
+    <div class="nc-category">노사관계</div>
+    <h3 class="nc-title">타워크레인 노조 총파업…전국 공공공사 85% 셧다운 위기</h3>
+    <p class="nc-summary">전국건설노조가 27일 총파업에 돌입하며 전국 공공공사의 85%가 중단 위기에 처했다. 서울지방노동위원회는 21일 현대건설·롯데건설·IPARK현대산업개발 등 원청 건설사 3곳의 사용자성을 모두 인정했다. 4월에는 SK에코플랜트도 사용자성을 인정받았다.</p>
     <div class="nc-insight">
-      <div class="nc-insight-label">JP 인사이트</div>
-      <div class="nc-insight-text">지노위 결정에 불복 시 중노위 재심→행정소송까지 최소 1~2년 소요됩니다. 재심 기간 중에도 노조는 쟁의행위를 진행할 수 있으므로, 기업은 초기 단계에서 사용자성 범위를 명확히 하고 선제적 대응 전략을 수립해야 합니다.</div>
+      <div class="nc-insight-label">JP Insight</div>
+      <div class="nc-insight-text">노란봉투법 시행 이후 시공능력평가 상위 10개 건설사 중 8곳이 원청 사용자성을 인정받으면서, 건설업계는 하청 노조와의 직접 교섭 의무와 파업 리스크에 동시 직면하게 됐습니다. 원청사는 하도급 계약서 검토, 지휘·감독 범위 명확화, 예상 교섭비용 반영 등 선제적 리스크 관리가 필수입니다.</div>
     </div>
   </div>
   <div class="nc-footer">
-    <a class="nc-link" href="https://www.joongang.co.kr/article/25431509" target="_blank">원문 보기</a>
+    <a class="nc-link" href="https://biz.newdaily.co.kr/site/data/html/2026/05/27/2026052700173.html" target="_blank">원문 보기</a>
   </div>
 </div><div class="news-card-nl">
   <div class="nc-header">
-    <div class="nc-rank">3</div>
-    <span class="nc-source">📰 연합뉴스</span>
+    <span class="nc-rank">No.3</span>
+    <span class="nc-source">📰 비즈니스포스트</span>
     <span class="nc-date">2026.05.27</span>
   </div>
   <div class="nc-body">
-    <div class="nc-category">노동행정</div>
-    <h3 class="nc-title">울산동부노동지청 초대 청장, '노란봉투법 안착'을 최우선 과제로</h3>
-    <p class="nc-summary">김상중 초대 울산동부노동지청장은 '노동 1번지' 울산에서 안정적 노사관계 유지와 산재예방, 노란봉투법의 현장 안착을 위해 노력하겠다고 밝혔다. 고위험 작업장과 중대재해 발생 사업장에 대해서는 엄정한 법 집행과 집중 감독을 실시할 계획이다.</p>
+    <div class="nc-category">노사관계</div>
+    <h3 class="nc-title">삼성전자 사장단 "상생과 인재 육성에 5년 동안 5조 투입"</h3>
+    <p class="nc-summary">삼성전자 사장단은 27일 노사 갈등 타결 후 향후 5년간 5조 원을 투입해 상생 생태계 조성과 미래 인재 육성에 나서겠다고 밝혔다. 사장단은 국민·주주·임직원에게 걱정과 심려를 끼친 점을 사과하며 사회적 책임을 다하겠다고 약속했다.</p>
     <div class="nc-insight">
-      <div class="nc-insight-label">JP 인사이트</div>
-      <div class="nc-insight-text">노동지청은 노란봉투법 관련 민원·분쟁 창구 역할을 강화하고 있습니다. 특히 울산·거제 등 제조업 밀집 지역 기업은 하청 노조의 교섭 요구 시 즉시 관할 지청에 법 해석 및 대응 방법을 문의해 행정지도를 받는 것이 유리합니다.</div>
+      <div class="nc-insight-label">JP Insight</div>
+      <div class="nc-insight-text">삼성전자 임금협상 타결은 영업이익 연동형 성과급 모델이 대기업 표준으로 자리 잡는 신호탄이 됐습니다. 중견·중소기업도 우수인력 유지를 위해 성과배분 제도 재설계가 필요하며, 특히 상여금·성과급 지급 기준을 명확히 취업규칙에 규정해 분쟁을 예방해야 합니다.</div>
     </div>
   </div>
   <div class="nc-footer">
-    <a class="nc-link" href="https://www.yna.co.kr/view/AKR20260526151100057?input=1195m" target="_blank">원문 보기</a>
+    <a class="nc-link" href="https://www.businesspost.co.kr/BP?command=article_view&num=438689" target="_blank">원문 보기</a>
   </div>
 </div>
 </div>
 
 <!-- 섹션 2: 5인 미만 사업장 -->
 <div class="nl-section">
-  <div class="sec-label">Section 2 · 5인 미만 사업장 집중 노동법 이슈</div>
+  <div class="kicker">Section 02 &nbsp;·&nbsp; 5인 미만 사업장 집중 노동법 이슈</div>
   <div class="five-card">
-  <div class="five-badge">⭐ 5인 미만 사업장 필독</div>
+  <div class="five-badge">5인 미만 사업장 필독</div>
   <div class="five-title">5인 미만 사업장 사장님 필독</div>
-  <div class="five-sub">양당 공통공약 '5인 미만 근로기준법 적용' 어떻게 대비할까? · 매일노동뉴스 · 2026.05.27</div>
-  <ul class="five-points"><li>양당 공통공약으로 5인 미만 사업장에도 근로기준법 전면 적용 추진 — 해고예고, 연차휴가, 주휴수당 등 의무화 예상</li><li>현행 5인 미만 사업장은 해고 제한(제23조), 휴업수당(제46조), 연차유급휴가(제60조) 등 적용 제외 상태</li><li>법 개정 시 영세 자영업자는 인건비 부담 급증 — 최저임금 2.9% 인상과 맞물려 폐업 압력 가중</li><li>노동부는 5인 미만 사업장 고용보험 가입자 18.4% 증가 추세 확인 — 실업급여 수급 자영업자 1년 새 급증</li></ul>
+  <div class="five-sub">최저임금법 위반 플랫폼 기업 엄벌 시작 &middot; 민주노총 &middot; 2026.05.27</div>
+  <hr class="checklist-divider">
+  <ul class="five-points"><li>민주노총이 27일 카카오·배민 등 플랫폼·대리업체 사업주를 최저임금법 위반으로 고용노동부에 집단 진정 제기</li><li>대리운전기사·배달라이더·학습지교사 등 특수고용·플랫폼 노동자가 직접 사용자를 대상으로 최저임금 미지급 고발</li><li>5인 미만 사업장도 최저임금법 적용 대상이며, 위반 시 3년 이하 징역 또는 2천만원 이하 벌금(최저임금법 제28조)</li><li>수습 기간(3개월) 중 최저임금의 90% 감액 가능하나, 1년 미만 근로계약·단순노무직은 수습 감액 불가</li></ul>
   <div class="five-tip">
     <div class="five-tip-label">즉시 실행 팁</div>
-    법 시행 전 근로계약서·취업규칙 정비가 필수입니다. 특히 연차휴가 발생 기준일, 해고예고수당 지급 요건, 주휴수당 산정 방식을 미리 숙지하고, 인건비 시뮬레이션을 통해 인력 운영 계획을 재조정하세요.
+    5인 미만 사업장도 매월 급여명세서 교부 의무가 있으며, 최저임금 미달 여부는 기본급뿐 아니라 매월 1회 이상 정기적으로 지급되는 상여금·식대(월정액)를 포함해 산정합니다. 2026년 최저임금 9,860원(월 환산 2,060,740원) 준수 여부를 지금 점검하세요.
   </div>
 </div>
 </div>
 
-<!-- 섹션 3: 건설·자재 시장 -->
+<!-- 섹션 3: 정부·노동부·국회 정책동향 -->
 <div class="nl-section">
-  <div class="sec-label">Section 3 · 건설/자재 시장 동향 + 노동 이슈</div>
-  <div class="const-card">
-  <div class="const-badge">🏗 건설·자재 시장</div>
-  <div class="const-title">건설·자재 시장 동향</div>
-  <div class="const-sub">건설업 노무·임금 실무 이슈 · 공인노무사 JP · 2026.05.27</div>
-  <ul class="const-bullets"><li>건설업 하청 노조, 노란봉투법 근거로 원청 건설사 대상 직접 교섭 요구 증가 — HD건설기계·포스코 등 사례 확산</li><li>조선업 수주 증가로 HD현대중공업 노조 '영업이익 30%' 성과급 요구 — 방산·중공업 임금협상 도미노 예고</li><li>건설 현장 외국인 계절근로자 하반기 추가 모집 — 시급 10,320원(2026년 최저임금) 적용, 3대 보험 의무 가입</li></ul>
-  <div class="const-insight">
-    <div class="const-insight-label">노무 실무 포인트</div>
-    건설업은 다단계 하도급 구조상 원청 사용자성 분쟁이 가장 빈번합니다. 원청 건설사는 하청 근로자의 출퇴근·작업지시·안전관리에 실질 지배력을 행사하면 교섭 의무가 발생하므로, 현장별 사용자성 판단 기준표를 마련하고 법무팀과 사전 검토 체계를 구축해야 합니다.
+  <div class="kicker">Section 03 &nbsp;·&nbsp; 정부·노동부·국회 정책동향</div>
+  <div class="gov-card">
+  <div class="gov-badge">정부·노동부·국회</div>
+  <div class="gov-title">정부·노동부·국회 정책동향</div>
+  <div class="gov-sub">초과이윤 재분배 논의 본격화 &middot; MTN &middot; 2026.05.27</div>
+  <hr class="checklist-divider">
+  <ul class="gov-bullets"><li>김영훈 노동장관, 6월 1일 긴급 노사정 대화 소집해 대기업 초과이익 재분배 방식 논의 예고</li><li>국회 우원식 의장, 노란봉투법·전세사기특별법·생명안전기본법 등 민생법안과 AI기본법·반도체특별법 등 미래 입법 추진 강조</li><li>노동부, 노란봉투법이 성과급 분쟁 촉발했다는 주장 반박 — "삼성전자 성과급 문제는 2021년 SK하이닉스 합의 이후 시작, 개정 노조법 시행 이전 일"</li><li>지방노동위원회, 경남관광재단 등 지자체·공공기관 발주기관에 대한 원청 사용자성 인정 판정 확대 중</li></ul>
+  <div class="gov-insight">
+    <div class="gov-insight-label">실무 대응 포인트</div>
+    정부가 초과이윤 재분배를 사회적 대화 의제로 공식화하면서, 영업이익·순이익 연동형 성과급이 대기업 임금교섭의 새로운 표준이 될 전망입니다. 사용자는 성과급 지급 기준을 취업규칙·단체협약에 명확히 규정하고, 회계기준·이익 산정 방식·지급 시기 등을 사전에 합의해 분쟁을 예방해야 합니다.
   </div>
 </div>
 </div>
 
 <!-- 섹션 4: JP's Weekly Insight -->
 <div class="nl-section">
-  <div class="sec-label">Section 4 · JP's Weekly Insight</div>
+  <div class="kicker">Section 04 &nbsp;·&nbsp; JP's Weekly Insight</div>
   <div class="qa-wrap">
-  <div class="qa-label">JP's Weekly Insight · 이번 주 가장 많이 받은 질문</div>
-  <div class="qa-q">정년퇴직 후 촉탁직으로 재계약한 직원도 부당해고 구제 대상인가요?</div>
+  <div class="qa-label">JP's Weekly Insight &middot; 이번 주 가장 많이 받은 질문</div>
+  <div class="qa-q">원청 사용자성이 인정되면 하청 노조와 반드시 단체교섭에 응해야 하나요?</div>
   <div class="qa-a-label">공인노무사 JP의 답변</div>
-  <p class="qa-paragraph">중앙노동위원회와 서울행정법원은 정년 후 촉탁계약을 맺은 관리부장에게 '근로계약 갱신 기대권'을 인정하며 부당해고 구제 결정을 확정했습니다(2026.04.09 판결). 촉탁직이라도 반복 갱신으로 계속 근로 기대가 형성되면 근로기준법상 근로자로 보호받습니다.</p><p class="qa-paragraph">실무적으로는 ① 촉탁계약서에 '갱신 없음' 명시 여부 ② 과거 갱신 관행 유무 ③ 계약 종료 사유의 합리성을 종합 판단합니다. 단순히 '촉탁직'이라는 명칭만으로는 갱신거절이 정당화되지 않으며, 사전 통지 및 합리적 사유 제시가 필수입니다.</p><p class="qa-paragraph">정년 후 재고용 시 갱신 한도·평가 기준·종료 사유를 계약서에 구체적으로 명시하고, 매 계약 만료 3개월 전 서면 안내를 통해 예측가능성을 높여야 부당해고 분쟁을 예방할 수 있습니다.</p>
-  <div class="qa-cta">💬 더 궁금한 점은 무료 상담으로 확인하세요.</div>
+  <p class="qa-paragraph">노동조합 및 노동관계조정법 제2조 제2호는 사용자를 '사업주, 사업 경영 담당자, 그 밖에 근로자에 관한 사항에 대하여 사업주를 위하여 행위하는 자'로 정의합니다. 노동위원회가 원청의 사용자성을 인정하면, 원청은 근로조건 결정에 실질적 지배력·영향력을 행사하는 사용자로서 하청 노조와 성실히 교섭할 의무를 집니다(노조법 제30조).</p><p class="qa-paragraph">다만 교섭 의무 범위는 원청이 실제로 결정권한을 가진 사항(임금·근로시간·안전·복리후생 등)에 한정되며, 하청 고유 권한 사항은 제외됩니다. 원청은 교섭 요구서를 받은 날로부터 정당한 사유 없이 거부하거나 해태하면 노조법 제81조 제3호(부당노동행위) 위반으로 2년 이하 징역 또는 2천만원 이하 벌금에 처해질 수 있습니다.</p><p class="qa-paragraph">실무적으로는 하도급 계약서에서 임금·근로시간 등 근로조건 결정 권한을 하청에 명확히 부여하고, 원청의 지휘·감독 범위를 업무 안전·품질 관리 등으로 한정해 사용자성 인정 범위를 최소화해야 합니다. 이미 사용자성이 인정된 경우, 교섭 창구 단일화 절차를 거쳐 교섭 대표 노조를 확정하고, 교섭 가능 사항과 불가능 사항을 명확히 구분해 대응하세요.</p>
+  <div class="qa-cta">💬 <a href="https://open.kakao.com/o/sJpLaborLetter" target="_blank" style="color:#1a6b3a;text-decoration:none;font-weight:700;">카카오톡 오픈채팅으로 무료 상담하기 →</a></div>
 </div>
 </div>
 
-<!-- 섹션 5: CTA -->
+<!-- 섹션 5A: 이번 주 실무 캘린더 -->
+<div class="nl-section">
+  <div class="kicker">Section 05A &nbsp;·&nbsp; 이번 주 실무 캘린더</div>
+  <table class="cal-table">
+  <tr>
+    <th>날짜</th><th>마감 업무</th><th>근거·비고</th>
+  </tr>
+  <tr>
+  <td class="cal-date">5.26(월)</td>
+  <td>5월분 고용·산재보험 보험료 신고·납부 (30인 미만)</td>
+  <td class="cal-note">근로복지공단 EDI 또는 토탈서비스</td>
+</tr><tr>
+  <td class="cal-date">5.27(화)</td>
+  <td>4월 퇴직자 퇴직소득세 신고·납부 기한</td>
+  <td class="cal-note">퇴직일 다음달 말일까지 (소득세법 시행령 제196조)</td>
+</tr><tr>
+  <td class="cal-date">5.30(금)</td>
+  <td>5월분 원천세(근로소득세·4대보험) 신고·납부</td>
+  <td class="cal-note">반기별 납부 사업장 제외</td>
+</tr><tr>
+  <td class="cal-date">5.31(토)</td>
+  <td>2026년 최저임금 심의 근로자위원 추천 마감</td>
+  <td class="cal-note">최저임금위원회 공고 확인</td>
+</tr>
+</table>
+</div>
+
+<!-- 섹션 5C: HR 숫자로 보는 이번 주 -->
+<div class="nl-section">
+  <div class="kicker">Section 05C &nbsp;·&nbsp; HR 숫자로 보는 이번 주</div>
+  <div class="stats-grid"><div class="stat-card">
+  <div class="stat-number">9,860원</div>
+  <div class="stat-label">2026년 최저임금</div>
+  <div class="stat-context">시간급 기준, 월 환산 2,060,740원 (주 40시간·월 209시간 기준, 주휴수당 포함)</div>
+</div><div class="stat-card">
+  <div class="stat-number">8곳</div>
+  <div class="stat-label">원청 사용자성 인정 대형건설사</div>
+  <div class="stat-context">시공능력평가 상위 10개사 중 8곳, 서울지노위 4~5월 연속 판정 (2026.5.27 기준)</div>
+</div><div class="stat-card">
+  <div class="stat-number">3개월</div>
+  <div class="stat-label">부당해고 구제신청 기한</div>
+  <div class="stat-context">해고일로부터 3개월 이내 지방노동위원회 신청 필수 (노조법 제82조)</div>
+</div></div>
+</div>
+
+<!-- CTA 섹션 -->
 <div class="cta-section">
-  <div class="cta-logo">공인노무사 JP</div>
+  <div class="cta-eyebrow">무료 상담</div>
   <h2 class="cta-headline">노동법 궁금증,<br>무료로 해결하세요</h2>
-  <p class="cta-sub">근로계약서 · 임금체불 · 해고 · 퇴직금 · 5인 미만 이슈<br>공인노무사 JP가 직접 답변합니다</p>
-  <a class="cta-btn" href="https://laborjp.tistory.com" target="_blank">무료 상담 신청하기</a>
-  <p class="cta-note">laborjp.tistory.com</p>
+  <p class="cta-sub">근로계약서 · 취업규칙 · 해고 · 휴가 · 5인 미만 이슈부터<br>노동조합 관련 이슈까지<br>공인노무사 JP가 직접 답변합니다</p>
+  <a class="cta-btn" href="https://open.kakao.com/o/sJpLaborLetter" target="_blank">무료 상담 신청하기</a>
+  <p class="cta-note">카카오톡 오픈채팅으로 연결됩니다</p>
 </div>
 
 <!-- 공유 바: CTA 아래, 푸터 위 / 모바일 하단 sticky -->
-<script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js" integrity="sha384-TiCUE00h649CAMonG018J2ujOgDKW/kVWlChEuu4jK2vxfAAD0eZxzCKakxg55G4" crossorigin="anonymous"></script>
 <div class="share-bar">
-  <span class="share-label">공유하기</span>
-  <button class="share-btn share-copy" onclick="nlCopyLink()">🔗 링크 복사</button>
-  <span id="nl-copy-msg">✅ 링크 복사됨!</span>
-  <button class="share-btn share-kakao" onclick="nlShareKakao()">💬 카카오톡</button>
-  <a class="share-btn share-telegram" href="https://t.me/share/url?url=https%3A//eu-labornews.vercel.app/newsletter/newsletter_20260527.html&text=%5BJP%20Labor%20Letter%5D%202026%EB%85%84%205%EC%9B%94%20%EB%84%B7%EC%A7%B8%EC%A3%BC%20%EB%85%B8%EB%8F%99%C2%B7HR%20%ED%95%B5%EC%8B%AC%20%EB%B8%8C%EB%A6%AC%ED%95%91%20%E2%80%94%20%EA%B3%B5%EC%9D%B8%EB%85%B8%EB%AC%B4%EC%82%AC%20JP" target="_blank" rel="noopener">✈️ 텔레그램</a>
+  <div class="share-row">
+    <button class="share-btn share-copy" onclick="nlCopyLink()">🔗 링크 복사</button>
+    <button class="share-btn share-kakao" onclick="nlShareKakao()">💬 카카오톡</button>
+  </div>
+  <div id="nl-copy-msg">✅ 링크 복사됨!</div>
 </div>
+
 <script>
 if (typeof Kakao !== "undefined" && !Kakao.isInitialized()) { Kakao.init("d9aebc68a07b969a791ba9bd2f1f7207"); }
 function nlCopyLink() {
@@ -400,7 +534,7 @@ function nlFallback(url) {
 }
 function nlShowCopy() {
   var m = document.getElementById('nl-copy-msg');
-  m.style.display = 'inline';
+  m.style.display = 'block';
   setTimeout(function() { m.style.display = 'none'; }, 2500);
 }
 function nlShareKakao() {
@@ -408,8 +542,8 @@ function nlShareKakao() {
   Kakao.Share.sendDefault({
     objectType: 'feed',
     content: {
-      title: '[JP Labor Letter] — 공인노무사 JP',
-      description: '2026년 5월 넷째주 노동·HR·건설 핵심 브리핑',
+      title: '[노동 브리핑] 2026년 5월 넷째주 — 공인노무사JP',
+      description: '2026년 5월 넷째주 노동·HR·정책 핵심 브리핑',
       link: { mobileWebUrl: 'https://eu-labornews.vercel.app/newsletter/newsletter_20260527.html', webUrl: 'https://eu-labornews.vercel.app/newsletter/newsletter_20260527.html' },
     },
     buttons: [{ title: '뉴스레터 보기', link: { mobileWebUrl: 'https://eu-labornews.vercel.app/newsletter/newsletter_20260527.html', webUrl: 'https://eu-labornews.vercel.app/newsletter/newsletter_20260527.html' } }],
@@ -419,12 +553,14 @@ function nlShareKakao() {
 
 <!-- 푸터 -->
 <div class="nl-footer">
-  <div class="nf-logo">JP Labor Letter</div>
-  <div class="nf-url">laborjp.tistory.com</div>
-  <div class="nf-disc">
+  <div class="nf-left">
+    <div class="nf-brand">공인노무사JP의 뉴스레터</div>
     본 뉴스레터는 정보 제공 목적으로 작성된 자료입니다.<br>
     구체적인 사안은 전문가 상담을 권장합니다.<br>
-    Powered by Claude AI · © 2026 공인노무사 JP. 무단 복제·배포 금지.
+    Powered by Claude AI &middot; &copy; 2026 공인노무사 JP
+  </div>
+  <div class="nf-right">
+    <a href="https://open.kakao.com/o/sJpLaborLetter" target="_blank">상담 예약</a>
   </div>
 </div>
 
