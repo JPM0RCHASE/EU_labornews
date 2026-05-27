@@ -872,6 +872,50 @@ if ok:
     shutil.copy2(PNG_OUTPUT, PNG_LATEST)
     print(f"✅ PNG 최신 파일 갱신: {PNG_LATEST}")
 
+# ── 텔레그램용 첫 페이지 프리뷰 PNG 생성 ─────────────
+PNG_PREVIEW = f"newsletter/preview_{DATE_STR}.png"
+
+def generate_preview_png(html_rel_path: str, preview_path: str) -> bool:
+    """첫 페이지(viewport)만 캡처한 텔레그램 발송용 프리뷰 PNG."""
+    try:
+        from playwright.sync_api import sync_playwright
+    except ImportError:
+        return False
+
+    with socket.socket() as _s:
+        _s.bind(("", 0))
+        port = _s.getsockname()[1]
+
+    class _SilentHandler(http.server.SimpleHTTPRequestHandler):
+        def log_message(self, *args):
+            pass
+
+    handler_factory = lambda *a, **kw: _SilentHandler(*a, directory=REPO_ROOT, **kw)
+
+    try:
+        with socketserver.TCPServer(("127.0.0.1", port), handler_factory) as httpd:
+            t = threading.Thread(target=httpd.serve_forever, daemon=True)
+            t.start()
+            try:
+                with sync_playwright() as pw:
+                    browser = pw.chromium.launch()
+                    # 1200px 높이 = 뉴스레터 첫 화면(헤더+섹션1 일부)
+                    page = browser.new_page(viewport={"width": 600, "height": 1200})
+                    page.goto(f"http://127.0.0.1:{port}/{html_rel_path}",
+                              wait_until="networkidle", timeout=30_000)
+                    page.wait_for_timeout(2_000)
+                    # full_page=False → viewport 크기만 캡처 (첫 페이지)
+                    page.screenshot(path=preview_path, full_page=False)
+                    browser.close()
+            finally:
+                httpd.shutdown()
+        print(f"✅ 프리뷰 PNG 저장: {preview_path}")
+        return True
+    except Exception as e:
+        print(f"⚠ 프리뷰 PNG 생성 실패: {e}")
+        return False
+
+
 # ── 텔레그램 발송 ─────────────────────────────────────
 def send_telegram_png(png_path: str) -> None:
     if not TELEGRAM_BOT_TOKEN:
@@ -885,7 +929,7 @@ def send_telegram_png(png_path: str) -> None:
         return
 
     caption = (
-        f"📋 인사 노무 브리핑 — {WEEK_LABEL}\n"
+        f"📋 인사 노무 뉴스레터 — {WEEK_LABEL}\n"
         f"━━━━━━━━━━━━━━━━━━\n"
         f"이번 주 인사·노무·정책 핵심 뉴스를 정리했습니다.\n\n"
         f"🔗 전체 보기: {VERCEL_URL}\n"
@@ -910,7 +954,9 @@ def send_telegram_png(png_path: str) -> None:
 
 
 if ok:
-    send_telegram_png(PNG_OUTPUT)
+    print("텔레그램 프리뷰 PNG 생성 중...")
+    preview_ok = generate_preview_png(OUTPUT, PNG_PREVIEW)
+    send_telegram_png(PNG_PREVIEW if preview_ok else PNG_OUTPUT)
 
 print(f"🎉 완료! 웹 URL: {VERCEL_URL}")
 if ok:
