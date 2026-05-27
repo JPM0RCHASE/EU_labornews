@@ -350,22 +350,37 @@ function showCopyMsg() {{
   setTimeout(function() {{ m.style.display = 'none'; }}, 2500);
 }}
 function shareKakao() {{
-  // SDK 초기화 성공 → 카드뉴스 URL을 카카오톡 친구에게 공유
+  var shareUrl  = '{VERCEL_URL}';
+  var shareText = '[JP Labor Letter] 오늘의 인사노무 핵심 브리핑 · {DATE_LABEL}';
+
+  // ① Kakao SDK 정상 초기화 → 카드형 공유 (가장 풍부한 미리보기)
   if (typeof Kakao !== 'undefined' && Kakao.isInitialized()) {{
-    Kakao.Share.sendDefault({{
-      objectType: 'feed',
-      content: {{
-        title: '[JP Labor Letter] — 공인노무사 JP',
-        description: '오늘의 인사노무 핵심 브리핑 · {DATE_LABEL}',
-        imageUrl: '{OG_IMAGE}',
-        link: {{ mobileWebUrl: '{VERCEL_URL}', webUrl: '{VERCEL_URL}' }},
-      }},
-      buttons: [{{ title: '카드뉴스 보기', link: {{ mobileWebUrl: '{VERCEL_URL}', webUrl: '{VERCEL_URL}' }} }}],
-    }});
-  }} else {{
-    // SDK 없거나 초기화 실패 → 오픈채팅방 직접 열기 (항상 동작)
-    window.open('{KAKAO_CHAT_URL}', '_blank');
+    try {{
+      Kakao.Share.sendDefault({{
+        objectType: 'feed',
+        content: {{
+          title: '[JP Labor Letter] — 공인노무사 JP',
+          description: '오늘의 인사노무 핵심 브리핑 · {DATE_LABEL}',
+          imageUrl: '{OG_IMAGE}',
+          link: {{ mobileWebUrl: shareUrl, webUrl: shareUrl }},
+        }},
+        buttons: [{{ title: '카드뉴스 보기', link: {{ mobileWebUrl: shareUrl, webUrl: shareUrl }} }}],
+      }});
+      return;
+    }} catch(e) {{
+      console.warn('Kakao.Share 실패:', e);
+    }}
   }}
+
+  // ② 모바일 네이티브 공유시트 (Android/iOS) — KakaoTalk 포함
+  if (navigator.share) {{
+    navigator.share({{ title: '[JP Labor Letter]', text: shareText, url: shareUrl }})
+      .catch(function(e) {{ console.log('native share cancelled:', e); }});
+    return;
+  }}
+
+  // ③ 최후 fallback: 오픈채팅방 직접 열기
+  window.open('{KAKAO_CHAT_URL}', '_blank');
 }}
 </script>
 </body>

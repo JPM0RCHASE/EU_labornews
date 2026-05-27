@@ -223,19 +223,35 @@ function showCopyMsg() {
   setTimeout(function() { m.style.display = 'none'; }, 2500);
 }
 function shareKakao() {
-  if (typeof Kakao === 'undefined' || !Kakao.isInitialized()) {
-    window.open('https://t.me/share/url?url=https%3A//eu-labornews.vercel.app/20260527/labornews_20260527.html&text=%5BJP%20Labor%20Letter%5D%202026.%2005.%2027.%20%EB%85%B8%EB%8F%99%C2%B7HR%20%ED%95%B5%EC%8B%AC%20%EB%B8%8C%EB%A6%AC%ED%95%91%20%E2%80%94%20%EA%B3%B5%EC%9D%B8%EB%85%B8%EB%AC%B4%EC%82%AC%20JP', '_blank'); return;
+  var shareUrl  = 'https://eu-labornews.vercel.app/20260527/labornews_20260527.html';
+  var shareText = '[JP Labor Letter] 오늘의 인사노무 핵심 브리핑 · 2026. 05. 27.';
+
+  // ① Kakao SDK 정상 초기화 → 카드형 공유
+  if (typeof Kakao !== 'undefined' && Kakao.isInitialized()) {
+    try {
+      Kakao.Share.sendDefault({
+        objectType: 'feed',
+        content: {
+          title: '[JP Labor Letter] — 공인노무사 JP',
+          description: '오늘의 인사노무 핵심 브리핑 · 2026. 05. 27.',
+          imageUrl: 'https://eu-labornews.vercel.app/thumbnail_telegram.png?v=20260527',
+          link: { mobileWebUrl: shareUrl, webUrl: shareUrl },
+        },
+        buttons: [{ title: '카드뉴스 보기', link: { mobileWebUrl: shareUrl, webUrl: shareUrl } }],
+      });
+      return;
+    } catch(e) { console.warn('Kakao.Share 실패:', e); }
   }
-  Kakao.Share.sendDefault({
-    objectType: 'feed',
-    content: {
-      title: '[JP Labor Letter] — 공인노무사 JP',
-      description: '오늘의 인사노무 핵심 브리핑 · 2026. 05. 27.',
-      imageUrl: 'https://eu-labornews.vercel.app/thumbnail_telegram.png?v=20260527',
-      link: { mobileWebUrl: 'https://eu-labornews.vercel.app/20260527/labornews_20260527.html', webUrl: 'https://eu-labornews.vercel.app/20260527/labornews_20260527.html' },
-    },
-    buttons: [{ title: '카드뉴스 보기', link: { mobileWebUrl: 'https://eu-labornews.vercel.app/20260527/labornews_20260527.html', webUrl: 'https://eu-labornews.vercel.app/20260527/labornews_20260527.html' } }],
-  });
+
+  // ② 모바일 네이티브 공유시트 (Android/iOS) — KakaoTalk 앱이 목록에 표시됨
+  if (navigator.share) {
+    navigator.share({ title: '[JP Labor Letter]', text: shareText, url: shareUrl })
+      .catch(function(e) { console.log('share cancelled:', e); });
+    return;
+  }
+
+  // ③ 최후 fallback: 오픈채팅방 직접 열기
+  window.open('https://open.kakao.com/o/gOaNVSwi', '_blank');
 }
 </script>
 </body>
