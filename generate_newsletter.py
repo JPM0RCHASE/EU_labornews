@@ -52,10 +52,11 @@ KEYWORDS = [
     "5인미만 사업장 노동법","주휴수당 알바",
     "퇴직금 소상공인","근로계약서 작성",
     "직원 해고 절차","가짜 프리랜서 3.3",
-    # 섹션 3: 건설/자재 시장
-    "건설경기 전망","건자재 시장","시멘트 출하",
-    "레미콘 건설업","건설수주 착공","건설업 노무",
-    "유진기업 레미콘","골재 건설자재",
+    # 섹션 3: 정부/노동부/국회 정책동향
+    "고용노동부 정책 고시","고용노동부 지침 행정해석",
+    "고용노동부 단속 과태료","국회 환경노동위원회",
+    "노동법 개정안 입법","정부 노동정책 발표",
+    "노동부 행정해석","국회 노동법 통과",
 ]
 
 headers = {"X-Naver-Client-Id": NAVER_CLIENT_ID, "X-Naver-Client-Secret": NAVER_CLIENT_SECRET}
@@ -108,7 +109,7 @@ PROMPT = f"""당신은 공인노무사 JP입니다. 오늘은 {DATE_LABEL} {WEEK
 【생성 규칙】
 1. 반드시 수집된 뉴스 목록에서만 선별할 것 (임의 생성 금지)
 2. 없는 섹션은 공인노무사 JP 실무 인사이트로 대체 (url → https://laborjp.tistory.com)
-3. 건설 섹션이 없으면 건설업 노무·임금 실무 이슈로 대체
+3. 정부/노동부/국회 섹션이 없으면 최근 고용노동부 행정해석·지침 실무 이슈로 대체
 4. JP's Weekly Insight Q&A는 수집 뉴스 기반으로 실제 받을 법한 질문 1개 작성
 5. 모든 제목은 질문형 또는 실용적 표현 권장
 
@@ -143,18 +144,18 @@ JSON만 응답. 다른 텍스트 절대 금지:
     ],
     "action_tip": "즉시 실행 가능한 실무 조언 2~3문장"
   }},
-  "section3_construction": {{
-    "title": "건설·자재 시장 동향",
-    "sub_title": "유진기업·건설업 실무 포인트",
+  "section3_gov_policy": {{
+    "title": "정부·노동부·국회 정책동향",
+    "sub_title": "이번 주 핵심 정책 이슈",
     "source": "언론사명 또는 공인노무사 JP",
     "date": "2026.05.12",
     "url": "https://실제URL 또는 https://laborjp.tistory.com",
-    "market_bullets": [
-      "시장 동향 1",
-      "시장 동향 2",
-      "시장 동향 3"
+    "policy_bullets": [
+      "정책 동향 1 — 구체적 내용",
+      "정책 동향 2",
+      "정책 동향 3"
     ],
-    "labor_insight": "건설업 노무·인사 실무 시사점 2~3문장"
+    "policy_insight": "정책 변화에 따른 실무 시사점 2~3문장"
   }},
   "section4_weekly_insight": {{
     "question": "이번 주 가장 많이 받은 질문을 한 문장으로",
@@ -193,7 +194,7 @@ def safe_parse(text):
         "week_label": WEEK_LABEL,
         "section1_top3": [{"rank":i+1,"source":"공인노무사 JP","date":TODAY.strftime("%Y.%m.%d"),"url":"https://laborjp.tistory.com","category":"노동법 실무","title":f"이번 주 노동·HR 이슈 {i+1}","summary":"뉴스 수집 중 오류. 다음 주 브리핑을 확인해 주세요.","insight":"구체적 사안은 공인노무사 JP에게 문의하세요."} for i in range(3)],
         "section2_five_fewer":{"title":"5인 미만 사업장 핵심 이슈","sub_title":"이번 주 점검 포인트","source":"공인노무사 JP","date":TODAY.strftime("%Y.%m.%d"),"url":"https://laborjp.tistory.com","key_points":["근로계약서 필수 작성","주휴수당 지급 의무 확인","퇴직금 산정 기준 체크","임금체불 예방 조치"],"action_tip":"궁금한 사항은 laborjp.tistory.com에서 무료 상담을 신청하세요."},
-        "section3_construction":{"title":"건설·자재 시장 동향","sub_title":"이번 주 핵심 포인트","source":"공인노무사 JP","date":TODAY.strftime("%Y.%m.%d"),"url":"https://laborjp.tistory.com","market_bullets":["건설업 고용 동향 모니터링 중","자재가격 변동 확인 필요","건설업 노무비 관리 점검"],"labor_insight":"건설업 관련 노무 이슈는 laborjp.tistory.com에서 확인하세요."},
+        "section3_gov_policy":{"title":"정부·노동부·국회 정책동향","sub_title":"이번 주 핵심 정책 이슈","source":"공인노무사 JP","date":TODAY.strftime("%Y.%m.%d"),"url":"https://laborjp.tistory.com","policy_bullets":["고용노동부 정책 동향 모니터링 중","국회 노동법 개정 현황 확인 필요","행정해석 변경 사항 점검"],"policy_insight":"정책 변화에 따른 실무 대응 방법은 laborjp.tistory.com에서 확인하세요."},
         "section4_weekly_insight":{"question":"퇴직금을 분할해서 매월 지급해도 되나요?","answer_paragraphs":["근로기준법상 퇴직금은 퇴직 시 일시에 지급이 원칙입니다.","다만 근로자 동의 시 분할 지급 약정이 가능하며, 서면 동의가 필요합니다.","분할 지급 약정 없이 월급에 포함해 지급하면 퇴직금 선급이 무효화될 수 있습니다."],"cta_line":"더 궁금한 점은 무료 상담으로 확인하세요."}
     }
 
@@ -201,7 +202,7 @@ data = safe_parse(raw)
 week_label = data.get("week_label", WEEK_LABEL)
 top3 = data.get("section1_top3", [])
 five_fewer = data.get("section2_five_fewer", {})
-construction = data.get("section3_construction", {})
+gov_policy = data.get("section3_gov_policy", {})
 weekly_qa = data.get("section4_weekly_insight", {})
 print("뉴스레터 콘텐츠 생성 완료")
 
@@ -246,9 +247,9 @@ CSS_NL = """
   .nl-section:last-of-type { border-bottom: none; }
   .sec-label {
     display: inline-flex; align-items: center; gap: 8px;
-    font-size: 11px; font-weight: 700; letter-spacing: .14em;
-    color: #c9a84c; text-transform: uppercase; margin-bottom: 20px;
-    padding-bottom: 10px; border-bottom: 1px solid #e8e8f0; width: 100%;
+    font-size: 18px; font-weight: 800; letter-spacing: .04em;
+    color: #c9a84c; margin-bottom: 20px;
+    padding-bottom: 10px; border-bottom: 2px solid #c9a84c; width: 100%;
   }
   .sec-label::before { content: ''; width: 18px; height: 2px; background: #c9a84c; }
 
@@ -484,16 +485,16 @@ def render_five_fewer(s):
 </div>"""
 
 
-def render_construction(s):
-    buls = "".join(f"<li>{b}</li>" for b in s.get("market_bullets", []))
+def render_gov_policy(s):
+    buls = "".join(f"<li>{b}</li>" for b in s.get("policy_bullets", []))
     return f"""<div class="const-card">
-  <div class="const-badge">🏗 건설·자재 시장</div>
-  <div class="const-title">{s.get('title','건설·자재 동향')}</div>
+  <div class="const-badge">🏛 정부·노동부·국회</div>
+  <div class="const-title">{s.get('title','정부·노동부·국회 정책동향')}</div>
   <div class="const-sub">{s.get('sub_title','')} · {s.get('source','')} · {s.get('date','')}</div>
   <ul class="const-bullets">{buls}</ul>
   <div class="const-insight">
-    <div class="const-insight-label">노무 실무 포인트</div>
-    {s.get('labor_insight','')}
+    <div class="const-insight-label">실무 대응 포인트</div>
+    {s.get('policy_insight','')}
   </div>
 </div>"""
 
@@ -505,7 +506,7 @@ def render_qa(qa):
   <div class="qa-q">{qa.get('question','')}</div>
   <div class="qa-a-label">공인노무사 JP의 답변</div>
   {paras}
-  <div class="qa-cta">💬 {qa.get('cta_line','더 궁금한 점은 무료 상담으로 확인하세요.')}</div>
+  <div class="qa-cta">💬 <a href="https://open.kakao.com/o/sJpLaborLetter" target="_blank" style="color:#c9a84c;text-decoration:none;font-weight:700;">카카오톡 오픈채팅으로 무료 상담하기 →</a></div>
 </div>"""
 
 
@@ -550,10 +551,10 @@ NEWSLETTER_HTML = f"""<!DOCTYPE html>
   {render_five_fewer(five_fewer)}
 </div>
 
-<!-- 섹션 3: 건설·자재 시장 -->
+<!-- 섹션 3: 정부·노동부·국회 정책동향 -->
 <div class="nl-section">
-  <div class="sec-label">Section 3 · 건설/자재 시장 동향 + 노동 이슈</div>
-  {render_construction(construction)}
+  <div class="sec-label">Section 3 · 정부·노동부·국회 정책동향</div>
+  {render_gov_policy(gov_policy)}
 </div>
 
 <!-- 섹션 4: JP's Weekly Insight -->
@@ -566,9 +567,9 @@ NEWSLETTER_HTML = f"""<!DOCTYPE html>
 <div class="cta-section">
   <div class="cta-logo">공인노무사 JP</div>
   <h2 class="cta-headline">노동법 궁금증,<br>무료로 해결하세요</h2>
-  <p class="cta-sub">근로계약서 · 임금체불 · 해고 · 퇴직금 · 5인 미만 이슈<br>공인노무사 JP가 직접 답변합니다</p>
-  <a class="cta-btn" href="https://laborjp.tistory.com" target="_blank">무료 상담 신청하기</a>
-  <p class="cta-note">laborjp.tistory.com</p>
+  <p class="cta-sub">근로계약서 · 취업규칙 · 해고 · 휴가 · 5인 미만 이슈부터 노동조합 관련 이슈까지<br>공인노무사 JP가 직접 답변합니다</p>
+  <a class="cta-btn" href="https://open.kakao.com/o/sJpLaborLetter" target="_blank">무료 상담 신청하기</a>
+  <p class="cta-note">카카오톡 오픈채팅으로 연결됩니다</p>
 </div>
 
 <!-- 공유 바: CTA 아래, 푸터 위 / 모바일 하단 sticky -->
