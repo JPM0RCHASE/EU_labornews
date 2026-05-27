@@ -28,6 +28,7 @@ NAVER_CLIENT_SECRET = os.environ["NAVER_CLIENT_SECRET"]
 MAILY_API_KEY       = os.environ.get("MAILY_API_KEY", "")
 MAILY_PROJECT_ID    = os.environ.get("MAILY_PROJECT_ID", "")
 KAKAO_JS_KEY        = os.environ.get("KAKAO_JS_KEY", "")
+KAKAO_CHAT_URL      = "https://open.kakao.com/o/gOaNVSwi"   # 공인노무사JP 오픈채팅방
 
 # ── 날짜 설정 ─────────────────────────────────────────
 KST        = timezone(timedelta(hours=9))
@@ -140,10 +141,13 @@ PROMPT = f"""당신은 공인노무사 JP입니다. 오늘은 {DATE_LABEL} {WEEK
 【생성 규칙】
 1. 반드시 수집된 뉴스 목록에서만 선별할 것 (임의 생성 금지)
 2. 없는 섹션은 공인노무사 JP 실무 인사이트로 대체 (url → https://laborjp.tistory.com)
-3. section1_top3 선별 시: ★메이저 표시된 조선·중앙·동아·한겨레·경향·KBS·MBC·SBS·JTBC·연합뉴스 기사를 최우선 선별. 메이저 기사 부족 시에만 다른 매체 사용
-4. section3_weekly_insight의 질문 도출 근거도 메이저 언론사 기사를 우선 참고
-5. JP's Weekly Insight Q&A는 수집 뉴스 기반으로 실제 받을 법한 질문 1개 작성
-6. 모든 제목은 질문형 또는 실용적 표현 권장
+3. 【섹션 중복 방지 — 최우선 규칙】
+   STEP 1: section2_gov_policy 기사를 먼저 선택한다 (고용노동부·국회·정부 정책 관련 기사 우선)
+   STEP 2: section1_top3 기사는 반드시 STEP 1에서 사용한 기사와 동일하거나 주제(토픽)가 겹치는 기사를 제외하고 선별한다. 두 섹션의 뉴스 주제는 절대 겹쳐서는 안 된다.
+4. section1_top3 선별 시: ★메이저 표시된 조선·중앙·동아·한겨레·경향·KBS·MBC·SBS·JTBC·연합뉴스 기사를 최우선 선별. 메이저 기사 부족 시에만 다른 매체 사용
+5. section3_weekly_insight의 질문 도출 근거도 메이저 언론사 기사를 우선 참고
+6. JP's Weekly Insight Q&A는 수집 뉴스 기반으로 실제 받을 법한 질문 1개 작성
+7. 모든 제목은 질문형 또는 실용적 표현 권장
 
 JSON만 응답. 다른 텍스트 절대 금지:
 {{
@@ -458,7 +462,6 @@ CSS_NL = """
 
   /* CTA */
   .cta-section { background: #1a6b3a; padding: 36px 32px; text-align: center; }
-  .cta-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: .2em; color: rgba(255,255,255,.65); text-transform: uppercase; margin-bottom: 12px; }
   .cta-headline {
     font-family: 'Playfair Display', Georgia, serif;
     font-size: 24px; font-weight: 900; color: #fff;
@@ -567,7 +570,7 @@ def render_qa(qa: dict) -> str:
         '<div class="qa-a-label">공인노무사 JP의 답변</div>'
         f"{paras}"
         '<div class="qa-cta">💬 '
-        '<a href="https://open.kakao.com/o/sJpLaborLetter" target="_blank" '
+        '<a href="https://open.kakao.com/o/gOaNVSwi" target="_blank" '
         'style="color:#1a6b3a;text-decoration:none;font-weight:700;">'
         "카카오톡 오픈채팅으로 무료 상담하기 →</a></div>"
         "</div>"
@@ -591,7 +594,8 @@ def render_five_fewer(s: dict) -> str:
     )
 
 
-# 카카오 관련 태그/JS (KAKAO_JS_KEY 있을 때만)
+# ── 카카오 SDK: 키가 있을 때만 로드 ──────────────────
+# SDK 없어도 공유 버튼은 항상 활성 (fallback: 오픈채팅방 직접 열기)
 kakao_sdk_tag = (
     '<script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js"'
     ' integrity="sha384-TiCUE00h649CAMonG018J2ujOgDKW/kVWlChEuu4jK2vxfAAD0eZxzCKakxg55G4"'
@@ -603,11 +607,8 @@ kakao_init_js = (
     f'{{ Kakao.init("{KAKAO_JS_KEY}"); }}'
 ) if KAKAO_JS_KEY else ""
 
-kakao_btn = (
-    '<button class="share-btn share-kakao" onclick="nlShareKakao()">💬 카카오톡</button>'
-    if KAKAO_JS_KEY
-    else '<button class="share-btn share-kakao" style="opacity:.4;cursor:default;" disabled>💬 카카오톡</button>'
-)
+# 버튼은 항상 활성: SDK 있으면 뉴스레터 공유, 없으면 오픈채팅방으로 이동
+kakao_btn = '<button class="share-btn share-kakao" onclick="nlShareKakao()">💬 카카오톡</button>'
 
 # ── 최종 HTML 조립 ────────────────────────────────────
 NEWSLETTER_HTML = (
@@ -672,11 +673,10 @@ NEWSLETTER_HTML = (
 
     # CTA
     '<div class="cta-section">\n'
-    '  <div class="cta-eyebrow">무료 상담</div>\n'
     '  <h2 class="cta-headline">노동법 궁금증,<br>무료로 해결하세요</h2>\n'
     '  <p class="cta-sub">근로계약서 · 취업규칙 · 해고 · 휴가 · 5인 미만 이슈부터<br>'
     "노동조합 관련 이슈까지<br>공인노무사 JP가 직접 답변합니다</p>\n"
-    '  <a class="cta-btn" href="https://open.kakao.com/o/sJpLaborLetter" target="_blank">무료 상담 신청하기</a>\n'
+    '  <a class="cta-btn" href="https://open.kakao.com/o/gOaNVSwi" target="_blank">무료 상담 신청하기</a>\n'
     '  <p class="cta-note">카카오톡 오픈채팅으로 연결됩니다</p>\n'
     "</div>\n"
 
@@ -698,7 +698,7 @@ NEWSLETTER_HTML = (
     "    Powered by Claude AI &middot; &copy; 2026 공인노무사 JP\n"
     "  </div>\n"
     '  <div class="nf-right">\n'
-    '    <a href="https://open.kakao.com/o/sJpLaborLetter" target="_blank">상담 예약 →</a>\n'
+    '    <a href="https://open.kakao.com/o/gOaNVSwi" target="_blank">상담 예약 →</a>\n'
     "  </div>\n"
     "</div>\n"
     "</div><!-- /email-wrap -->\n"
@@ -727,16 +727,21 @@ NEWSLETTER_HTML = (
     "  setTimeout(function() { m.style.display = 'none'; }, 2500);\n"
     "}\n"
     "function nlShareKakao() {\n"
-    "  if (typeof Kakao === 'undefined' || !Kakao.isInitialized()) { return; }\n"
-    "  Kakao.Share.sendDefault({\n"
-    "    objectType: 'feed',\n"
-    "    content: {\n"
-    f"      title: '[인사 노무 브리핑] {week_label} — 공인노무사JP',\n"
-    f"      description: '{week_label} 노동·HR·정책 핵심 브리핑',\n"
-    f"      link: {{ mobileWebUrl: '{VERCEL_URL}', webUrl: '{VERCEL_URL}' }},\n"
-    "    },\n"
-    f"    buttons: [{{ title: '뉴스레터 보기', link: {{ mobileWebUrl: '{VERCEL_URL}', webUrl: '{VERCEL_URL}' }} }}],\n"
-    "  });\n"
+    "  // SDK 초기화 성공 → 뉴스레터 URL을 카카오톡 친구에게 공유\n"
+    "  if (typeof Kakao !== 'undefined' && Kakao.isInitialized()) {\n"
+    "    Kakao.Share.sendDefault({\n"
+    "      objectType: 'feed',\n"
+    "      content: {\n"
+    f"        title: '[인사 노무 브리핑] {week_label} — 공인노무사JP',\n"
+    f"        description: '{week_label} 노동·HR·정책 핵심 브리핑',\n"
+    f"        link: {{ mobileWebUrl: '{VERCEL_URL}', webUrl: '{VERCEL_URL}' }},\n"
+    "      },\n"
+    f"      buttons: [{{ title: '뉴스레터 보기', link: {{ mobileWebUrl: '{VERCEL_URL}', webUrl: '{VERCEL_URL}' }} }}],\n"
+    "    });\n"
+    "  } else {\n"
+    "    // SDK 없거나 초기화 실패 → 오픈채팅방으로 바로 이동 (항상 동작)\n"
+    f"    window.open('{KAKAO_CHAT_URL}', '_blank');\n"
+    "  }\n"
     "}\n"
     "</script>\n"
     "</body>\n"
