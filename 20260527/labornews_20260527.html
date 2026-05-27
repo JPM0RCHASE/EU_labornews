@@ -65,23 +65,20 @@ body{background:var(--navy);color:var(--text-body);font-family:'Apple SD Gothic 
 /* ── 공유 바 ── */
 .share-bar{
   background:#111827;border-top:1px solid var(--navy-border);
-  padding:14px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;
-  margin-top:16px;
-  /* 모바일 하단 sticky */
+  padding:12px 16px 10px;
   position:sticky;bottom:0;z-index:90;
 }
-.share-label{font-size:12px;color:var(--text-muted);margin-right:2px}
+.share-row{display:flex;gap:10px;}
 .share-btn{
-  display:inline-flex;align-items:center;gap:6px;
-  padding:9px 16px;font-size:13px;font-weight:700;
-  border:none;border-radius:4px;cursor:pointer;
+  flex:1;display:flex;align-items:center;justify-content:center;gap:6px;
+  padding:13px 0;font-size:15px;font-weight:700;
+  border:none;border-radius:6px;cursor:pointer;
   text-decoration:none;transition:opacity .2s;
 }
 .share-btn:hover{opacity:.82}
 .share-copy{background:var(--navy-border);color:var(--cream)}
 .share-kakao{background:#FEE500;color:#3A1D1D}
-.share-telegram{background:#0088cc;color:#fff}
-#copy-msg{font-size:12px;color:var(--gold);display:none;white-space:nowrap}
+#copy-msg{font-size:12px;color:var(--gold);display:none;text-align:center;padding-top:6px;}
 /* ── 푸터 ── */
 .footer{border-top:1px solid var(--navy-border);background:#111827;padding:24px 20px;text-align:center;margin-top:0}
 .footer-logo{font-size:14px;font-weight:700;color:var(--gold);margin-bottom:6px}
@@ -96,99 +93,99 @@ body{background:var(--navy);color:var(--text-body);font-family:'Apple SD Gothic 
   <div class="headline-list"><a class="headline-item" href="#news1">
   <div class="headline-num">1</div>
   <div class="headline-content">
-    <div class="headline-source">📰 중앙일보 · 2026.05.27</div>
-    <div class="headline-title">노란봉투법 분쟁 확산…포스코·SK에너지 등 재심 10건 접수</div>
+    <div class="headline-source">📰 문화일보 · 2026.05.27</div>
+    <div class="headline-title">대형건설사 8곳 '원청 사용자성' 인정...파업·비용 급증 직면</div>
     <span class="headline-tag tag-high">🔴 핵심 이슈</span>
   </div>
 </a><a class="headline-item" href="#news2">
   <div class="headline-num">2</div>
   <div class="headline-content">
     <div class="headline-source">📰 YTN · 2026.05.27</div>
-    <div class="headline-title">삼성전자 '최대 6억 성과급' 합의안 투표…산업계 전체 노사분쟁 도화선 우려</div>
+    <div class="headline-title">삼성전자 '억대 성과급' 가결...주요 계열사 성과급 확산 조짐</div>
     <span class="headline-tag tag-high">🔴 핵심 이슈</span>
   </div>
 </a><a class="headline-item" href="#news3">
   <div class="headline-num">3</div>
   <div class="headline-content">
-    <div class="headline-source">📰 연합뉴스 · 2026.05.27</div>
-    <div class="headline-title">울산동부노동지청장 '노란봉투법 안착·중대재해 엄정 집행' 강조</div>
-    <span class="headline-tag tag-med">⚠ 주의</span>
+    <div class="headline-source">📰 YTN · 2026.05.27</div>
+    <div class="headline-title">노란봉투법, 성과급 논쟁 키울까...하청 공존 논의 본격화</div>
+    <span class="headline-tag tag-med">⚠ 주요 동향</span>
   </div>
 </a><a class="headline-item" href="#news4">
   <div class="headline-num">4</div>
   <div class="headline-content">
     <div class="headline-source">📰 매일노동뉴스 · 2026.05.27</div>
-    <div class="headline-title">양당 공통공약 '5인 미만 사업장 근로기준법'…국민의힘은 노조법 재개정 추진</div>
-    <span class="headline-tag tag-med">⚠ 주의</span>
+    <div class="headline-title">노동부 해석지침으로 공공부문 원청교섭 사실상 봉쇄</div>
+    <span class="headline-tag tag-med">⚠ 주요 동향</span>
   </div>
 </a><a class="headline-item" href="#news5">
   <div class="headline-num">5</div>
   <div class="headline-content">
-    <div class="headline-source">📰 서울신문 · 2026.05.27</div>
-    <div class="headline-title">산업부·노동부, K-뉴딜 아카데미로 청년 1만명 직업훈련 지원</div>
-    <span class="headline-tag tag-info">ℹ 정보</span>
+    <div class="headline-source">📰 한겨레 · 2026.05.27</div>
+    <div class="headline-title">노란봉투법·지역의사제 성과...65살 정년연장은 묘수 찾아야</div>
+    <span class="headline-tag tag-info">ℹ 참고 정보</span>
   </div>
 </a></div>
 </section>
 <div class="news-card" id="news1">
-  <div class="source-bar"><span class="source-name">📰 중앙일보</span><span class="source-date">2026.05.27</span></div>
+  <div class="source-bar"><span class="source-name">📰 문화일보</span><span class="source-date">2026.05.27</span></div>
   <div class="card-inner">
     <div class="risk-tag risk-high">🔴 핵심 이슈</div>
     <div class="card-category">노란봉투법</div>
-    <h2 class="card-title">노란봉투법 분쟁 확산…포스코·SK에너지 등 재심 10건 접수</h2>
-    <ul class="bullet-list"><li>중노위 재심 사건 총 10건 접수, 포스코·SK에너지·인천국제공항공사 등 주요 기업 포함</li><li>하청 노조의 원청 교섭 요구 급증, 교섭창구 단일화 절차와 사용자성 판단 기준이 쟁점</li><li>백화점·면세점 영업시간까지 원청 교섭 대상 인정, 서울지노위 '우월적 지위로 사용자성 판단'</li></ul>
-    <div class="insight"><div class="insight-label">실무 시사점</div><div class="insight-text">노조법 개정 후 원청 책임 범위가 확대되며 주요 기업들의 교섭 부담 급증. 재심 결과에 따라 산업계 전반의 노사관계 재편 예상</div></div>
+    <h2 class="card-title">대형건설사 8곳 '원청 사용자성' 인정...파업·비용 급증 직면</h2>
+    <ul class="bullet-list"><li>시공능력 상위 10개 건설사 중 8곳, 하청노조 대상 사용자성 줄줄이 인정</li><li>노란봉투법 시행 후 원청 대상 하청노조 교섭 요구 급증, 건설업계 긴장</li><li>타워크레인 노조 총파업으로 전국 공공공사 85% 셧다운 위기 직면</li></ul>
+    <div class="insight"><div class="insight-label">실무 시사점</div><div class="insight-text">노조법 개정 후 원청 사용자성 인정 사례가 급증하면서 건설·제조업 전반에 교섭 요구와 파업 리스크가 확산되고 있습니다. 하청업체 관리 사업장은 사용자성 판단 기준을 명확히 검토해야 합니다.</div></div>
   </div>
-  <div class="read-more"><span class="wm-small">© JP Labor News</span><a href="https://www.joongang.co.kr/article/25431509" target="_blank">자세히 보기</a></div>
+  <div class="read-more"><span class="wm-small">© JP Labor News</span><a href="https://www.munhwa.com/article/11591579?ref=naver" target="_blank">자세히 보기</a></div>
 </div><div class="news-card" id="news2">
   <div class="source-bar"><span class="source-name">📰 YTN</span><span class="source-date">2026.05.27</span></div>
   <div class="card-inner">
     <div class="risk-tag risk-high">🔴 핵심 이슈</div>
     <div class="card-category">대기업 노사</div>
-    <h2 class="card-title">삼성전자 '최대 6억 성과급' 합의안 투표…산업계 전체 노사분쟁 도화선 우려</h2>
-    <ul class="bullet-list"><li>삼성전자 노조 합의안 투표 결과 오전 발표, 가결 시 총파업 위기는 면하나 DS·DX 부문 간 노노갈등 심화</li><li>블룸버그 '성과급 30조 규모 예상', 노란봉투법으로 공급망 전체 이익 공유 압력 강화</li><li>현대차 노조도 순이익 30% 성과급·정년연장 요구, 조선업계는 수주 증가로 성과급 요구 목소리 커져</li></ul>
-    <div class="insight"><div class="insight-label">실무 시사점</div><div class="insight-text">주요 대기업의 초과 성과급 합의는 전 산업계 임단협 기준선 상향으로 작용. 노조 요구 강도 증가와 노사분쟁 확산 대비 필요</div></div>
+    <h2 class="card-title">삼성전자 '억대 성과급' 가결...주요 계열사 성과급 확산 조짐</h2>
+    <ul class="bullet-list"><li>삼성전자 노사 '영업이익 연동 성과급' 합의안 73% 찬성으로 가결, 총파업 위기 해소</li><li>삼성바이오로직스 등 주요 계열사에서도 영업이익 연동 보상 체계 요구 이어져</li><li>일부 주주들 '무효소송' 예고하며 성과급 배분 논쟁 산업계 전반 확산 전망</li></ul>
+    <div class="insight"><div class="insight-label">실무 시사점</div><div class="insight-text">대기업 성과급 연동 체계가 계열사로 확산되면서 임금교섭 난이도가 높아지고 있습니다. 성과 배분 기준과 주주 이해관계를 고려한 정교한 보상 설계가 필요합니다.</div></div>
   </div>
-  <div class="read-more"><span class="wm-small">© JP Labor News</span><a href="https://www.ytn.co.kr/_ln/0102_202605270945348536" target="_blank">자세히 보기</a></div>
+  <div class="read-more"><span class="wm-small">© JP Labor News</span><a href="https://www.ytn.co.kr/_ln/0102_202605272207074978" target="_blank">자세히 보기</a></div>
 </div><div class="news-card" id="news3">
-  <div class="source-bar"><span class="source-name">📰 연합뉴스</span><span class="source-date">2026.05.27</span></div>
+  <div class="source-bar"><span class="source-name">📰 YTN</span><span class="source-date">2026.05.27</span></div>
   <div class="card-inner">
-    <div class="risk-tag risk-med">⚠ 주의</div>
-    <div class="card-category">노동행정</div>
-    <h2 class="card-title">울산동부노동지청장 '노란봉투법 안착·중대재해 엄정 집행' 강조</h2>
-    <ul class="bullet-list"><li>김상중 초대 울산동부노동지청장, '노동 1번지'에서 안정적 노사관계 유지와 산재예방 성과 목표</li><li>고위험 작업장·중대재해 발생 사업장에 대한 엄정한 법 집행과 집중 감독 예고</li><li>영세 소규모 사업장까지 감독 범위 확대, 노란봉투법 시행 후 노동행정 강화 기조</li></ul>
-    <div class="insight"><div class="insight-label">실무 시사점</div><div class="insight-text">울산 등 제조업 밀집 지역 노동지청의 감독 강화로 원청·하청 포함 전반적 노무관리 리스크 증가. 선제적 컴플라이언스 점검 필수</div></div>
+    <div class="risk-tag risk-med">⚠ 주요 동향</div>
+    <div class="card-category">노사관계</div>
+    <h2 class="card-title">노란봉투법, 성과급 논쟁 키울까...하청 공존 논의 본격화</h2>
+    <ul class="bullet-list"><li>노동계, 하청업체와도 성과를 나눠야 한다는 주장 제기</li><li>노란봉투법 통해 하청업체의 성과 배분 요구 현실화 가능성 분석</li><li>원청-하청 공존 방안 논의 본격화, 성과급 분배 구조 재편 전망</li></ul>
+    <div class="insight"><div class="insight-label">실무 시사점</div><div class="insight-text">원청 사용자성 인정이 성과급 배분 논쟁으로 확대되면서 하청노조의 처우 개선 요구가 강화될 전망입니다. 원·하청 통합 보상 체계 검토가 필요한 시점입니다.</div></div>
   </div>
-  <div class="read-more"><span class="wm-small">© JP Labor News</span><a href="https://www.yna.co.kr/view/AKR20260526151100057?input=1195m" target="_blank">자세히 보기</a></div>
+  <div class="read-more"><span class="wm-small">© JP Labor News</span><a href="https://www.ytn.co.kr/_ln/0103_202605272207360037" target="_blank">자세히 보기</a></div>
 </div><div class="news-card" id="news4">
   <div class="source-bar"><span class="source-name">📰 매일노동뉴스</span><span class="source-date">2026.05.27</span></div>
   <div class="card-inner">
-    <div class="risk-tag risk-med">⚠ 주의</div>
-    <div class="card-category">국회 입법</div>
-    <h2 class="card-title">양당 공통공약 '5인 미만 사업장 근로기준법'…국민의힘은 노조법 재개정 추진</h2>
-    <ul class="bullet-list"><li>지방선거 앞두고 양당 모두 5인 미만 사업장 근로기준법 적용 확대 공약화</li><li>국민의힘, 개정 노조법 재개정 의사 재확인…원청 사용자성과 교섭범위 명확화 주장</li><li>노조법 개정 후 3개월, 정치권의 재개정 논의로 법 해석과 적용 불확실성 지속</li></ul>
-    <div class="insight"><div class="insight-label">실무 시사점</div><div class="insight-text">노조법 재개정 논의로 원청 교섭 범위 등 핵심 쟁점의 법적 불확실성 장기화. 당분간 노동위 판정 추이 예의주시 필요</div></div>
+    <div class="risk-tag risk-med">⚠ 주요 동향</div>
+    <div class="card-category">노동부 지침</div>
+    <h2 class="card-title">노동부 해석지침으로 공공부문 원청교섭 사실상 봉쇄</h2>
+    <ul class="bullet-list"><li>노조법 개정됐지만 노동부 해석지침으로 공공부문 원청교섭 사실상 봉쇄 상황</li><li>중앙부처·지자체, '모범사용자' 자처하면서도 교섭 회피하는 이중 태도 지적</li><li>공공부문 비정규직, 7월 총파업 예고하며 '모범사용자 정부' 관철 압박</li></ul>
+    <div class="insight"><div class="insight-label">실무 시사점</div><div class="insight-text">노조법 개정에도 불구하고 고용노동부의 해석지침이 공공부문 원청교섭을 제한하면서 법 취지와 현장 적용 간 괴리가 발생하고 있습니다. 공공기관은 7월 파업 리스크 대비가 필요합니다.</div></div>
   </div>
-  <div class="read-more"><span class="wm-small">© JP Labor News</span><a href="https://www.labortoday.co.kr/news/articleView.html?idxno=234608" target="_blank">자세히 보기</a></div>
+  <div class="read-more"><span class="wm-small">© JP Labor News</span><a href="http://worknworld.kctu.org/news/articleView.html?idxno=509335" target="_blank">자세히 보기</a></div>
 </div><div class="news-card" id="news5">
-  <div class="source-bar"><span class="source-name">📰 서울신문</span><span class="source-date">2026.05.27</span></div>
+  <div class="source-bar"><span class="source-name">📰 한겨레</span><span class="source-date">2026.05.27</span></div>
   <div class="card-inner">
-    <div class="risk-tag risk-info">ℹ 정보</div>
-    <div class="card-category">HR정책</div>
-    <h2 class="card-title">산업부·노동부, K-뉴딜 아카데미로 청년 1만명 직업훈련 지원</h2>
-    <ul class="bullet-list"><li>산업부·고용노동부, 15~34세 미취업 청년 1만명 대상 K-뉴딜 아카데미 운영</li><li>SK·현대차·KB국민은행 등 10대 그룹 참여, 기업 훈련비·청년 훈련수당 지원</li><li>장기 실업 등 취약 청년 우대, 실무 중심 직업훈련으로 노동시장 진입 지원</li></ul>
-    <div class="insight"><div class="insight-label">실무 시사점</div><div class="insight-text">정부 지원 활용한 청년 인력 확보 기회. 주요 기업 참여로 검증된 프로그램이며 훈련비 지원으로 채용 비용 절감 가능</div></div>
+    <div class="risk-tag risk-info">ℹ 참고 정보</div>
+    <div class="card-category">노동정책</div>
+    <h2 class="card-title">노란봉투법·지역의사제 성과...65살 정년연장은 묘수 찾아야</h2>
+    <ul class="bullet-list"><li>3월 시행된 노란봉투법, 하청노동자 처우 개선에 큰 변화 가져와</li><li>지역의사제 등 정책적 성과 있으나 65세 정년연장은 여전히 난제</li><li>노사관계 변화 속에서 정년연장 실효성 있는 방안 모색 필요</li></ul>
+    <div class="insight"><div class="insight-label">실무 시사점</div><div class="insight-text">노란봉투법 시행이 노사관계의 큰 전환점이 된 가운데, 정년연장 등 중장기 인사정책 과제에 대한 사회적 합의 도출이 시급합니다.</div></div>
   </div>
-  <div class="read-more"><span class="wm-small">© JP Labor News</span><a href="https://www.seoul.co.kr/news/economy/industry/2026/05/27/20260527032002?wlog_tag3=naver" target="_blank">자세히 보기</a></div>
+  <div class="read-more"><span class="wm-small">© JP Labor News</span><a href="https://www.hani.co.kr/arti/society/society_general/1260706.html" target="_blank">자세히 보기</a></div>
 </div>
 
 <!-- ── 공유 바: 마지막 카드 아래, 푸터 위 ── -->
 <div class="share-bar">
-  <span class="share-label">공유하기</span>
-  <button class="share-btn share-copy" onclick="copyLink()">🔗 링크 복사</button>
-  <span id="copy-msg">✅ 링크 복사됨!</span>
-  <button class="share-btn share-kakao" onclick="shareKakao()">💬 카카오톡</button>
-  <a class="share-btn share-telegram" href="https://t.me/share/url?url=https%3A//eu-labornews.vercel.app/20260527/labornews_20260527.html&text=%5BJP%20Labor%20Letter%5D%202026.%2005.%2027.%20%EB%85%B8%EB%8F%99%C2%B7HR%20%ED%95%B5%EC%8B%AC%20%EB%B8%8C%EB%A6%AC%ED%95%91%20%E2%80%94%20%EA%B3%B5%EC%9D%B8%EB%85%B8%EB%AC%B4%EC%82%AC%20JP" target="_blank" rel="noopener">✈️ 텔레그램</a>
+  <div class="share-row">
+    <button class="share-btn share-copy" onclick="copyLink()">🔗 링크 복사</button>
+    <button class="share-btn share-kakao" onclick="shareKakao()">💬 카카오톡</button>
+  </div>
+  <div id="copy-msg">✅ 링크 복사됨!</div>
 </div>
 
 <footer class="footer">
@@ -197,11 +194,7 @@ body{background:var(--navy);color:var(--text-body);font-family:'Apple SD Gothic 
 </footer>
 
 <script>
-
-  if (typeof Kakao !== 'undefined') {
-    if (!Kakao.isInitialized()) { Kakao.init('d9aebc68a07b969a791ba9bd2f1f7207'); }
-  }
-
+  if (typeof Kakao !== "undefined" && !Kakao.isInitialized()) { Kakao.init("d9aebc68a07b969a791ba9bd2f1f7207"); }
 function copyLink() {
   var url = 'https://eu-labornews.vercel.app/20260527/labornews_20260527.html';
   if (navigator.clipboard && navigator.clipboard.writeText) {
