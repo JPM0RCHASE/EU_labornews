@@ -12,7 +12,7 @@ JP Labor Letter - 주간 뉴스레터 생성 및 Maily 발송
 발행: Maily API (https://maily.so)
 저장: newsletter/ 폴더 (날짜별 HTML)
 """
-import os, re, json, requests
+import os, re, json, requests, urllib.parse
 from datetime import datetime, timezone, timedelta
 import anthropic
 
@@ -20,8 +20,9 @@ import anthropic
 ANTHROPIC_API_KEY   = os.environ["ANTHROPIC_API_KEY"]
 NAVER_CLIENT_ID     = os.environ["NAVER_CLIENT_ID"]
 NAVER_CLIENT_SECRET = os.environ["NAVER_CLIENT_SECRET"]
-MAILY_API_KEY       = os.environ.get("MAILY_API_KEY", "")   # Maily API 키 (maily.so 대시보드에서 발급)
-MAILY_PROJECT_ID    = os.environ.get("MAILY_PROJECT_ID", "") # Maily 프로젝트(채널) ID
+MAILY_API_KEY       = os.environ.get("MAILY_API_KEY", "")    # Maily API 키 (maily.so 대시보드에서 발급)
+MAILY_PROJECT_ID    = os.environ.get("MAILY_PROJECT_ID", "")  # Maily 프로젝트(채널) ID
+KAKAO_JS_KEY        = os.environ.get("KAKAO_JS_KEY", "")      # 카카오 JavaScript 키 (선택)
 
 # ── 날짜 설정 ──────────────────────────────────────────
 KST         = timezone(timedelta(hours=9))
@@ -407,6 +408,26 @@ CSS_NL = """
   .cta-btn:hover { background: #e2c278; }
   .cta-note { font-size: 11px; color: #4a5569; margin-top: 14px; }
 
+  /* 공유 바 */
+  .share-bar {
+    background: #111827; border-top: 1px solid #1f3260;
+    padding: 14px 32px; display: flex; align-items: center;
+    gap: 10px; flex-wrap: wrap;
+    position: sticky; bottom: 0; z-index: 90;
+  }
+  .share-label { font-size: 12px; color: #7a8299; }
+  .share-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 9px 16px; font-size: 13px; font-weight: 700;
+    border: none; border-radius: 4px; cursor: pointer;
+    text-decoration: none; transition: opacity .2s;
+  }
+  .share-btn:hover { opacity: .82; }
+  .share-copy     { background: #1f3260; color: #f5f0e8; }
+  .share-kakao    { background: #FEE500; color: #3A1D1D; }
+  .share-telegram { background: #0088cc; color: #fff; }
+  #nl-copy-msg { font-size: 12px; color: #c9a84c; display: none; white-space: nowrap; }
+
   /* 푸터 */
   .nl-footer {
     background: #111827; padding: 24px 32px;
@@ -549,6 +570,49 @@ NEWSLETTER_HTML = f"""<!DOCTYPE html>
   <a class="cta-btn" href="https://laborjp.tistory.com" target="_blank">무료 상담 신청하기</a>
   <p class="cta-note">laborjp.tistory.com</p>
 </div>
+
+<!-- 공유 바: CTA 아래, 푸터 위 / 모바일 하단 sticky -->
+{'<script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js" integrity="sha384-TiCUE00h649CAMonG018J2ujOgDKW/kVWlChEuu4jK2vxfAAD0eZxzCKakxg55G4" crossorigin="anonymous"></script>' if KAKAO_JS_KEY else ''}
+<div class="share-bar">
+  <span class="share-label">공유하기</span>
+  <button class="share-btn share-copy" onclick="nlCopyLink()">🔗 링크 복사</button>
+  <span id="nl-copy-msg">✅ 링크 복사됨!</span>
+  {'<button class="share-btn share-kakao" onclick="nlShareKakao()">💬 카카오톡</button>' if KAKAO_JS_KEY else ''}
+  <a class="share-btn share-telegram" href="https://t.me/share/url?url={urllib.parse.quote(VERCEL_URL)}&text={urllib.parse.quote(f'[JP Labor Letter] {week_label} 노동·HR 핵심 브리핑 — 공인노무사 JP')}" target="_blank" rel="noopener">✈️ 텔레그램</a>
+</div>
+<script>
+{'if (typeof Kakao !== "undefined" && !Kakao.isInitialized()) { Kakao.init("' + KAKAO_JS_KEY + '"); }' if KAKAO_JS_KEY else ''}
+function nlCopyLink() {{
+  var url = '{VERCEL_URL}';
+  if (navigator.clipboard && navigator.clipboard.writeText) {{
+    navigator.clipboard.writeText(url).then(function() {{ nlShowCopy(); }}).catch(function() {{ nlFallback(url); }});
+  }} else {{ nlFallback(url); }}
+}}
+function nlFallback(url) {{
+  var ta = document.createElement('textarea');
+  ta.value = url; ta.style.position = 'fixed'; ta.style.opacity = '0';
+  document.body.appendChild(ta); ta.focus(); ta.select();
+  try {{ document.execCommand('copy'); nlShowCopy(); }} catch(e) {{}}
+  document.body.removeChild(ta);
+}}
+function nlShowCopy() {{
+  var m = document.getElementById('nl-copy-msg');
+  m.style.display = 'inline';
+  setTimeout(function() {{ m.style.display = 'none'; }}, 2500);
+}}
+function nlShareKakao() {{
+  if (typeof Kakao === 'undefined' || !Kakao.isInitialized()) {{ return; }}
+  Kakao.Share.sendDefault({{
+    objectType: 'feed',
+    content: {{
+      title: '[JP Labor Letter] — 공인노무사 JP',
+      description: '{week_label} 노동·HR·건설 핵심 브리핑',
+      link: {{ mobileWebUrl: '{VERCEL_URL}', webUrl: '{VERCEL_URL}' }},
+    }},
+    buttons: [{{ title: '뉴스레터 보기', link: {{ mobileWebUrl: '{VERCEL_URL}', webUrl: '{VERCEL_URL}' }} }}],
+  }});
+}}
+</script>
 
 <!-- 푸터 -->
 <div class="nl-footer">
