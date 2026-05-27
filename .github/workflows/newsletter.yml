@@ -21,10 +21,12 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: 패키지 설치
-        run: pip install anthropic requests
+      - name: 패키지 설치 (Python 라이브러리 + Playwright)
+        run: |
+          pip install anthropic requests playwright
+          playwright install chromium --with-deps
 
-      - name: 주간 뉴스레터 생성 및 Maily 발송
+      - name: 주간 뉴스레터 생성 + PNG 변환 + Maily 발송
         env:
           ANTHROPIC_API_KEY:    ${{ secrets.ANTHROPIC_API_KEY }}
           NAVER_CLIENT_ID:      ${{ secrets.NAVER_CLIENT_ID }}
@@ -34,10 +36,10 @@ jobs:
           KAKAO_JS_KEY:         ${{ secrets.KAKAO_JS_KEY }}
         run: python generate_newsletter.py
 
-      - name: GitHub에 자동 커밋
+      - name: GitHub에 자동 커밋 (HTML + PNG)
         run: |
           git config --global user.email "action@github.com"
           git config --global user.name "GitHub Actions"
           git add newsletter/
-          git diff --staged --quiet || git commit -m "Auto: $(date +'%Y%m%d') JP Labor Letter 주간 뉴스레터 생성"
+          git diff --staged --quiet || git commit -m "Auto: $(date +'%Y%m%d') 인사 노무 브리핑 뉴스레터 생성 (HTML+PNG)"
           git push origin main

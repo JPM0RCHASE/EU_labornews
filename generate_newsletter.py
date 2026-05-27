@@ -16,6 +16,11 @@
 import os
 import re
 import json
+import socket
+import shutil
+import threading
+import http.server
+import socketserver
 import requests
 import urllib.parse
 from datetime import datetime, timezone, timedelta
@@ -41,9 +46,12 @@ WEEK_KO    = ["첫", "둘", "셋", "넷", "다섯"][min(WEEK_NUM - 1, 4)]
 WEEK_LABEL = f"{TODAY.year}년 {TODAY.month}월 {WEEK_KO}째주"
 
 os.makedirs("newsletter", exist_ok=True)
-OUTPUT     = f"newsletter/newsletter_{DATE_STR}.html"
-LATEST     = "newsletter/latest.html"
-VERCEL_URL = f"https://eu-labornews.vercel.app/newsletter/newsletter_{DATE_STR}.html"
+OUTPUT      = f"newsletter/newsletter_{DATE_STR}.html"
+LATEST      = "newsletter/latest.html"
+PNG_OUTPUT  = f"newsletter/newsletter_{DATE_STR}.png"
+PNG_LATEST  = "newsletter/latest.png"
+VERCEL_URL  = f"https://eu-labornews.vercel.app/newsletter/newsletter_{DATE_STR}.html"
+REPO_ROOT   = os.path.dirname(os.path.abspath(__file__))
 
 print(f"[{DATE_LABEL}] 인사 노무 브리핑 뉴스레터 생성 시작...")
 
@@ -805,4 +813,64 @@ send_via_maily(
     html_content=NEWSLETTER_HTML,
 )
 
+
+# ── PNG 생성 (Playwright) ────────────────────────────
+def generate_png(html_rel_path: str, png_path: str) -> bool:
+    """
+    로컬 HTTP 서버 → Playwright Chromium으로 full-page PNG 생성.
+    CDN 폰트(Pretendard, Playfair Display)까지 정상 렌더링됨.
+    """
+    try:
+        from playwright.sync_api import sync_playwright
+    except ImportError:
+        print("⚠ playwright 미설치 — PNG 생성 건너뜀")
+        print("  로컬 실행 시: pip install playwright && playwright install chromium")
+        return False
+
+    # 빈 포트 자동 탐색
+    with socket.socket() as _s:
+        _s.bind(("", 0))
+        port = _s.getsockname()[1]
+
+    # 로컬 HTTP 서버 (repo 루트 기준 서빙 — CDN 폰트 로드 가능)
+    class _SilentHandler(http.server.SimpleHTTPRequestHandler):
+        def log_message(self, *args):
+            pass
+
+    handler_factory = lambda *a, **kw: _SilentHandler(*a, directory=REPO_ROOT, **kw)
+
+    try:
+        with socketserver.TCPServer(("127.0.0.1", port), handler_factory) as httpd:
+            t = threading.Thread(target=httpd.serve_forever, daemon=True)
+            t.start()
+
+            try:
+                with sync_playwright() as pw:
+                    browser = pw.chromium.launch()
+                    page = browser.new_page(viewport={"width": 600, "height": 900})
+                    url = f"http://127.0.0.1:{port}/{html_rel_path}"
+                    page.goto(url, wait_until="networkidle", timeout=30_000)
+                    page.wait_for_timeout(2_000)   # 웹폰트 렌더링 여유
+                    page.screenshot(path=png_path, full_page=True)
+                    browser.close()
+            finally:
+                httpd.shutdown()
+
+        print(f"✅ PNG 저장: {png_path}")
+        return True
+
+    except Exception as e:
+        print(f"⚠ PNG 생성 실패: {e}")
+        return False
+
+
+print("PNG 생성 중...")
+ok = generate_png(OUTPUT, PNG_OUTPUT)
+if ok:
+    shutil.copy2(PNG_OUTPUT, PNG_LATEST)
+    print(f"✅ PNG 최신 파일 갱신: {PNG_LATEST}")
+
 print(f"🎉 완료! 웹 URL: {VERCEL_URL}")
+if ok:
+    png_vercel = VERCEL_URL.replace(".html", ".png")
+    print(f"🖼  PNG URL: {png_vercel}")
