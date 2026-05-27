@@ -2,7 +2,7 @@
 JP Labor News - 텔레그램 일간 카드뉴스 생성
 매주 월~금 오전 7시 자동 실행
 - Naver API 7일 이내 뉴스 수집
-- 인사·노무·임금·산재·건설·건자재 주제
+- 고용노동부·국회 노동 이슈 + 인사노무 주제
 - Claude API로 5건 카드뉴스 생성
 - 텔레그램 자동 발송
 """
@@ -15,6 +15,8 @@ NAVER_CLIENT_ID     = os.environ["NAVER_CLIENT_ID"]
 NAVER_CLIENT_SECRET = os.environ["NAVER_CLIENT_SECRET"]
 TELEGRAM_BOT_TOKEN  = os.environ["TELEGRAM_BOT_TOKEN"]
 TELEGRAM_CHAT_ID    = os.environ["TELEGRAM_CHAT_ID"]
+# 카카오톡 공유 JS 키 (선택 — 없으면 카카오 공유 버튼 미노출)
+KAKAO_JS_KEY        = os.environ.get("KAKAO_JS_KEY", "")
 
 KST      = timezone(timedelta(hours=9))
 TODAY    = datetime.now(KST)
@@ -27,8 +29,7 @@ NEWS_FILE = f"labornews_{DATE_STR}.html"
 SEND_FILE = f"send_{DATE_STR}.html"
 VERCEL_URL = f"https://eu-labornews.vercel.app/{FOLDER}/{NEWS_FILE}"
 
-# ✅ 카톡·텔레그램 캐시 우회: 날짜를 쿼리스트링으로 붙여 매일 새 이미지로 인식
-# THUMBNAIL_URL(원본)은 제거하고 OG_IMAGE로 통일
+# OG 이미지: 쿼리스트링으로 매일 새 이미지로 인식
 OG_IMAGE = f"https://eu-labornews.vercel.app/thumbnail_telegram.png?v={DATE_STR}"
 
 os.makedirs(FOLDER, exist_ok=True)
@@ -36,13 +37,18 @@ print(f"[{DATE_LABEL}] 텔레그램 카드뉴스 생성 시작...")
 
 # ── Naver 뉴스 수집 ──────────────────────────────────
 KEYWORDS = [
+    # 노사·노동법 핵심
     "노란봉투법","노조법 개정","원청 사용자성 교섭",
+    # 대기업 노사
     "삼성전자 노사 파업","SK 현대차 노동","대기업 단체교섭 임금",
+    # 인사노무 실무
     "인사노무 노동법","임금체불 단속","산업재해 중대재해",
-    "노동부 고용노동부","최저임금","부당해고 노동위원회",
-    "건설경기 전망","건자재 시장","시멘트 출하",
-    "레미콘 건설업","건설수주 착공","건설업 노무",
-    "레미콘 시멘트 가격","골재 건설자재",
+    "최저임금","부당해고 노동위원회",
+    # 고용노동부·정책·국회 (카드 4번 주제)
+    "고용노동부 정책 고시","고용노동부 지침 행정해석",
+    "고용노동부 단속 과태료","국회 환경노동위원회",
+    "노동법 개정안 입법","정부 노동정책 발표",
+    # HR·조직문화
     "HR 인사관리 채용","리더십 조직문화",
 ]
 
@@ -97,11 +103,11 @@ PROMPT = f"""당신은 공인노무사이자 HR 전문가입니다. 오늘은 {D
 1번: 노란봉투법·노조법 개정·원청 사용자성 관련 뉴스 ⭐ 반드시 1순위
 2번: 삼성·SK·현대차·LG 등 주요 대기업 노사·임금·파업 관련 뉴스 ⭐ 반드시 2순위 (삼성·SK·현대 기사 없으면 다른 주요 대기업으로 대체)
 3번: 인사·노무·임금·산재·노동부 관련 핵심 이슈
-4번: 건설경기·건자재·시멘트·레미콘·골재·건설수주 관련 뉴스 ⭐ 반드시 포함 (유진기업 핵심 업무)
+4번: 고용노동부 정책·지침·단속 또는 국회 노동법 개정 관련 뉴스 ⭐ 반드시 포함 (고용노동부 행정해석·단속·처벌 강화, 국회 노동법 개정안 등)
 5번: HR·인사관리·리더십 동향 (단, 돌봄·요양·서비스업 주제는 제외)
 
 ※ 1번(노란봉투법)과 2번(대기업) 뉴스가 없으면 공인노무사 JP 실무 인사이트로 대체
-※ 4번 건설·건자재 뉴스가 없으면 건설업 노무·임금 관련 이슈로 대체
+※ 4번 고용노동부·국회 뉴스가 없으면 노동법 제도 변화·정책 이슈로 대체
 ※ 돌봄·요양·복지서비스·음식점·소매업 관련 뉴스는 절대 포함하지 말 것
 ※ 5인 미만 사업장 관련 내용은 제외
 
@@ -131,13 +137,11 @@ JSON만 응답. 다른 텍스트 절대 금지:
       "title": "카드 제목",
       "keyword": "강조키워드",
       "bullets": ["핵심 내용 1", "핵심 내용 2", "핵심 내용 3"],
-      "insight": "실무 시사점 1~2문장",
-      "is_construction": false
+      "insight": "실무 시사점 1~2문장"
     }}
   ]
 }}
 risk_level: high(🔴), med(⚠), info(ℹ)
-is_construction: 건설/건자재 관련이면 true
 총 5건, rank 1~5 순서 고정"""
 
 print("Claude API 호출 중...")
@@ -160,6 +164,19 @@ print(f"카드뉴스 {len(news_list)}건 생성 완료")
 # ── HTML 생성 ────────────────────────────────────────
 RISK_CLS = {"high":"risk-high","med":"risk-med","info":"risk-info"}
 TAG_CLS  = {"high":"tag-high","med":"tag-med","info":"tag-info"}
+
+# 텔레그램 공유 URL (제목 포함)
+SHARE_TITLE = urllib.parse.quote(f"[JP Labor Letter] {DATE_LABEL} 노동·HR 핵심 브리핑 — 공인노무사 JP")
+TG_SHARE_URL = f"https://t.me/share/url?url={urllib.parse.quote(VERCEL_URL)}&text={SHARE_TITLE}"
+
+# 카카오 JS 초기화 블록 (키 있을 때만 활성화)
+KAKAO_INIT_JS = f"""
+  if (typeof Kakao !== 'undefined') {{
+    if (!Kakao.isInitialized()) {{ Kakao.init('{KAKAO_JS_KEY}'); }}
+  }}
+""" if KAKAO_JS_KEY else ""
+
+KAKAO_SDK_TAG = '<script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js" integrity="sha384-TiCUE00h649CAMonG018J2ujOgDKW/kVWlChEuu4jK2vxfAAD0eZxzCKakxg55G4" crossorigin="anonymous"></script>' if KAKAO_JS_KEY else ""
 
 CSS = """:root{--navy:#0a0f1e;--navy-card:#141d2e;--navy-border:#1f3260;--gold:#c9a84c;--gold-dim:#9b7d36;--cream:#f5f0e8;--cream-dim:#ccc4b0;--text-body:#c8ccd8;--text-muted:#7a8299;--base:17px}
 *{margin:0;padding:0;box-sizing:border-box}
@@ -184,7 +201,6 @@ body{background:var(--navy);color:var(--text-body);font-family:'Apple SD Gothic 
 .tag-high{background:rgba(192,57,43,.15);color:#e74c3c;border:1px solid rgba(192,57,43,.3)}
 .tag-med{background:rgba(243,156,18,.12);color:#f39c12;border:1px solid rgba(243,156,18,.3)}
 .tag-info{background:rgba(52,152,219,.12);color:#5dade2;border:1px solid rgba(52,152,219,.3)}
-.tag-construction{background:rgba(46,125,50,.15);color:#66bb6a;border:1px solid rgba(46,125,50,.3)}
 .news-card{background:var(--navy-card);border:1px solid var(--navy-border);margin:16px 16px 0;border-radius:4px;overflow:hidden;position:relative}
 .news-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:4px;background:linear-gradient(to right,var(--gold-dim),var(--gold),var(--gold-dim))}
 .source-bar{display:flex;align-items:center;justify-content:space-between;background:rgba(31,50,96,.7);border-bottom:1px solid var(--navy-border);padding:8px 16px;margin-top:4px}
@@ -208,15 +224,34 @@ body{background:var(--navy);color:var(--text-body);font-family:'Apple SD Gothic 
 .read-more a{font-size:13px;font-weight:700;color:var(--gold);text-decoration:none;display:flex;align-items:center;gap:6px}
 .read-more a::after{content:'→';font-size:15px}
 .wm-small{font-size:10px;color:rgba(201,168,76,.3);font-weight:600}
-.footer{border-top:1px solid var(--navy-border);background:#111827;padding:24px 20px;text-align:center;margin-top:16px}
+/* ── 공유 바 ── */
+.share-bar{
+  background:#111827;border-top:1px solid var(--navy-border);
+  padding:14px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  margin-top:16px;
+  /* 모바일 하단 sticky */
+  position:sticky;bottom:0;z-index:90;
+}
+.share-label{font-size:12px;color:var(--text-muted);margin-right:2px}
+.share-btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:9px 16px;font-size:13px;font-weight:700;
+  border:none;border-radius:4px;cursor:pointer;
+  text-decoration:none;transition:opacity .2s;
+}
+.share-btn:hover{opacity:.82}
+.share-copy{background:var(--navy-border);color:var(--cream)}
+.share-kakao{background:#FEE500;color:#3A1D1D}
+.share-telegram{background:#0088cc;color:#fff}
+#copy-msg{font-size:12px;color:var(--gold);display:none;white-space:nowrap}
+/* ── 푸터 ── */
+.footer{border-top:1px solid var(--navy-border);background:#111827;padding:24px 20px;text-align:center;margin-top:0}
 .footer-logo{font-size:14px;font-weight:700;color:var(--gold);margin-bottom:6px}
 .footer-disc{font-size:11px;color:var(--text-muted);line-height:1.8}"""
 
 headlines_html = ""
 for n in news_list:
     tc = TAG_CLS.get(n["risk_level"],"tag-info")
-    if n.get("is_construction"):
-        tc = "tag-construction"
     headlines_html += f"""<a class="headline-item" href="#news{n['rank']}">
   <div class="headline-num">{n['rank']}</div>
   <div class="headline-content">
@@ -230,9 +265,8 @@ cards_html = ""
 for n in news_list:
     bullets = "".join(f"<li>{b}</li>" for b in n["bullets"])
     rc = RISK_CLS.get(n["risk_level"],"risk-info")
-    construction_badge = ' <span style="font-size:10px;background:rgba(46,125,50,.15);color:#66bb6a;border:1px solid rgba(46,125,50,.3);padding:2px 6px;border-radius:2px">🏗 건설·건자재</span>' if n.get("is_construction") else ""
     cards_html += f"""<div class="news-card" id="news{n['rank']}">
-  <div class="source-bar"><span class="source-name">📰 {n['source']}{construction_badge}</span><span class="source-date">{n['date']}</span></div>
+  <div class="source-bar"><span class="source-name">📰 {n['source']}</span><span class="source-date">{n['date']}</span></div>
   <div class="card-inner">
     <div class="risk-tag {rc}">{n['risk_label']}</div>
     <div class="card-category">{n['category']}</div>
@@ -243,6 +277,9 @@ for n in news_list:
   <div class="read-more"><span class="wm-small">© JP Labor News</span><a href="{n['url']}" target="_blank">자세히 보기</a></div>
 </div>"""
 
+# 카카오톡 공유 버튼 (JS 키가 있을 때만 표시)
+KAKAO_BTN_HTML = f'<button class="share-btn share-kakao" onclick="shareKakao()">💬 카카오톡</button>' if KAKAO_JS_KEY else ""
+
 NEWS_HTML = f"""<!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -251,7 +288,7 @@ NEWS_HTML = f"""<!DOCTYPE html>
 <title>Today's Labor News — {DATE_LABEL} | 공인노무사 JP</title>
 <meta name="description" content="오늘의 인사노무 핵심 브리핑. 노동법·노사·HR 이슈 5건.">
 <meta property="og:title" content="Today's Labor News — {DATE_LABEL} | 공인노무사 JP">
-<meta property="og:description" content="노란봉투법·대기업 노사·임금체불·건설경기 등 오늘의 핵심 이슈 5건">
+<meta property="og:description" content="노란봉투법·대기업 노사·임금체불·고용노동부 등 오늘의 핵심 이슈 5건">
 <meta property="og:type" content="article">
 <meta property="og:url" content="{VERCEL_URL}">
 <meta property="og:image" content="{OG_IMAGE}">
@@ -260,6 +297,7 @@ NEWS_HTML = f"""<!DOCTYPE html>
 <meta property="og:site_name" content="JP Labor News">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="{OG_IMAGE}">
+{KAKAO_SDK_TAG}
 <style>{CSS}</style>
 </head>
 <body>
@@ -271,11 +309,59 @@ NEWS_HTML = f"""<!DOCTYPE html>
   <div class="headline-list">{headlines_html}</div>
 </section>
 {cards_html}
-<div style="height:24px"></div>
+
+<!-- ── 공유 바: 마지막 카드 아래, 푸터 위 ── -->
+<div class="share-bar">
+  <span class="share-label">공유하기</span>
+  <button class="share-btn share-copy" onclick="copyLink()">🔗 링크 복사</button>
+  <span id="copy-msg">✅ 링크 복사됨!</span>
+  {KAKAO_BTN_HTML}
+  <a class="share-btn share-telegram" href="{TG_SHARE_URL}" target="_blank" rel="noopener">✈️ 텔레그램</a>
+</div>
+
 <footer class="footer">
   <div class="footer-logo">JP Labor News</div>
   <div class="footer-disc">Powered by Claude AI · 자동 생성<br>본 카드뉴스는 정보 제공 목적입니다.<br>© 2026 JP Labor News</div>
 </footer>
+
+<script>
+{KAKAO_INIT_JS}
+function copyLink() {{
+  var url = '{VERCEL_URL}';
+  if (navigator.clipboard && navigator.clipboard.writeText) {{
+    navigator.clipboard.writeText(url).then(function() {{ showCopyMsg(); }}).catch(function() {{ fallbackCopy(url); }});
+  }} else {{
+    fallbackCopy(url);
+  }}
+}}
+function fallbackCopy(url) {{
+  var ta = document.createElement('textarea');
+  ta.value = url; ta.style.position = 'fixed'; ta.style.opacity = '0';
+  document.body.appendChild(ta); ta.focus(); ta.select();
+  try {{ document.execCommand('copy'); showCopyMsg(); }} catch(e) {{}}
+  document.body.removeChild(ta);
+}}
+function showCopyMsg() {{
+  var m = document.getElementById('copy-msg');
+  m.style.display = 'inline';
+  setTimeout(function() {{ m.style.display = 'none'; }}, 2500);
+}}
+function shareKakao() {{
+  if (typeof Kakao === 'undefined' || !Kakao.isInitialized()) {{
+    window.open('{TG_SHARE_URL}', '_blank'); return;
+  }}
+  Kakao.Share.sendDefault({{
+    objectType: 'feed',
+    content: {{
+      title: '[JP Labor Letter] — 공인노무사 JP',
+      description: '오늘의 인사노무 핵심 브리핑 · {DATE_LABEL}',
+      imageUrl: '{OG_IMAGE}',
+      link: {{ mobileWebUrl: '{VERCEL_URL}', webUrl: '{VERCEL_URL}' }},
+    }},
+    buttons: [{{ title: '카드뉴스 보기', link: {{ mobileWebUrl: '{VERCEL_URL}', webUrl: '{VERCEL_URL}' }} }}],
+  }});
+}}
+</script>
 </body>
 </html>"""
 
@@ -287,7 +373,6 @@ for n in news_list:
 tg_lines.append(f"\n🔗 전체 카드뉴스:\n{VERCEL_URL}")
 tg_text = "\n".join(tg_lines)
 
-# ✅ 수정: THUMBNAIL_URL → OG_IMAGE (캐시 우회 쿼리스트링 포함)
 tg_photo_url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendPhoto"
 tg_api_url = f"{tg_photo_url}?chat_id={urllib.parse.quote(str(TELEGRAM_CHAT_ID))}&photo={urllib.parse.quote(OG_IMAGE)}&caption={urllib.parse.quote(tg_text[:1024])}"
 
@@ -318,12 +403,12 @@ with open(f"{FOLDER}/{NEWS_FILE}", "w", encoding="utf-8") as f:
 with open(f"{FOLDER}/{SEND_FILE}", "w", encoding="utf-8") as f:
     f.write(SEND_HTML)
 
-# ✅ 수정: THUMBNAIL_URL → OG_IMAGE (캐시 우회 쿼리스트링 포함)
+# 텔레그램 자동 발송
 resp = requests.post(
     f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendPhoto",
     data={
         "chat_id": TELEGRAM_CHAT_ID,
-        "photo": OG_IMAGE,   # ← 핵심 수정 포인트
+        "photo": OG_IMAGE,
         "caption": VERCEL_URL,
         "parse_mode": "HTML",
     },
