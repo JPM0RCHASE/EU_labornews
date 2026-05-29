@@ -211,39 +211,6 @@ JSON만 응답. 다른 텍스트 절대 금지:
       "핵심 포인트 4"
     ],
     "action_tip": "즉시 실행 가능한 실무 조언 2~3문장"
-  }},
-  "section5_calendar": {{
-    "monthly_issues": [
-      {{
-        "label": "이달의 핵심 이슈 제목 (예: 연차 촉진 기간 도래)",
-        "detail": "현장 주의사항 1~2문장 — 구체적 기한이나 법조항 포함"
-      }},
-      {{
-        "label": "이달의 핵심 이슈 제목 2",
-        "detail": "현장 주의사항 1~2문장"
-      }}
-    ],
-    "subsidies": [
-      {{
-        "name": "지원금명 (예: 청년일자리도약장려금)",
-        "target": "지원 대상 요약",
-        "amount": "지원 금액",
-        "deadline": "신청 기한 또는 상시",
-        "tip": "핵심 요건 1~2문장"
-      }},
-      {{
-        "name": "지원금명 2",
-        "target": "지원 대상",
-        "amount": "지원 금액",
-        "deadline": "신청 기한",
-        "tip": "핵심 요건"
-      }}
-    ],
-    "quick_qa": {{
-      "question": "실무자가 자주 헷갈리는 질문 1가지",
-      "answer": "명쾌한 단답형 답변 1~2문장"
-    }},
-    "hr_checkpoint": "인사담당자가 이번 주/이번 달 반드시 확인해야 할 실무 체크포인트 2~3문장"
   }}
 }}"""
 
@@ -327,39 +294,6 @@ def safe_parse(text: str) -> dict:
             ],
             "action_tip": "구체적인 사안은 전문가 상담을 권장합니다.",
         },
-        "section5_calendar": {
-            "monthly_issues": [
-                {
-                    "label": "연차휴가 사용 촉진 기간 도래",
-                    "detail": "회계연도 기준 사업장은 6월 말 연차 소멸 전 촉진 절차를 개시해야 합니다. 서면 통보 후 10일 이내 근로자 미지정 시 사용자 지정 의무가 발생합니다.",
-                },
-                {
-                    "label": "하절기 탄력근로제 운용 점검",
-                    "detail": "3개월 단위 탄력근로제는 서면 합의 또는 취업규칙 근거가 필요합니다. 단위 기간 내 평균 40시간 초과 여부를 사전 확인하세요.",
-                },
-            ],
-            "subsidies": [
-                {
-                    "name": "청년일자리도약장려금",
-                    "target": "5인 이상 중소·중견기업",
-                    "amount": "최대 월 60만원 × 12개월",
-                    "deadline": "상시 신청",
-                    "tip": "만 15~34세 취업애로 청년을 정규직으로 채용 후 6개월 유지 시 지원. 고용24(www.work24.go.kr) 신청.",
-                },
-                {
-                    "name": "고용창출장려금(일자리함께하기)",
-                    "target": "교대제 도입·전환 기업",
-                    "amount": "신규 채용 1인당 최대 연 720만원",
-                    "deadline": "상시 신청",
-                    "tip": "교대제 신규 도입 또는 기존 교대제 확대로 신규 채용 시 지원. 관할 고용센터 신청.",
-                },
-            ],
-            "quick_qa": {
-                "question": "수습 기간 중 해고해도 근로기준법이 적용되나요?",
-                "answer": "3개월 이내 수습 근로자는 30일 전 예고 없이 해고 가능합니다. 단, 5인 이상 사업장은 부당해고 구제신청 대상이므로 정당한 사유가 필요합니다.",
-            },
-            "hr_checkpoint": "이달 중 연차 사용 촉진 서면 통보 대상자를 확인하고, 신규 채용 예정이라면 청년일자리도약장려금 요건을 사전 검토하세요. 지원금 신청은 채용 후 6개월이 지나야 하므로 채용 시점부터 기록 관리가 필수입니다.",
-        },
     }
 
 
@@ -369,7 +303,6 @@ top3       = data.get("section1_top3", [])
 gov_policy = data.get("section2_gov_policy", {})
 weekly_qa  = data.get("section3_weekly_insight", {})
 five_fewer = data.get("section4_five_fewer", {})
-calendar   = data.get("section5_calendar", {})
 print("뉴스레터 콘텐츠 생성 완료")
 
 # ─────────────────────────────────────────────────────
@@ -682,62 +615,84 @@ def render_five_fewer(s: dict) -> str:
     )
 
 
-def render_section5(s: dict) -> str:
-    # 이달의 핵심 이슈
-    issues_html = ""
-    for issue in s.get("monthly_issues", []):
-        issues_html += (
-            '<div class="cal-issue-item">'
-            f'<div class="cal-issue-label">{issue.get("label", "")}</div>'
-            f'<div class="cal-issue-detail">{issue.get("detail", "")}</div>'
-            "</div>"
-        )
+# ── Section 05 고정 콘텐츠 (모성보호 & 일·가정 양립) ──
+# 법령 기반 안정 콘텐츠 — 법 개정 시에만 수동 업데이트
+SECTION5_HTML = """
+<div class="cal-block">
+  <div class="cal-sub-title">파트 1 · 이달의 핵심 이슈 CHECK — 근로자 권리 &amp; 사업주 의무</div>
 
-    # 지원금 알리미
-    subsidies_html = ""
-    for sub in s.get("subsidies", []):
-        subsidies_html += (
-            '<div class="cal-subsidy">'
-            f'<div class="cal-subsidy-name">{sub.get("name", "")}</div>'
-            '<div class="cal-subsidy-meta">'
-            f'<span class="cal-meta-tag">{sub.get("target", "")}</span>'
-            f'<span class="cal-meta-tag amount">{sub.get("amount", "")}</span>'
-            f'<span class="cal-meta-tag deadline">신청 기한: {sub.get("deadline", "")}</span>'
-            "</div>"
-            f'<div class="cal-subsidy-tip">✓ {sub.get("tip", "")}</div>'
-            "</div>"
-        )
+  <div class="cal-issue-item">
+    <div class="cal-issue-label">🩺 난임치료휴가</div>
+    <div class="cal-issue-detail">
+      연간 <strong>3일(최초 1일 유급)</strong> 부여 의무(남녀고용평등법 제18조의3). 신청 근로자에게 사유를 묻거나 불이익 처우 시 500만원 이하 과태료.<br>
+      ✓ <strong>비밀 유지 필수</strong> — 인사기록 별도 관리, 동료에게 사유 공개 금지.
+    </div>
+  </div>
 
-    # 한 줄 QA
-    qq = s.get("quick_qa", {})
-    quick_qa_html = (
-        '<div class="cal-quick-qa">'
-        '<div class="cal-qq-label">한 줄 실무 Q&amp;A</div>'
-        f'<div class="cal-qq-q">Q. {qq.get("question", "")}</div>'
-        f'<div class="cal-qq-a">A. {qq.get("answer", "")}</div>'
-        "</div>"
-    )
+  <div class="cal-issue-item">
+    <div class="cal-issue-label">🤰 임신기 근로시간 단축</div>
+    <div class="cal-issue-detail">
+      <strong>임신 12주 이내 또는 36주 이후</strong> 1일 2시간 단축 근무 허용 의무(근로기준법 제74조의2). 임금 삭감 불가.<br>
+      ✓ 신청서·의사 소견서 수령 후 즉시 허용. 거부 시 500만원 이하 벌금.
+    </div>
+  </div>
 
-    # 인사담당자 Check Point
-    checkpoint_html = (
-        '<div class="cal-checkpoint">'
-        '<div class="cal-cp-label">인사담당자 Check Point</div>'
-        f'<div class="cal-cp-text">{s.get("hr_checkpoint", "")}</div>'
-        "</div>"
-    )
+  <div class="cal-issue-item">
+    <div class="cal-issue-label">👶 출산전후휴가</div>
+    <div class="cal-issue-detail">
+      단태아 <strong>90일</strong>(출산 후 45일 이상 배치), 다태아 <strong>120일</strong> 보장(근로기준법 제74조).<br>
+      ✓ 최초 60일(다태아 75일)은 <strong>사업주 유급</strong> 부담(우선지원대상기업은 고용보험에서 전액 지원).
+    </div>
+  </div>
 
-    return (
-        '<div class="cal-block">'
-        '<div class="cal-sub-title">이달의 핵심 이슈 Check</div>'
-        f'{issues_html}'
-        "</div>"
-        '<div class="cal-block">'
-        '<div class="cal-sub-title">놓치면 손해인 지원금 알리미</div>'
-        f'{subsidies_html}'
-        "</div>"
-        f'{quick_qa_html}'
-        f'{checkpoint_html}'
-    )
+  <div class="cal-issue-item">
+    <div class="cal-issue-label">🍼 육아휴직 &amp; 육아기 근로시간 단축</div>
+    <div class="cal-issue-detail">
+      만 8세 이하(초등 2학년 이하) 자녀 1인당 <strong>최대 1년</strong> 육아휴직(남녀고용평등법 제19조). 부부 동시 사용 가능.<br>
+      ✓ <strong>육아기 근로시간 단축</strong>: 미사용 육아휴직 기간 2배 가산하여 단축 근무 사용 가능(최대 3년). 주 15~35시간 범위 내 적용.
+    </div>
+  </div>
+</div>
+
+<div class="cal-block">
+  <div class="cal-sub-title">파트 2 · 놓치면 손해인 지원금 알리미 — 사업주 혜택</div>
+
+  <div class="cal-subsidy">
+    <div class="cal-subsidy-name">출산육아기 고용안정장려금 (육아휴직 부여)</div>
+    <div class="cal-subsidy-meta">
+      <span class="cal-meta-tag">우선지원대상기업 (중소기업)</span>
+      <span class="cal-meta-tag amount">월 30만원 (초기 특례 월 최대 200만원)</span>
+      <span class="cal-meta-tag deadline">육아휴직 개시 후 신청</span>
+    </div>
+    <div class="cal-subsidy-tip">
+      ✓ 생후 <strong>12개월 이내</strong> 자녀에 대한 육아휴직 부여 시 첫 3개월간 <strong>월 200만원 초기 특례</strong> 지원(부모 모두 사용 시 각각 적용).<br>
+      ✓ 고용24(www.work24.go.kr) 또는 관할 고용센터에서 신청.
+    </div>
+  </div>
+
+  <div class="cal-subsidy">
+    <div class="cal-subsidy-name">육아기 근로시간 단축 지원금</div>
+    <div class="cal-subsidy-meta">
+      <span class="cal-meta-tag">우선지원대상기업</span>
+      <span class="cal-meta-tag amount">월 30만원 (최초 3인 추가 지원)</span>
+      <span class="cal-meta-tag deadline">단축 개시 후 신청</span>
+    </div>
+    <div class="cal-subsidy-tip">
+      ✓ 동일 사업장 내 <strong>최초 3인</strong>에 대해 1인당 <strong>월 10만원 추가</strong>(합계 월 40만원) 지원.<br>
+      ✓ 단축 근무자의 업무 분담 동료에 대한 임금 보전 지원금도 별도 신청 가능.
+    </div>
+  </div>
+
+  <div class="cal-quick-qa">
+    <div class="cal-qq-label">💡 노무사 TIP — 지원금 안전하게 받는 사후 관리 포인트</div>
+    <div class="cal-qq-a">
+      <strong>① 복직 후 6개월 이상 고용 유지</strong>가 지원금 수령의 핵심 요건입니다. 복직 즉시 퇴직·해고 처리 시 지원금 전액 반환 및 향후 3년간 지원 제한.<br>
+      <strong>② 서류 관리</strong>: 육아휴직 신청서, 확인서, 복직 확인서를 3년간 보관 의무.<br>
+      <strong>③ 대체인력 활용 시</strong> 대체인력지원금 중복 신청 가능하므로 반드시 사전 확인하세요.
+    </div>
+  </div>
+</div>
+"""
 
 # ── 최종 HTML 조립 ────────────────────────────────────
 NEWSLETTER_HTML = (
@@ -799,10 +754,10 @@ NEWSLETTER_HTML = (
     f"  {render_five_fewer(five_fewer)}\n"
     "</div>\n"
 
-    # 섹션 5
+    # 섹션 5 (고정 콘텐츠 — 모성보호 & 일·가정 양립)
     '<div class="nl-section">\n'
-    '  <div class="kicker">Section 05 &nbsp;·&nbsp; 중견·중소기업 맞춤 인사노무 &amp; 지원금 캘린더</div>\n'
-    f"  {render_section5(calendar)}\n"
+    '  <div class="kicker">Section 05 &nbsp;·&nbsp; 모성보호 &amp; 일·가정 양립 지원 제도</div>\n'
+    f"  {SECTION5_HTML}\n"
     "</div>\n"
 
     # 공유 바 (링크 복사)
