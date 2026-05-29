@@ -204,6 +204,20 @@
   .cal-cp-label { font-size: 9px; font-weight: 700; color: #555; letter-spacing: .16em; text-transform: uppercase; margin-bottom: 8px; }
   .cal-cp-text { font-size: 12px; color: #333; line-height: 1.9; }
 
+  /* 섹션 5: 판결 카드 */
+  .ruling-card { border: 1px solid #ddd; padding: 20px; margin-bottom: 14px; }
+  .ruling-card:last-child { margin-bottom: 0; }
+  .ruling-header { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; align-items: center; }
+  .ruling-court { font-size: 10px; font-weight: 700; background: #111; color: #fff; padding: 2px 8px; letter-spacing: .04em; }
+  .ruling-type  { font-size: 10px; font-weight: 700; background: #1a6b3a; color: #fff; padding: 2px 8px; letter-spacing: .04em; }
+  .ruling-date  { font-size: 11px; color: #888; margin-left: auto; }
+  .ruling-title { font-size: 15px; font-weight: 900; color: #111; margin-bottom: 14px; line-height: 1.4; word-break: keep-all; }
+  .ruling-section-label { font-size: 9px; font-weight: 700; color: #555; letter-spacing: .14em; text-transform: uppercase; margin-bottom: 4px; margin-top: 10px; }
+  .ruling-text  { font-size: 12px; color: #333; line-height: 1.85; }
+  .ruling-insight { border-left: 2px solid #1a6b3a; padding: 10px 12px; background: #f7fbf8; margin-top: 14px; }
+  .ruling-insight-label { font-size: 9px; font-weight: 700; color: #1a6b3a; letter-spacing: .14em; margin-bottom: 5px; }
+  .ruling-insight-text  { font-size: 12px; color: #333; line-height: 1.85; }
+
   /* 공유 바 */
   .share-bar { background: #111; padding: 7px 20px 6px; }
   .share-btn {
@@ -246,98 +260,23 @@
 </div>
 <div class="nl-section">
   <div class="kicker kicker-s01">Section 01 &nbsp;·&nbsp; 이번 주 꼭 읽어야 할 뉴스 Top 3</div>
-  <div class="news-card-nl"><div class="nc-header"><span class="nc-rank">No.1</span><span class="nc-source">📰 KBS</span><span class="nc-date">2026.05.28</span></div><div class="nc-body"><div class="nc-category">육아휴직</div><h3 class="nc-title">한 달 미만 육아휴직 급여 거부, 법원이 '위법' 판단한 이유는?</h3><p class="nc-summary">법원이 고용노동부의 육아휴직 급여 지급 거부 처분을 위법하다고 판결했습니다. 정부가 육아휴직 분할 사용을 장려하면서도 내부 지침을 기계적으로 적용해 한 달 미만 사용자에게 급여를 거부한 것이 문제가 됐습니다. 재판부는 고용노동부 업무편람이 자체적·독단적 법 해석에 불과하다고 지적했습니다.</p><div class="nc-insight"><div class="nc-insight-label">JP Insight</div><div class="nc-insight-text">고용노동부의 내부 지침이라도 법령의 취지와 다르게 해석·적용하면 위법 처분이 될 수 있습니다. 육아휴직 분할 사용 시 한 달 미만 기간도 급여 지급 대상이 될 수 있으므로, 사업주는 근로자의 육아휴직 신청을 지침만으로 거부하지 말고 법령의 취지를 우선 검토해야 합니다.</div></div></div><div class="nc-footer"><a class="nc-link" href="https://news.kbs.co.kr/news/pc/view/view.do?ncd=8572304&ref=A" target="_blank">원문 보기 →</a></div></div><div class="news-card-nl"><div class="nc-header"><span class="nc-rank">No.2</span><span class="nc-source">📰 경인일보</span><span class="nc-date">2026.05.28</span></div><div class="nc-body"><div class="nc-category">노란봉투법</div><h3 class="nc-title">노란봉투법 시행됐지만, 하청 노조의 원청 교섭은 왜 '산 너머 산'인가?</h3><p class="nc-summary">노란봉투법(노조법 개정) 시행 이후 하청 노조가 원청에 교섭을 요구했지만, 실제 교섭까지 진행된 곳은 인천시의료원이 유일합니다. 노동위원회가 원청의 사용자성을 인정해야 교섭이 시작되는데, 절차가 복잡하고 시간이 오래 걸려 현장에서는 여전히 교섭 진입이 어려운 상황입니다.</p><div class="nc-insight"><div class="nc-insight-label">JP Insight</div><div class="nc-insight-text">노란봉투법으로 법적 근거가 마련됐지만, 사용자성 인정 절차와 노동위원회 심판이 필수적이어서 실제 교섭까지는 시간이 소요됩니다. 원청 사업주는 하청 노조의 교섭 요구 공고 등 법적 절차를 정확히 이해하고, 사용자성 인정 여부를 사전에 법률 검토를 통해 대비해야 합니다.</div></div></div><div class="nc-footer"><a class="nc-link" href="https://www.kyeongin.com/article/1764506" target="_blank">원문 보기 →</a></div></div><div class="news-card-nl"><div class="nc-header"><span class="nc-rank">No.3</span><span class="nc-source">📰 헤럴드경제</span><span class="nc-date">2026.05.29</span></div><div class="nc-body"><div class="nc-category">노사관계</div><h3 class="nc-title">삼성전자 임단협 가결 후에도 법정 공방, 동행노조가 반발하는 이유는?</h3><p class="nc-summary">삼성전자 노사 임금협상 잠정합의안이 73.7% 찬성으로 가결됐지만, 제3노조인 동행노조는 효력정지 가처분을 신청했습니다. DS(반도체) 부문과 DX(완제품) 부문 간 성과보상 격차 문제가 핵심 쟁점이며, 동행노조는 부문 간 불공정한 배분을 문제 삼고 있습니다.</p><div class="nc-insight"><div class="nc-insight-label">JP Insight</div><div class="nc-insight-text">대기업 노사합의안도 내부 부서·부문 간 성과급 배분 방식에 따라 일부 노조의 법적 이의제기가 발생할 수 있습니다. 사업주는 임단협 시 부문별 성과 배분의 합리성과 형평성을 충분히 설명하고, 다수 노조 간 이견 조율 절차를 명확히 해야 분쟁을 예방할 수 있습니다.</div></div></div><div class="nc-footer"><a class="nc-link" href="https://biz.heraldcorp.com/article/10759683?ref=naver" target="_blank">원문 보기 →</a></div></div>
+  <div class="news-card-nl"><div class="nc-header"><span class="nc-rank">No.1</span><span class="nc-source">📰 한겨레</span><span class="nc-date">2026.05.29</span></div><div class="nc-body"><div class="nc-category">임금·성과급</div><h3 class="nc-title">반도체 초과이익 배분 논란, 산업부 vs 노동부 시각차 뚜렷</h3><p class="nc-summary">삼성전자 성과급 갈등을 계기로 반도체 대기업의 초과이익 처분 문제가 정부 부처 간 온도차를 드러냈다. 김정관 산업통상부 장관은 재투자 필요성을 강조한 반면, 김영훈 고용노동부 장관은 노사의 헌신과 사회 지원을 언급하며 긴급토론회를 예고했다. 대기업 성과 배분 문제가 정책 이슈로 확산되고 있다.</p><div class="nc-insight"><div class="nc-insight-label">JP Insight</div><div class="nc-insight-text">초과이익 배분 논의는 향후 대기업 임단협에서 핵심 쟁점이 될 전망입니다. 인사담당자는 영업이익·순이익 연동 성과급 요구에 대비해 재무구조와 배분 원칙을 사전 검토하고, 노사협의 과정에서 투자 계획과 고용 안정 방안을 함께 제시하는 전략이 필요합니다.</div></div></div><div class="nc-footer"><a class="nc-link" href="https://www.hani.co.kr/arti/economy/economy_general/1261066.html" target="_blank">원문 보기 →</a></div></div><div class="news-card-nl"><div class="nc-header"><span class="nc-rank">No.2</span><span class="nc-source">📰 연합뉴스</span><span class="nc-date">2026.05.29</span></div><div class="nc-body"><div class="nc-category">중대재해·산업안전</div><h3 class="nc-title">서소문 고가 붕괴 사고, 경찰 중대재해처벌법 적용 수사 착수</h3><p class="nc-summary">경찰이 서소문 고가 붕괴 사고와 관련해 서울시 등을 대상으로 8시간째 압수수색을 진행했다. 업무상 과실치사상, 중대재해처벌법, 산업안전보건법 위반 등 세 가지 혐의가 적시됐으며, 원청업체와 하청업체는 모두 피의자로 입건됐다. 발주처인 서울시에 대한 중대재해처벌법 적용 여부가 주목된다.</p><div class="nc-insight"><div class="nc-insight-label">JP Insight</div><div class="nc-insight-text">철거·해체 공사는 중대재해처벌법 적용 대상으로 안전보건관리체계 구축 의무가 엄격합니다. 발주처와 원청은 하도급 단계별 안전관리 계획을 문서화하고, 위험성 평가와 작업 전 안전점검을 철저히 이행해야 법적 책임을 방어할 수 있습니다.</div></div></div><div class="nc-footer"><a class="nc-link" href="https://www.yna.co.kr/view/AKR20260529138700004?input=1195m" target="_blank">원문 보기 →</a></div></div><div class="news-card-nl"><div class="nc-header"><span class="nc-rank">No.3</span><span class="nc-source">📰 KBS</span><span class="nc-date">2026.05.28</span></div><div class="nc-body"><div class="nc-category">고용노동부 지침</div><h3 class="nc-title">육아휴직 급여 거부에 법원 "내부 지침 기계적 적용" 위법 판단</h3><p class="nc-summary">정부가 육아휴직 분할 사용을 장려하면서도 행정청이 내부 지침을 기계적으로 적용해 한 달 미만 육아휴직 급여를 거부한 것은 위법하다는 법원 판결이 나왔다. 재판부는 고용노동부 업무편람을 "자체적·독단적 법 해석"이라고 지적하며, 법령의 취지를 벗어난 행정 처분을 비판했다.</p><div class="nc-insight"><div class="nc-insight-label">JP Insight</div><div class="nc-insight-text">행정청의 내부 지침이나 업무편람은 법령의 위임 없이 권리를 제한할 수 없다는 법리가 재확인됐습니다. 인사담당자는 육아휴직, 연차휴가 등 법정 권리 처리 시 고용노동부 지침뿐 아니라 법령 원문과 판례를 함께 검토하여 근로자 권익 침해를 방지해야 합니다.</div></div></div><div class="nc-footer"><a class="nc-link" href="https://news.kbs.co.kr/news/pc/view/view.do?ncd=8572304&ref=A" target="_blank">원문 보기 →</a></div></div>
 </div>
 <div class="nl-section">
   <div class="kicker">Section 02 &nbsp;·&nbsp; 정부·노동부·국회 정책동향</div>
-  <div class="gov-card"><div class="gov-badge">정부·노동부·국회</div><div class="gov-title">정부·노동부·국회 정책동향</div><div class="gov-sub">이번 주 핵심 정책 이슈 · 조선비즈 · 2026.05.29</div><hr class="section-divider"><ul class="gov-bullets"><li>정부 부처·소속기관·교육청 비정규직에게 내년부터 '공정수당' 지급 — 근속 1년 미만으로 퇴직금 없는 근로자 대상, 월 최저임금의 8.3% 상당 지급</li><li>최저임금의 118%를 '적정임금'으로 설정 — 이보다 낮은 임금 받는 비정규직은 일괄 인상, 중앙행정기관·지자체·교육청·공공기관 및 자회사·지방공기업 적용</li><li>비정규직 채용 절차 강화 — 필요에 따라 비정규직 채용하고 최소 임금만 주던 불공정 관행 타파, 채용 사유와 절차 명확화</li></ul><div class="gov-insight"><div class="gov-insight-label">실무 대응 포인트</div>공공부문 비정규직 처우 개선 정책이 본격화되면서, 민간 사업장도 비정규직 임금 및 수당 수준 재검토가 필요합니다. 특히 최저임금 118% 적정임금 기준은 공공부문 용역·위탁 계약 시 민간 사업주에게도 영향을 미칠 수 있으므로, 계약 조건과 임금 테이블을 사전 점검해야 합니다.</div></div>
+  <div class="gov-card"><div class="gov-badge">정부·노동부·국회</div><div class="gov-title">정부·노동부·국회 정책동향</div><div class="gov-sub">이번 주 핵심 정책 이슈 · 노컷뉴스 · 2026.05.29</div><hr class="section-divider"><ul class="gov-bullets"><li>정부, 공공기관 1년 미만 비정규직 대상 '공정수당' 2027년부터 본격 도입 — 전국 생활임금 평균액(최저임금 118%, 254만5000원) 기준, 계약기간별 8.5~10% 차등 지급</li><li>적정임금 제도로 월 정액임금이 최저임금 118% 미달 기간제 노동자에게 일괄 인상 적용 — 업무 특성상 불가피한 비정규직 채용 시 최소 1년 근로계약 체결 의무화</li><li>노란봉투법 시행 후 현대차그룹 계열사 노조 9만명 동맹파업 시동 — 원·하청 노조 연대 공동전선, 원청 교섭 의무 확대로 산업계 전반 파급 전망</li></ul><div class="gov-insight"><div class="gov-insight-label">실무 대응 포인트</div>공공부문 비정규직 처우개선과 노란봉투법 시행이 민간 기업 인사관리에도 영향을 미칠 것입니다. 특히 원청 사용자성 인정 범위 확대로 하청 노조의 교섭 요구가 증가할 수 있어, 사내하청 구조를 운영하는 기업은 노동위원회 판정 사례를 모니터링하고 교섭 대응 매뉴얼을 사전 준비해야 합니다.</div></div>
 </div>
 <div class="nl-section">
   <div class="kicker">Section 03 &nbsp;&middot;&nbsp; JP's Weekly Insight</div>
-  <div class="qa-wrap"><div class="qa-label">JP's Weekly Insight · 이번 주 가장 많이 받은 질문</div><div class="qa-q"><span class="qa-open-q">“</span>노란봉투법 시행 후 하청업체 사장인데, 원청 노조가 우리 회사에 교섭을 요구하면 어떻게 해야 하나요?<span class="qa-close-q">”</span></div><div class="qa-a-label">공인노무사 JP의 답변</div><p class="qa-paragraph">노조법 개정(노란봉투법)으로 하청 노조가 원청에게 교섭을 요구할 수 있게 되었지만, 원청이 자동으로 교섭 의무를 지는 것은 아닙니다. 하청 노조는 먼저 지방노동위원회에 '원청의 사용자성 인정' 신청을 해야 하며, 노동위원회가 원청이 근로조건을 실질적으로 지배·결정한다고 인정해야 원청에게 교섭 의무가 발생합니다.</p><p class="qa-paragraph">원청이 사용자성을 인정받으면 교섭 요구 사실을 공고하고 관련 절차를 이행해야 합니다. 현재까지 실제 교섭이 진행된 사례는 매우 적으며(인천시의료원 등), 노동위원회 심판 절차에 시간이 소요되므로 즉시 교섭이 시작되지는 않습니다. 하청업체 사장님은 원청과의 계약 내용, 근로조건 결정 권한 범위를 명확히 파악하고, 원청 측과 긴밀히 협의하여 대응 방향을 정해야 합니다.</p><p class="qa-paragraph">만약 원청이 사용자성을 인정받지 못하면 교섭 의무는 발생하지 않지만, 하청 노조가 재신청하거나 법적 다툼을 이어갈 수 있습니다. 사업주는 노동위원회 절차와 판단 기준을 정확히 이해하고, 필요 시 노무사나 법률 전문가와 상담하여 대응 전략을 수립하는 것이 중요합니다.</p><div class="qa-cta">💬 <a href="https://open.kakao.com/o/gOaNVSwi" target="_blank" style="color:#1a6b3a;text-decoration:none;font-weight:700;">카카오톡 오픈채팅으로 무료 상담하기 →</a></div></div>
+  <div class="qa-wrap"><div class="qa-label">JP's Weekly Insight · 이번 주 가장 많이 받은 질문</div><div class="qa-q"><span class="qa-open-q">“</span>노란봉투법 시행 후 하청 노조가 원청 교섭을 요구하면 반드시 응해야 하나요?<span class="qa-close-q">”</span></div><div class="qa-a-label">공인노무사 JP의 답변</div><p class="qa-paragraph">노란봉투법(노동조합법 개정안)은 원청이 하청 근로자의 근로조건을 실질적으로 지배·결정하는 경우 사용자성을 인정하여 단체교섭 의무를 부과합니다. 다만 모든 원청이 자동으로 사용자가 되는 것은 아니며, ① 업무수행 과정 지휘·감독 여부 ② 근로시간·휴게·징계 결정 여부 ③ 임금 결정 관여 정도 등을 종합 판단합니다.</p><p class="qa-paragraph">하청 노조가 교섭을 요구하면 원청은 30일 이내 사용자성 여부를 노동위원회에 판정 신청할 수 있습니다. 노동위원회가 사용자성을 인정하면 교섭 의무가 발생하고, 부인하면 교섭 거부가 가능합니다. 현대차, 타워크레인 등 주요 사례에서 노동위는 업무 지시권, 안전관리 책임 등을 근거로 원청 사용자성을 인정하는 추세입니다.</p><p class="qa-paragraph">원청은 사내하청 계약서와 업무 지시 문서를 점검하여 실질 지배 요소를 최소화하고, 하청업체의 독립성을 확보해야 합니다. 교섭 요구 접수 즉시 노무법인과 대응 전략을 수립하고, 노동위원회 심문 준비와 증거자료 확보에 집중해야 법적 리스크를 관리할 수 있습니다.</p><div class="qa-cta">💬 <a href="https://open.kakao.com/o/gOaNVSwi" target="_blank" style="color:#1a6b3a;text-decoration:none;font-weight:700;">카카오톡 오픈채팅으로 무료 상담하기 →</a></div></div>
 </div>
 <div class="nl-section">
   <div class="kicker">Section 04 &nbsp;·&nbsp; 5인 미만 사업장 집중 노동법 이슈</div>
-  <div class="five-card"><div class="five-badge">5인 미만 사업장 필독</div><div class="five-title">5인 미만 사업장 사장님 필독</div><div class="five-sub">이번 주 핵심 쟁점 · 뉴시스 · 2026.05.23</div><hr class="section-divider"><ul class="five-points"><li>4대보험 중 고용·산재보험만 가입하겠다는 제안은 위법 — 근로계약 체결 시 국민연금·건강보험도 의무 가입 대상, 회사가 보험료 부담 회피 목적으로 일부만 가입 제안 시 '가짜 3.3 계약' 의심</li><li>프리랜서 계약(3.3% 원천징수)은 근로자성이 인정되면 무효 — 사업주 지휘·감독 하에 정해진 시간·장소에서 근무하면 근로자로 인정, 4대보험 소급 가입 및 퇴직금 청구 가능</li><li>5인 미만 사업장도 고용보험·산재보험·국민연금·건강보험 가입 의무 있음 — 근로기준법 일부 적용 제외되지만 사회보험은 전면 적용, 위반 시 과태료 및 소급 징수</li><li>계약서 형식보다 실제 근무 실태가 판단 기준 — 법원·노동위원회는 계약서 명칭이 아니라 실질적 근로 제공 방식으로 근로자성 판단, 사장님은 계약 체결 시 근로자성 여부를 정확히 검토해야 함</li></ul><div class="five-tip"><div class="five-tip-label">즉시 실행 팁</div>5인 미만 사업장도 근로계약 시 4대보험 전체 가입이 원칙입니다. 보험료 부담을 줄이려고 일부만 가입하거나 프리랜서 계약으로 위장하면 나중에 소급 징수와 가산금, 법적 분쟁으로 이어질 수 있으니, 계약 체결 전 반드시 노무사 상담을 받아 정확한 계약 형태를 확정하세요.</div></div>
+  <div class="five-card"><div class="five-badge">5인 미만 사업장 필독</div><div class="five-title">5인 미만 사업장 사장님 필독</div><div class="five-sub">이번 주 핵심 쟁점 · 뉴시스 · 2026.05.23</div><hr class="section-divider"><ul class="five-points"><li>근로계약서에 '프리랜서'라고 명시해도 실제 업무수행 형태가 사용종속 관계라면 근로자로 인정됩니다 — 4대보험 중 고용·산재보험만 가입하겠다는 제안은 '가짜 3.3 계약' 의심 신호</li><li>법원은 ① 업무 시간·장소 구속 여부 ② 업무 지시권 행사 ③ 보수의 근로대가성 ④ 전속성 정도 등을 종합 판단하여 근로자성을 결정합니다 — 계약서 형식보다 실질 관계가 우선</li><li>근로자로 인정되면 최저임금, 주휴수당, 연차휴가, 퇴직금(1년 이상 근무 시) 등 근로기준법상 권리를 모두 보장받을 수 있습니다 — 5인 미만 사업장도 최저임금·주휴수당·퇴직금은 의무</li><li>4대보험료 부담을 회피하려는 가짜 프리랜서 계약은 추후 진정·고소 시 과태료(최대 1억원)와 임금 소급 지급 리스크가 큽니다 — 근로자파견법 위반 시 3년 이하 징역 또는 3천만원 이하 벌금</li></ul><div class="five-tip"><div class="five-tip-label">즉시 실행 팁</div>프리랜서 계약 체결 전 실제 업무 형태를 점검하고, 시간·장소·업무수행 방법의 자율성을 실질적으로 보장하는 계약서를 작성하세요. 근로자성 판단이 애매하면 고용노동부 '근로자성 판단 자가진단 도구'를 활용하거나 노무사 자문을 통해 사전 리스크를 제거하는 것이 안전합니다.</div></div>
 </div>
 <div class="nl-section">
-  <div class="kicker">Section 05 &nbsp;·&nbsp; 모성보호 &amp; 일·가정 양립 지원 제도</div>
-  
-<div class="cal-block">
-  <div class="cal-sub-title">파트 1 · 이달의 핵심 이슈 CHECK — 근로자 권리 &amp; 사업주 의무</div>
-
-  <div class="cal-issue-item">
-    <div class="cal-issue-label">🩺 난임치료휴가</div>
-    <div class="cal-issue-detail">
-      연간 <strong>3일(최초 1일 유급)</strong> 부여 의무(남녀고용평등법 제18조의3). 신청 근로자에게 사유를 묻거나 불이익 처우 시 500만원 이하 과태료.<br>
-      ✓ <strong>비밀 유지 필수</strong> — 인사기록 별도 관리, 동료에게 사유 공개 금지.
-    </div>
-  </div>
-
-  <div class="cal-issue-item">
-    <div class="cal-issue-label">🤰 임신기 근로시간 단축</div>
-    <div class="cal-issue-detail">
-      <strong>임신 12주 이내 또는 36주 이후</strong> 1일 2시간 단축 근무 허용 의무(근로기준법 제74조의2). 임금 삭감 불가.<br>
-      ✓ 신청서·의사 소견서 수령 후 즉시 허용. 거부 시 500만원 이하 벌금.
-    </div>
-  </div>
-
-  <div class="cal-issue-item">
-    <div class="cal-issue-label">👶 출산전후휴가</div>
-    <div class="cal-issue-detail">
-      단태아 <strong>90일</strong>(출산 후 45일 이상 배치), 다태아 <strong>120일</strong> 보장(근로기준법 제74조).<br>
-      ✓ 최초 60일(다태아 75일)은 <strong>사업주 유급</strong> 부담(우선지원대상기업은 고용보험에서 전액 지원).
-    </div>
-  </div>
-
-  <div class="cal-issue-item">
-    <div class="cal-issue-label">🍼 육아휴직 &amp; 육아기 근로시간 단축</div>
-    <div class="cal-issue-detail">
-      만 8세 이하(초등 2학년 이하) 자녀 1인당 <strong>최대 1년</strong> 육아휴직(남녀고용평등법 제19조). 부부 동시 사용 가능.<br>
-      ✓ <strong>육아기 근로시간 단축</strong>: 미사용 육아휴직 기간 2배 가산하여 단축 근무 사용 가능(최대 3년). 주 15~35시간 범위 내 적용.
-    </div>
-  </div>
-</div>
-
-<div class="cal-block">
-  <div class="cal-sub-title">파트 2 · 놓치면 손해인 지원금 알리미 — 사업주 혜택</div>
-
-  <div class="cal-subsidy">
-    <div class="cal-subsidy-name">출산육아기 고용안정장려금 (육아휴직 부여)</div>
-    <div class="cal-subsidy-meta">
-      <span class="cal-meta-tag">우선지원대상기업 (중소기업)</span>
-      <span class="cal-meta-tag amount">월 30만원 (초기 특례 월 최대 200만원)</span>
-      <span class="cal-meta-tag deadline">육아휴직 개시 후 신청</span>
-    </div>
-    <div class="cal-subsidy-tip">
-      ✓ 생후 <strong>12개월 이내</strong> 자녀에 대한 육아휴직 부여 시 첫 3개월간 <strong>월 200만원 초기 특례</strong> 지원(부모 모두 사용 시 각각 적용).<br>
-      ✓ 고용24(www.work24.go.kr) 또는 관할 고용센터에서 신청.
-    </div>
-  </div>
-
-  <div class="cal-subsidy">
-    <div class="cal-subsidy-name">육아기 근로시간 단축 지원금</div>
-    <div class="cal-subsidy-meta">
-      <span class="cal-meta-tag">우선지원대상기업</span>
-      <span class="cal-meta-tag amount">월 30만원 (최초 3인 추가 지원)</span>
-      <span class="cal-meta-tag deadline">단축 개시 후 신청</span>
-    </div>
-    <div class="cal-subsidy-tip">
-      ✓ 동일 사업장 내 <strong>최초 3인</strong>에 대해 1인당 <strong>월 10만원 추가</strong>(합계 월 40만원) 지원.<br>
-      ✓ 단축 근무자의 업무 분담 동료에 대한 임금 보전 지원금도 별도 신청 가능.
-    </div>
-  </div>
-
-  <div class="cal-quick-qa">
-    <div class="cal-qq-label">💡 노무사 TIP — 지원금 안전하게 받는 사후 관리 포인트</div>
-    <div class="cal-qq-a">
-      <strong>① 복직 후 6개월 이상 고용 유지</strong>가 지원금 수령의 핵심 요건입니다. 복직 즉시 퇴직·해고 처리 시 지원금 전액 반환 및 향후 3년간 지원 제한.<br>
-      <strong>② 서류 관리</strong>: 육아휴직 신청서, 확인서, 복직 확인서를 3년간 보관 의무.<br>
-      <strong>③ 대체인력 활용 시</strong> 대체인력지원금 중복 신청 가능하므로 반드시 사전 확인하세요.
-    </div>
-  </div>
-</div>
-
+  <div class="kicker">Section 05 &nbsp;·&nbsp; 이번 주 주요 노동 판결</div>
+  <div class="ruling-card"><div class="ruling-header"><span class="ruling-court">서울행정법원</span><span class="ruling-type">산업재해·소멸시효</span><span class="ruling-date">2026.05.29</span></div><h3 class="ruling-title"><a href="https://www.naeil.com/news/read/590203?ref=naver" target="_blank" style="color:#111;text-decoration:none;">소음성 난청 진단 확진 시점이 장해급여 청구권 소멸시효 기산점</a></h3><div class="ruling-section-label">사건 개요</div><div class="ruling-text">소음 사업장 퇴직 후 상당 기간 경과 후 소음성 난청을 진단받은 근로자가 장해급여를 청구했으나, 근로복지공단은 퇴직일 기준 소멸시효(3년) 완성을 이유로 부지급 결정을 내렸다. 근로자는 진단 확진 시점을 기산점으로 봐야 한다고 주장하며 소송을 제기했다.</div><div class="ruling-section-label">판결 요지</div><div class="ruling-text">법원은 대법원 2014두7374 판결 법리에 따라 소음성 난청은 소음 노출 중단 시기가 아닌 진단 확진 시점이 장해급여 청구권 소멸시효의 기산점이라고 판시했다. 고용노동부와 근로복지공단은 이후 행정해석을 변경하여 확진일 기준으로 시효를 적용하고 있으며, 연령보정 방식도 개선됐다.</div><div class="ruling-insight"><div class="ruling-insight-label">⚖ 실무 시사점</div><div class="ruling-insight-text">진폐증, 난청 등 장기 잠복형 직업병은 퇴직 후에도 산재 인정 가능성이 있으므로, 인사담당자는 퇴직자 건강검진 결과를 보관하고 산재 신청 안내를 제공해야 합니다. 특히 소멸시효 기산점 판단이 복잡한 사안은 근로복지공단 결정에 불복 시 행정소송까지 염두에 두고 법률 자문을 받는 것이 중요합니다.</div></div></div>
 </div>
 <div class="share-bar">
   <button class="share-btn share-copy" onclick="nlCopyLink()">🔗 링크 복사</button>
