@@ -927,7 +927,7 @@ def generate_png(html_rel_path: str, png_path: str) -> bool:
             try:
                 with sync_playwright() as pw:
                     browser = pw.chromium.launch()
-                    page = browser.new_page(viewport={"width": 600, "height": 900})
+                    page = browser.new_page(viewport={"width": 600, "height": 900}, device_scale_factor=2)
                     url = f"http://127.0.0.1:{port}/{html_rel_path}"
                     page.goto(url, wait_until="networkidle", timeout=30_000)
                     page.wait_for_timeout(2_000)   # 웹폰트 렌더링 여유
@@ -978,7 +978,7 @@ def generate_preview_png(html_rel_path: str, preview_path: str) -> bool:
                 with sync_playwright() as pw:
                     browser = pw.chromium.launch()
                     # 1200px 높이 = 뉴스레터 첫 화면(헤더+섹션1 일부)
-                    page = browser.new_page(viewport={"width": 600, "height": 1200})
+                    page = browser.new_page(viewport={"width": 600, "height": 1200}, device_scale_factor=2)
                     page.goto(f"http://127.0.0.1:{port}/{html_rel_path}",
                               wait_until="networkidle", timeout=30_000)
                     page.wait_for_timeout(2_000)
