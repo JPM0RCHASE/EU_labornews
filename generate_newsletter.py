@@ -211,6 +211,39 @@ JSON만 응답. 다른 텍스트 절대 금지:
       "핵심 포인트 4"
     ],
     "action_tip": "즉시 실행 가능한 실무 조언 2~3문장"
+  }},
+  "section5_calendar": {{
+    "monthly_issues": [
+      {{
+        "label": "이달의 핵심 이슈 제목 (예: 연차 촉진 기간 도래)",
+        "detail": "현장 주의사항 1~2문장 — 구체적 기한이나 법조항 포함"
+      }},
+      {{
+        "label": "이달의 핵심 이슈 제목 2",
+        "detail": "현장 주의사항 1~2문장"
+      }}
+    ],
+    "subsidies": [
+      {{
+        "name": "지원금명 (예: 청년일자리도약장려금)",
+        "target": "지원 대상 요약",
+        "amount": "지원 금액",
+        "deadline": "신청 기한 또는 상시",
+        "tip": "핵심 요건 1~2문장"
+      }},
+      {{
+        "name": "지원금명 2",
+        "target": "지원 대상",
+        "amount": "지원 금액",
+        "deadline": "신청 기한",
+        "tip": "핵심 요건"
+      }}
+    ],
+    "quick_qa": {{
+      "question": "실무자가 자주 헷갈리는 질문 1가지",
+      "answer": "명쾌한 단답형 답변 1~2문장"
+    }},
+    "hr_checkpoint": "인사담당자가 이번 주/이번 달 반드시 확인해야 할 실무 체크포인트 2~3문장"
   }}
 }}"""
 
@@ -292,7 +325,40 @@ def safe_parse(text: str) -> dict:
                 "퇴직금 산정 기준 체크",
                 "임금체불 예방 조치",
             ],
-            "action_tip": "궁금한 사항은 카카오톡 오픈채팅에서 무료 상담을 신청하세요.",
+            "action_tip": "구체적인 사안은 전문가 상담을 권장합니다.",
+        },
+        "section5_calendar": {
+            "monthly_issues": [
+                {
+                    "label": "연차휴가 사용 촉진 기간 도래",
+                    "detail": "회계연도 기준 사업장은 6월 말 연차 소멸 전 촉진 절차를 개시해야 합니다. 서면 통보 후 10일 이내 근로자 미지정 시 사용자 지정 의무가 발생합니다.",
+                },
+                {
+                    "label": "하절기 탄력근로제 운용 점검",
+                    "detail": "3개월 단위 탄력근로제는 서면 합의 또는 취업규칙 근거가 필요합니다. 단위 기간 내 평균 40시간 초과 여부를 사전 확인하세요.",
+                },
+            ],
+            "subsidies": [
+                {
+                    "name": "청년일자리도약장려금",
+                    "target": "5인 이상 중소·중견기업",
+                    "amount": "최대 월 60만원 × 12개월",
+                    "deadline": "상시 신청",
+                    "tip": "만 15~34세 취업애로 청년을 정규직으로 채용 후 6개월 유지 시 지원. 고용24(www.work24.go.kr) 신청.",
+                },
+                {
+                    "name": "고용창출장려금(일자리함께하기)",
+                    "target": "교대제 도입·전환 기업",
+                    "amount": "신규 채용 1인당 최대 연 720만원",
+                    "deadline": "상시 신청",
+                    "tip": "교대제 신규 도입 또는 기존 교대제 확대로 신규 채용 시 지원. 관할 고용센터 신청.",
+                },
+            ],
+            "quick_qa": {
+                "question": "수습 기간 중 해고해도 근로기준법이 적용되나요?",
+                "answer": "3개월 이내 수습 근로자는 30일 전 예고 없이 해고 가능합니다. 단, 5인 이상 사업장은 부당해고 구제신청 대상이므로 정당한 사유가 필요합니다.",
+            },
+            "hr_checkpoint": "이달 중 연차 사용 촉진 서면 통보 대상자를 확인하고, 신규 채용 예정이라면 청년일자리도약장려금 요건을 사전 검토하세요. 지원금 신청은 채용 후 6개월이 지나야 하므로 채용 시점부터 기록 관리가 필수입니다.",
         },
     }
 
@@ -303,6 +369,7 @@ top3       = data.get("section1_top3", [])
 gov_policy = data.get("section2_gov_policy", {})
 weekly_qa  = data.get("section3_weekly_insight", {})
 five_fewer = data.get("section4_five_fewer", {})
+calendar   = data.get("section5_calendar", {})
 print("뉴스레터 콘텐츠 생성 완료")
 
 # ─────────────────────────────────────────────────────
@@ -470,29 +537,56 @@ CSS_NL = """
   .five-tip { border-left: 2px solid #1a6b3a; padding: 10px 12px; background: #f7fbf8; font-size: 12px; color: #333; line-height: 1.8; }
   .five-tip-label { font-size: 9px; font-weight: 700; color: #1a6b3a; letter-spacing: .16em; text-transform: uppercase; margin-bottom: 4px; }
 
-  /* 공유 바: 페이지 맨 하단 고정 없음, 절반 크기 */
+  /* 섹션 5: 지원금 캘린더 */
+  .cal-block { border: 1px solid #ddd; padding: 20px; margin-bottom: 12px; }
+  .cal-sub-title {
+    font-size: 10px; font-weight: 700; color: #1a6b3a;
+    letter-spacing: .16em; text-transform: uppercase; margin-bottom: 10px;
+  }
+  .cal-issue-item { margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid #e8e8e8; }
+  .cal-issue-item:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+  .cal-issue-label {
+    font-size: 14px; font-weight: 800; color: #111;
+    margin-bottom: 5px; word-break: keep-all;
+  }
+  .cal-issue-label::before { content: '▸'; color: #1a6b3a; margin-right: 6px; }
+  .cal-issue-detail { font-size: 12px; color: #444; line-height: 1.8; padding-left: 14px; }
+  .cal-subsidy { border: 1px solid #ddd; padding: 14px 16px; margin-bottom: 10px; }
+  .cal-subsidy:last-child { margin-bottom: 0; }
+  .cal-subsidy-name { font-size: 14px; font-weight: 900; color: #111; margin-bottom: 6px; }
+  .cal-subsidy-meta {
+    display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px;
+  }
+  .cal-meta-tag {
+    font-size: 10px; font-weight: 700; padding: 2px 8px;
+    background: #f0f0f0; color: #333; letter-spacing: .04em;
+  }
+  .cal-meta-tag.amount { background: #e8f5ec; color: #1a6b3a; }
+  .cal-meta-tag.deadline { background: #111; color: #fff; }
+  .cal-subsidy-tip { font-size: 12px; color: #444; line-height: 1.8; }
+  .cal-quick-qa { background: #f7fbf8; border-left: 2px solid #1a6b3a; padding: 14px 16px; margin-bottom: 12px; }
+  .cal-qq-label { font-size: 9px; font-weight: 700; color: #1a6b3a; letter-spacing: .16em; text-transform: uppercase; margin-bottom: 6px; }
+  .cal-qq-q { font-size: 13px; font-weight: 800; color: #111; margin-bottom: 8px; word-break: keep-all; }
+  .cal-qq-a { font-size: 12px; color: #333; line-height: 1.8; }
+  .cal-checkpoint { border: 1.5px solid #111; padding: 16px; background: #fff; }
+  .cal-cp-label { font-size: 9px; font-weight: 700; color: #555; letter-spacing: .16em; text-transform: uppercase; margin-bottom: 8px; }
+  .cal-cp-text { font-size: 12px; color: #333; line-height: 1.9; }
+
+  /* 공유 바 */
   .share-bar { background: #111; padding: 7px 20px 6px; }
-  .share-row { display: flex; gap: 8px; }
   .share-btn {
-    flex: 1; display: flex; align-items: center; justify-content: center;
-    gap: 4px; padding: 7px 0; font-size: 12px; font-weight: 700;
+    display: inline-flex; align-items: center; justify-content: center;
+    gap: 4px; padding: 7px 20px; font-size: 12px; font-weight: 700;
     border: none; cursor: pointer; text-decoration: none; transition: opacity .2s;
   }
   .share-btn:hover { opacity: .85; }
   .share-copy  { background: #333; color: #fff; }
-  .share-kakao { background: #FEE500; color: #3A1D1D; }
   #nl-copy-msg { font-size: 10px; color: #7dbb9a; display: none; text-align: center; padding-top: 4px; }
 
   /* 푸터 */
-  .nl-footer {
-    padding: 18px 32px;
-    border-top: 2px solid #111;
-    display: flex; align-items: center; justify-content: space-between;
-    flex-wrap: wrap; gap: 8px; background: #fff;
-  }
+  .nl-footer { padding: 18px 32px; border-top: 2px solid #111; background: #fff; }
   .nf-left { font-size: 11px; color: #555; line-height: 1.7; }
   .nf-brand { font-weight: 700; color: #111; }
-  .nf-right a { font-size: 12px; font-weight: 700; color: #1a6b3a; text-decoration: none; }
 
   /* 반응형 */
   @media (max-width: 600px) {
@@ -588,21 +682,62 @@ def render_five_fewer(s: dict) -> str:
     )
 
 
-# ── 카카오 SDK: 키가 있을 때만 로드 ──────────────────
-# SDK 없어도 공유 버튼은 항상 활성 (fallback: 오픈채팅방 직접 열기)
-kakao_sdk_tag = (
-    '<script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js"'
-    ' integrity="sha384-TiCUE00h649CAMonG018J2ujOgDKW/kVWlChEuu4jK2vxfAAD0eZxzCKakxg55G4"'
-    ' crossorigin="anonymous"></script>'
-) if KAKAO_JS_KEY else ""
+def render_section5(s: dict) -> str:
+    # 이달의 핵심 이슈
+    issues_html = ""
+    for issue in s.get("monthly_issues", []):
+        issues_html += (
+            '<div class="cal-issue-item">'
+            f'<div class="cal-issue-label">{issue.get("label", "")}</div>'
+            f'<div class="cal-issue-detail">{issue.get("detail", "")}</div>'
+            "</div>"
+        )
 
-kakao_init_js = (
-    f'if (typeof Kakao !== "undefined" && !Kakao.isInitialized()) '
-    f'{{ Kakao.init("{KAKAO_JS_KEY}"); }}'
-) if KAKAO_JS_KEY else ""
+    # 지원금 알리미
+    subsidies_html = ""
+    for sub in s.get("subsidies", []):
+        subsidies_html += (
+            '<div class="cal-subsidy">'
+            f'<div class="cal-subsidy-name">{sub.get("name", "")}</div>'
+            '<div class="cal-subsidy-meta">'
+            f'<span class="cal-meta-tag">{sub.get("target", "")}</span>'
+            f'<span class="cal-meta-tag amount">{sub.get("amount", "")}</span>'
+            f'<span class="cal-meta-tag deadline">신청 기한: {sub.get("deadline", "")}</span>'
+            "</div>"
+            f'<div class="cal-subsidy-tip">✓ {sub.get("tip", "")}</div>'
+            "</div>"
+        )
 
-# 버튼은 항상 활성: SDK 있으면 뉴스레터 공유, 없으면 오픈채팅방으로 이동
-kakao_btn = '<button class="share-btn share-kakao" onclick="nlShareKakao()">💬 카카오톡</button>'
+    # 한 줄 QA
+    qq = s.get("quick_qa", {})
+    quick_qa_html = (
+        '<div class="cal-quick-qa">'
+        '<div class="cal-qq-label">한 줄 실무 Q&amp;A</div>'
+        f'<div class="cal-qq-q">Q. {qq.get("question", "")}</div>'
+        f'<div class="cal-qq-a">A. {qq.get("answer", "")}</div>'
+        "</div>"
+    )
+
+    # 인사담당자 Check Point
+    checkpoint_html = (
+        '<div class="cal-checkpoint">'
+        '<div class="cal-cp-label">인사담당자 Check Point</div>'
+        f'<div class="cal-cp-text">{s.get("hr_checkpoint", "")}</div>'
+        "</div>"
+    )
+
+    return (
+        '<div class="cal-block">'
+        '<div class="cal-sub-title">이달의 핵심 이슈 Check</div>'
+        f'{issues_html}'
+        "</div>"
+        '<div class="cal-block">'
+        '<div class="cal-sub-title">놓치면 손해인 지원금 알리미</div>'
+        f'{subsidies_html}'
+        "</div>"
+        f'{quick_qa_html}'
+        f'{checkpoint_html}'
+    )
 
 # ── 최종 HTML 조립 ────────────────────────────────────
 NEWSLETTER_HTML = (
@@ -616,7 +751,6 @@ NEWSLETTER_HTML = (
     f'<meta property="og:title" content="인사 노무 브리핑 {week_label} | 공인노무사JP">\n'
     '<meta property="og:type" content="article">\n'
     f'<meta property="og:url" content="{VERCEL_URL}">\n'
-    f"{kakao_sdk_tag}\n"
     f"<style>{CSS_NL}</style>\n"
     "</head>\n"
     "<body>\n"
@@ -665,12 +799,15 @@ NEWSLETTER_HTML = (
     f"  {render_five_fewer(five_fewer)}\n"
     "</div>\n"
 
-    # 공유 바 (하단 고정 없음, 절반 크기)
+    # 섹션 5
+    '<div class="nl-section">\n'
+    '  <div class="kicker">Section 05 &nbsp;·&nbsp; 중견·중소기업 맞춤 인사노무 &amp; 지원금 캘린더</div>\n'
+    f"  {render_section5(calendar)}\n"
+    "</div>\n"
+
+    # 공유 바 (링크 복사)
     '<div class="share-bar">\n'
-    '  <div class="share-row">\n'
-    '    <button class="share-btn share-copy" onclick="nlCopyLink()">🔗 링크 복사</button>\n'
-    f"    {kakao_btn}\n"
-    "  </div>\n"
+    '  <button class="share-btn share-copy" onclick="nlCopyLink()">🔗 링크 복사</button>\n'
     '  <div id="nl-copy-msg">✅ 링크 복사됨!</div>\n'
     "</div>\n"
 
@@ -682,15 +819,11 @@ NEWSLETTER_HTML = (
     "    구체적인 사안은 전문가 상담을 권장합니다.<br>\n"
     "    Powered by Claude AI &middot; &copy; 2026 공인노무사 JP\n"
     "  </div>\n"
-    '  <div class="nf-right">\n'
-    '    <a href="https://open.kakao.com/o/gOaNVSwi" target="_blank">상담 예약 →</a>\n'
-    "  </div>\n"
     "</div>\n"
     "</div><!-- /email-wrap -->\n"
 
-    # JavaScript
+    # JavaScript (링크 복사만)
     "<script>\n"
-    f"{kakao_init_js}\n"
     "function nlCopyLink() {\n"
     f"  var url = '{VERCEL_URL}';\n"
     "  if (navigator.clipboard && navigator.clipboard.writeText) {\n"
@@ -710,36 +843,6 @@ NEWSLETTER_HTML = (
     "  var m = document.getElementById('nl-copy-msg');\n"
     "  m.style.display = 'block';\n"
     "  setTimeout(function() { m.style.display = 'none'; }, 2500);\n"
-    "}\n"
-    "function nlShareKakao() {\n"
-    f"  var shareUrl  = '{VERCEL_URL}';\n"
-    f"  var shareText = '[인사 노무 브리핑] {week_label} 노동·HR·정책 핵심 브리핑';\n"
-    "\n"
-    "  // ① Kakao SDK 정상 초기화 → 카드형 공유\n"
-    "  if (typeof Kakao !== 'undefined' && Kakao.isInitialized()) {\n"
-    "    try {\n"
-    "      Kakao.Share.sendDefault({\n"
-    "        objectType: 'feed',\n"
-    "        content: {\n"
-    f"          title: '[인사 노무 브리핑] {week_label} — 공인노무사JP',\n"
-    f"          description: '{week_label} 노동·HR·정책 핵심 브리핑',\n"
-    f"          link: {{ mobileWebUrl: '{VERCEL_URL}', webUrl: '{VERCEL_URL}' }},\n"
-    "        },\n"
-    f"        buttons: [{{ title: '뉴스레터 보기', link: {{ mobileWebUrl: '{VERCEL_URL}', webUrl: '{VERCEL_URL}' }} }}],\n"
-    "      });\n"
-    "      return;\n"
-    "    } catch(e) { console.warn('Kakao.Share 실패:', e); }\n"
-    "  }\n"
-    "\n"
-    "  // ② 모바일 네이티브 공유시트 — KakaoTalk 포함\n"
-    "  if (navigator.share) {\n"
-    "    navigator.share({ title: '[인사 노무 브리핑]', text: shareText, url: shareUrl })\n"
-    "      .catch(function(e) { console.log('share cancelled:', e); });\n"
-    "    return;\n"
-    "  }\n"
-    "\n"
-    "  // ③ 최후 fallback: 오픈채팅방 직접 열기\n"
-    f"  window.open('{KAKAO_CHAT_URL}', '_blank');\n"
     "}\n"
     "</script>\n"
     "</body>\n"

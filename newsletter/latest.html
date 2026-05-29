@@ -8,7 +8,6 @@
 <meta property="og:title" content="인사 노무 브리핑 2026년 5월 넷째주 | 공인노무사JP">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://eu-labornews.vercel.app/newsletter/newsletter_20260527.html">
-<script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js" integrity="sha384-TiCUE00h649CAMonG018J2ujOgDKW/kVWlChEuu4jK2vxfAAD0eZxzCKakxg55G4" crossorigin="anonymous"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700;1,900&display=swap');
   @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
@@ -180,7 +179,6 @@
   }
   .share-btn:hover { opacity: .85; }
   .share-copy  { background: #333; color: #fff; }
-  .share-kakao { background: #FEE500; color: #3A1D1D; }
   #nl-copy-msg { font-size: 10px; color: #7dbb9a; display: none; text-align: center; padding-top: 4px; }
 
   /* 푸터 */
@@ -192,7 +190,7 @@
   }
   .nf-left { font-size: 11px; color: #555; line-height: 1.7; }
   .nf-brand { font-weight: 700; color: #111; }
-  .nf-right a { font-size: 12px; font-weight: 700; color: #1a6b3a; text-decoration: none; }
+
 
   /* 반응형 */
   @media (max-width: 600px) {
@@ -235,10 +233,7 @@
   <div class="five-card"><div class="five-badge">5인 미만 사업장 필독</div><div class="five-title">5인 미만 사업장 사장님 필독</div><div class="five-sub">이번 주 핵심 쟁점 · 뉴시스 · 2026.05.23</div><hr class="section-divider"><ul class="five-points"><li>4대보험료 부담을 피하기 위해 근로계약 대신 '가짜 3.3% 프리랜서 계약'을 체결하면 근로기준법 위반입니다 — 실제 근로자성이 인정되면 소급 보험료와 가산금 부담</li><li>회사가 고용보험·산재보험만 가입해주고 국민연금·건강보험은 가입 안 하겠다는 제안은 위법 — 4대보험은 일괄 가입 의무</li><li>근로자인지 프리랜서인지는 계약서 형식이 아니라 ①업무 지휘감독 여부 ②근로시간·장소 구속 여부 ③임금 지급 방식 등 실질 관계로 판단합니다</li><li>근로자로 인정되면 최저임금·퇴직금·연차휴가 등 근로기준법상 모든 권리 적용 — 추후 노동청 진정 시 사업주는 미지급 임금과 가산금 책임</li></ul><div class="five-tip"><div class="five-tip-label">즉시 실행 팁</div>5인 미만 사업장도 프리랜서 계약 시 실질 근로자성 여부를 반드시 사전 점검하고, 계약서 작성 전 노무사 자문을 받으세요. 특히 정기 출퇴근, 업무 보고 체계, 월 고정급 지급 구조가 있다면 근로자로 분류될 가능성이 높으므로 정식 근로계약과 4대보험 가입으로 법적 리스크를 사전 차단해야 합니다.</div></div>
 </div>
 <div class="share-bar">
-  <div class="share-row">
-    <button class="share-btn share-copy" onclick="nlCopyLink()">🔗 링크 복사</button>
-    <button class="share-btn share-kakao" onclick="nlShareKakao()">💬 카카오톡</button>
-  </div>
+  <button class="share-btn share-copy" onclick="nlCopyLink()">🔗 링크 복사</button>
   <div id="nl-copy-msg">✅ 링크 복사됨!</div>
 </div>
 <div class="nl-footer">
@@ -248,13 +243,9 @@
     구체적인 사안은 전문가 상담을 권장합니다.<br>
     Powered by Claude AI &middot; &copy; 2026 공인노무사 JP
   </div>
-  <div class="nf-right">
-    <a href="https://open.kakao.com/o/gOaNVSwi" target="_blank">상담 예약 →</a>
-  </div>
 </div>
 </div><!-- /email-wrap -->
 <script>
-if (typeof Kakao !== "undefined" && !Kakao.isInitialized()) { Kakao.init("d9aebc68a07b969a791ba9bd2f1f7207"); }
 function nlCopyLink() {
   var url = 'https://eu-labornews.vercel.app/newsletter/newsletter_20260527.html';
   if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -274,36 +265,6 @@ function nlShowCopy() {
   var m = document.getElementById('nl-copy-msg');
   m.style.display = 'block';
   setTimeout(function() { m.style.display = 'none'; }, 2500);
-}
-function nlShareKakao() {
-  var shareUrl  = 'https://eu-labornews.vercel.app/newsletter/newsletter_20260527.html';
-  var shareText = '[인사 노무 브리핑] 2026년 5월 넷째주 노동·HR·정책 핵심 브리핑';
-
-  // ① Kakao SDK 정상 초기화 → 카드형 공유
-  if (typeof Kakao !== 'undefined' && Kakao.isInitialized()) {
-    try {
-      Kakao.Share.sendDefault({
-        objectType: 'feed',
-        content: {
-          title: '[인사 노무 브리핑] 2026년 5월 넷째주 — 공인노무사JP',
-          description: '2026년 5월 넷째주 노동·HR·정책 핵심 브리핑',
-          link: { mobileWebUrl: 'https://eu-labornews.vercel.app/newsletter/newsletter_20260527.html', webUrl: 'https://eu-labornews.vercel.app/newsletter/newsletter_20260527.html' },
-        },
-        buttons: [{ title: '뉴스레터 보기', link: { mobileWebUrl: 'https://eu-labornews.vercel.app/newsletter/newsletter_20260527.html', webUrl: 'https://eu-labornews.vercel.app/newsletter/newsletter_20260527.html' } }],
-      });
-      return;
-    } catch(e) { console.warn('Kakao.Share 실패:', e); }
-  }
-
-  // ② 모바일 네이티브 공유시트 — KakaoTalk 포함
-  if (navigator.share) {
-    navigator.share({ title: '[인사 노무 브리핑]', text: shareText, url: shareUrl })
-      .catch(function(e) { console.log('share cancelled:', e); });
-    return;
-  }
-
-  // ③ 최후 fallback: 오픈채팅방 직접 열기
-  window.open('https://open.kakao.com/o/gOaNVSwi', '_blank');
 }
 </script>
 </body>
