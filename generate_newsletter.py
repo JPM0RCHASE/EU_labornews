@@ -470,21 +470,6 @@ CSS_NL = """
   .five-tip { border-left: 2px solid #1a6b3a; padding: 10px 12px; background: #f7fbf8; font-size: 12px; color: #333; line-height: 1.8; }
   .five-tip-label { font-size: 9px; font-weight: 700; color: #1a6b3a; letter-spacing: .16em; text-transform: uppercase; margin-bottom: 4px; }
 
-  /* CTA */
-  .cta-section { background: #1a6b3a; padding: 36px 32px; text-align: center; }
-  .cta-headline {
-    font-family: 'Playfair Display', Georgia, serif;
-    font-size: 24px; font-weight: 900; color: #fff;
-    margin-bottom: 12px; line-height: 1.3; word-break: keep-all;
-  }
-  .cta-sub { font-size: 12px; color: rgba(255,255,255,.8); margin-bottom: 24px; line-height: 1.9; }
-  .cta-btn {
-    display: inline-block; background: #fff; color: #1a6b3a;
-    font-size: 14px; font-weight: 900; padding: 14px 32px;
-    text-decoration: none; letter-spacing: .03em;
-  }
-  .cta-note { font-size: 11px; color: rgba(255,255,255,.55); margin-top: 12px; }
-
   /* 공유 바: 페이지 맨 하단 고정 없음, 절반 크기 */
   .share-bar { background: #111; padding: 7px 20px 6px; }
   .share-row { display: flex; gap: 8px; }
@@ -511,9 +496,8 @@ CSS_NL = """
 
   /* 반응형 */
   @media (max-width: 600px) {
-    .nl-header, .nl-hero, .nl-section, .cta-section, .nl-footer { padding-left: 16px; padding-right: 16px; }
+    .nl-header, .nl-hero, .nl-section, .nl-footer { padding-left: 16px; padding-right: 16px; }
     .nl-hero-title { font-size: 26px; }
-    .cta-headline { font-size: 20px; }
     .nl-header { flex-direction: column; align-items: flex-start; gap: 6px; }
     .nl-issue { text-align: left; }
   }
@@ -679,15 +663,6 @@ NEWSLETTER_HTML = (
     '<div class="nl-section">\n'
     '  <div class="kicker">Section 04 &nbsp;·&nbsp; 5인 미만 사업장 집중 노동법 이슈</div>\n'
     f"  {render_five_fewer(five_fewer)}\n"
-    "</div>\n"
-
-    # CTA
-    '<div class="cta-section">\n'
-    '  <h2 class="cta-headline">노동법 궁금증,<br>무료로 해결하세요</h2>\n'
-    '  <p class="cta-sub">근로계약서 · 취업규칙 · 해고 · 휴가 · 5인 미만 이슈부터<br>'
-    "노동조합 관련 이슈까지<br>공인노무사 JP가 직접 답변합니다</p>\n"
-    '  <a class="cta-btn" href="https://open.kakao.com/o/gOaNVSwi" target="_blank">무료 상담 신청하기</a>\n'
-    '  <p class="cta-note">카카오톡 오픈채팅으로 연결됩니다</p>\n'
     "</div>\n"
 
     # 공유 바 (하단 고정 없음, 절반 크기)
