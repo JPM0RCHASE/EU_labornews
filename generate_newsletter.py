@@ -8,7 +8,6 @@
   2. 정부·노동부·국회 정책동향
   3. JP's Weekly Insight — 이번 주 가장 많이 받은 질문
   4. 5인 미만 사업장 집중 노동법 이슈
-  CTA → 카카오톡 오픈채팅
 
 발행: Maily API (https://maily.so)
 저장: newsletter/ 폴더 (날짜별 HTML)
@@ -33,7 +32,6 @@ NAVER_CLIENT_SECRET = os.environ["NAVER_CLIENT_SECRET"]
 MAILY_API_KEY        = os.environ.get("MAILY_API_KEY", "")
 MAILY_PROJECT_ID     = os.environ.get("MAILY_PROJECT_ID", "")
 KAKAO_JS_KEY         = os.environ.get("KAKAO_JS_KEY", "")
-KAKAO_CHAT_URL       = "https://open.kakao.com/o/gOaNVSwi"   # 공인노무사JP 오픈채팅방
 TELEGRAM_BOT_TOKEN   = os.environ.get("TELEGRAM_BOT_TOKEN", "")
 TELEGRAM_CHAT_ID     = os.environ.get("TELEGRAM_CHAT_ID", "")
 
@@ -252,7 +250,7 @@ JSON만 응답. 다른 텍스트 절대 금지:
       "답변 단락 2 — 실무 적용 방법",
       "답변 단락 3 — 주의사항 또는 예외"
     ],
-    "cta_line": "더 궁금한 점은 무료 상담으로 확인하세요."
+    "cta_line": ""
   }},
   "section4_five_fewer": {{
     "title": "5인 미만 사업장 사장님 필독",
@@ -337,7 +335,7 @@ def safe_parse(text: str) -> dict:
                 "국회 노동법 개정 현황 확인 필요",
                 "행정해석 변경 사항 점검",
             ],
-            "policy_insight": "정책 변화에 따른 실무 대응 방법은 카카오톡 오픈채팅에서 확인하세요.",
+            "policy_insight": "정책 변화에 따른 실무 대응 방법은 공인노무사 JP에게 문의하세요.",
         },
         "section3_weekly_insight": {
             "question": "퇴직금을 분할해서 매월 지급해도 되나요?",
@@ -346,7 +344,7 @@ def safe_parse(text: str) -> dict:
                 "다만 근로자 동의 시 분할 지급 약정이 가능하며, 서면 동의가 필요합니다.",
                 "분할 지급 약정 없이 월급에 포함해 지급하면 퇴직금 선급이 무효화될 수 있습니다.",
             ],
-            "cta_line": "더 궁금한 점은 무료 상담으로 확인하세요.",
+            "cta_line": "",
         },
         "section4_five_fewer": {
             "title": "5인 미만 사업장 핵심 이슈",
@@ -527,7 +525,6 @@ CSS_NL = """
   .qa-a-label { font-size: 10px; font-weight: 700; color: #555; margin-bottom: 10px; letter-spacing: .12em; }
   .qa-paragraph { font-size: 13px; color: #333; line-height: 1.9; margin-bottom: 10px; }
   .qa-paragraph:last-of-type { margin-bottom: 0; }
-  .qa-cta { margin-top: 18px; padding-top: 16px; border-top: 1px solid #e0e0e0; font-size: 13px; }
 
   /* 섹션 4: 5인 미만 */
   .five-card { border: 1px solid #ddd; padding: 20px; margin-bottom: 12px; }
@@ -681,15 +678,11 @@ def render_qa(qa: dict) -> str:
         '<div class="qa-q">'
         '<span class="qa-open-q">“</span>'
         f'{qa.get("question", "")}'
-        '<span class="qa-close-q">”</span>'
-        "</div>"
-        '<div class="qa-a-label">공인노무사 JP의 답변</div>'
-        f"{paras}"
-        '<div class="qa-cta">💬 '
-        '<a href="https://open.kakao.com/o/gOaNVSwi" target="_blank" '
-        'style="color:#1a6b3a;text-decoration:none;font-weight:700;">'
-        "카카오톡 오픈채팅으로 무료 상담하기 →</a></div>"
-        "</div>"
+        '<span class=”qa-close-q”>”</span>'
+        “</div>”
+        '<div class=”qa-a-label”>공인노무사 JP의 답변</div>'
+        f”{paras}”
+        “</div>”
     )
 
 
@@ -1008,8 +1001,7 @@ def send_telegram_png(png_path: str) -> None:
         f"📋 인사 노무 뉴스레터 — {WEEK_LABEL}\n"
         f"━━━━━━━━━━━━━━━━━━\n"
         f"이번 주 인사·노무·정책 핵심 뉴스를 정리했습니다.\n\n"
-        f"🔗 전체 보기: {VERCEL_URL}\n"
-        f"💬 무료 상담: {KAKAO_CHAT_URL}"
+        f"🔗 전체 보기: {VERCEL_URL}"
     )
 
     try:
