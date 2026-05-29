@@ -75,6 +75,15 @@ KEYWORDS = [
     "직원 해고 절차", "가짜 프리랜서 3.3",
 ]
 
+# 섹션 5: 노동 관련 판결 전용 키워드
+RULING_KEYWORDS = [
+    "노동 판결 대법원", "부당해고 판결 법원",
+    "근로기준법 판결", "임금 판결 대법원",
+    "노동법 판결 고등법원", "산업재해 판결",
+    "노동법률 판결", "법률신문 노동 판결",
+    "직장내 괴롭힘 판결", "해고 판결 노동위원회",
+]
+
 nav_headers = {
     "X-Naver-Client-Id": NAVER_CLIENT_ID,
     "X-Naver-Client-Secret": NAVER_CLIENT_SECRET,
@@ -139,6 +148,49 @@ news_text = "\n\n".join([
     for i, n in enumerate(news_pool)
 ]) if news_pool else "수집된 뉴스 없음"
 
+# ── 섹션 5 전용: 판결 뉴스 수집 ──────────────────────
+rulings_collected, rulings_seen = [], set()
+for kw in RULING_KEYWORDS:
+    try:
+        resp = requests.get(
+            "https://openapi.naver.com/v1/search/news.json",
+            headers=nav_headers,
+            params={"query": kw, "sort": "date", "display": 5},
+            timeout=10,
+        )
+        for item in resp.json().get("items", []):
+            try:
+                pub_dt = datetime.strptime(
+                    item.get("pubDate", ""), "%a, %d %b %Y %H:%M:%S %z"
+                ).astimezone(KST)
+                if pub_dt >= seven_days_ago:
+                    title = re.sub(r"<[^>]+>", "", item.get("title", ""))
+                    key = title[:20]
+                    if key not in rulings_seen:
+                        rulings_seen.add(key)
+                        link = item.get("originallink") or item.get("link", "")
+                        rulings_collected.append({
+                            "title": title,
+                            "link": link,
+                            "description": re.sub(r"<[^>]+>", "", item.get("description", "")),
+                            "pubDate": pub_dt.strftime("%Y.%m.%d"),
+                            "keyword": kw,
+                        })
+            except Exception:
+                continue
+    except Exception as e:
+        print(f"판결 키워드 '{kw}' 오류: {e}")
+
+print(f"판결 관련 뉴스 {len(rulings_collected)}건 수집")
+ruling_pool = rulings_collected[:20]
+
+ruling_text = "\n\n".join([
+    f"[판결{i+1}] {n['title']}\n"
+    f"날짜:{n['pubDate']} | 링크:{n['link']}\n"
+    f"요약:{n['description']}"
+    for i, n in enumerate(ruling_pool)
+]) if ruling_pool else "수집된 판결 뉴스 없음"
+
 # ── Claude API 콘텐츠 생성 ────────────────────────────
 client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
 
@@ -147,6 +199,9 @@ PROMPT = f"""당신은 공인노무사 JP입니다. 오늘은 {DATE_LABEL} {WEEK
 
 수집된 뉴스:
 {news_text}
+
+이번 주 노동 관련 판결 뉴스:
+{ruling_text}
 
 【생성 규칙】
 1. 반드시 수집된 뉴스 목록에서만 선별할 것 (임의 생성 금지)
@@ -158,6 +213,7 @@ PROMPT = f"""당신은 공인노무사 JP입니다. 오늘은 {DATE_LABEL} {WEEK
 5. section3_weekly_insight의 질문 도출 근거도 메이저 언론사 기사를 우선 참고
 6. JP's Weekly Insight Q&A는 수집 뉴스 기반으로 실제 받을 법한 질문 1개 작성
 7. 모든 제목은 질문형 또는 실용적 표현 권장
+8. section5_ruling은 반드시 '이번 주 노동 관련 판결 뉴스'에서만 선별. 판결 뉴스가 부족하면 일반 수집 뉴스 중 판결·결정 관련 기사를 사용할 것
 
 JSON만 응답. 다른 텍스트 절대 금지:
 {{
@@ -211,7 +267,29 @@ JSON만 응답. 다른 텍스트 절대 금지:
       "핵심 포인트 4"
     ],
     "action_tip": "즉시 실행 가능한 실무 조언 2~3문장"
-  }}
+  }},
+  "section5_ruling": [
+    {{
+      "court": "대법원 / 서울고등법원 / 서울행정법원 등 법원명",
+      "case_type": "부당해고 / 임금 / 산재 / 직장내괴롭힘 등 분류",
+      "title": "판결 핵심을 담은 한 줄 제목",
+      "date": "2026.05.xx",
+      "url": "https://실제URL 또는 https://laborjp.tistory.com",
+      "facts": "사건 경위 1~2문장 — 당사자와 쟁점 중심",
+      "ruling": "판결 요지 2~3문장 — 법원의 판단 근거 포함",
+      "insight": "중소·중견기업 인사담당자가 알아야 할 실무 시사점 2문장"
+    }},
+    {{
+      "court": "법원명",
+      "case_type": "분류",
+      "title": "두 번째 판결 제목",
+      "date": "2026.05.xx",
+      "url": "https://실제URL 또는 https://laborjp.tistory.com",
+      "facts": "사건 경위",
+      "ruling": "판결 요지",
+      "insight": "실무 시사점"
+    }}
+  ]
 }}"""
 
 print("Claude API 호출 중...")
@@ -294,6 +372,18 @@ def safe_parse(text: str) -> dict:
             ],
             "action_tip": "구체적인 사안은 전문가 상담을 권장합니다.",
         },
+        "section5_ruling": [
+            {
+                "court": "대법원",
+                "case_type": "부당해고",
+                "title": "이번 주 주요 노동 판결을 수집 중 오류 발생",
+                "date": today_str,
+                "url": "https://laborjp.tistory.com",
+                "facts": "판결 뉴스 수집 중 오류가 발생하였습니다.",
+                "ruling": "다음 주 브리핑에서 확인해 주세요.",
+                "insight": "구체적 판결 분석은 공인노무사 JP에게 문의하세요.",
+            }
+        ],
     }
 
 
@@ -303,6 +393,7 @@ top3       = data.get("section1_top3", [])
 gov_policy = data.get("section2_gov_policy", {})
 weekly_qa  = data.get("section3_weekly_insight", {})
 five_fewer = data.get("section4_five_fewer", {})
+rulings    = data.get("section5_ruling", [])
 print("뉴스레터 콘텐츠 생성 완료")
 
 # ─────────────────────────────────────────────────────
@@ -505,6 +596,20 @@ CSS_NL = """
   .cal-cp-label { font-size: 9px; font-weight: 700; color: #555; letter-spacing: .16em; text-transform: uppercase; margin-bottom: 8px; }
   .cal-cp-text { font-size: 12px; color: #333; line-height: 1.9; }
 
+  /* 섹션 5: 판결 카드 */
+  .ruling-card { border: 1px solid #ddd; padding: 20px; margin-bottom: 14px; }
+  .ruling-card:last-child { margin-bottom: 0; }
+  .ruling-header { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; align-items: center; }
+  .ruling-court { font-size: 10px; font-weight: 700; background: #111; color: #fff; padding: 2px 8px; letter-spacing: .04em; }
+  .ruling-type  { font-size: 10px; font-weight: 700; background: #1a6b3a; color: #fff; padding: 2px 8px; letter-spacing: .04em; }
+  .ruling-date  { font-size: 11px; color: #888; margin-left: auto; }
+  .ruling-title { font-size: 15px; font-weight: 900; color: #111; margin-bottom: 14px; line-height: 1.4; word-break: keep-all; }
+  .ruling-section-label { font-size: 9px; font-weight: 700; color: #555; letter-spacing: .14em; text-transform: uppercase; margin-bottom: 4px; margin-top: 10px; }
+  .ruling-text  { font-size: 12px; color: #333; line-height: 1.85; }
+  .ruling-insight { border-left: 2px solid #1a6b3a; padding: 10px 12px; background: #f7fbf8; margin-top: 14px; }
+  .ruling-insight-label { font-size: 9px; font-weight: 700; color: #1a6b3a; letter-spacing: .14em; margin-bottom: 5px; }
+  .ruling-insight-text  { font-size: 12px; color: #333; line-height: 1.85; }
+
   /* 공유 바 */
   .share-bar { background: #111; padding: 7px 20px 6px; }
   .share-btn {
@@ -615,84 +720,32 @@ def render_five_fewer(s: dict) -> str:
     )
 
 
-# ── Section 05 고정 콘텐츠 (모성보호 & 일·가정 양립) ──
-# 법령 기반 안정 콘텐츠 — 법 개정 시에만 수동 업데이트
-SECTION5_HTML = """
-<div class="cal-block">
-  <div class="cal-sub-title">파트 1 · 이달의 핵심 이슈 CHECK — 근로자 권리 &amp; 사업주 의무</div>
+def render_section5_ruling(items: list) -> str:
+    if not items:
+        return '<div class="cal-block"><div class="cal-sub-title">이번 주 판결 수집 중 오류 발생 — 다음 주 브리핑을 확인해 주세요.</div></div>'
+    out = ""
+    for r in items:
+        out += (
+            '<div class="ruling-card">'
+            '<div class="ruling-header">'
+            f'<span class="ruling-court">{r.get("court", "")}</span>'
+            f'<span class="ruling-type">{r.get("case_type", "")}</span>'
+            f'<span class="ruling-date">{r.get("date", "")}</span>'
+            "</div>"
+            f'<h3 class="ruling-title"><a href="{r.get("url", "#")}" target="_blank" '
+            f'style="color:#111;text-decoration:none;">{r.get("title", "")}</a></h3>'
+            '<div class="ruling-section-label">사건 개요</div>'
+            f'<div class="ruling-text">{r.get("facts", "")}</div>'
+            '<div class="ruling-section-label">판결 요지</div>'
+            f'<div class="ruling-text">{r.get("ruling", "")}</div>'
+            '<div class="ruling-insight">'
+            '<div class="ruling-insight-label">⚖ 실무 시사점</div>'
+            f'<div class="ruling-insight-text">{r.get("insight", "")}</div>'
+            "</div>"
+            "</div>"
+        )
+    return out
 
-  <div class="cal-issue-item">
-    <div class="cal-issue-label">🩺 난임치료휴가</div>
-    <div class="cal-issue-detail">
-      연간 <strong>3일(최초 1일 유급)</strong> 부여 의무(남녀고용평등법 제18조의3). 신청 근로자에게 사유를 묻거나 불이익 처우 시 500만원 이하 과태료.<br>
-      ✓ <strong>비밀 유지 필수</strong> — 인사기록 별도 관리, 동료에게 사유 공개 금지.
-    </div>
-  </div>
-
-  <div class="cal-issue-item">
-    <div class="cal-issue-label">🤰 임신기 근로시간 단축</div>
-    <div class="cal-issue-detail">
-      <strong>임신 12주 이내 또는 36주 이후</strong> 1일 2시간 단축 근무 허용 의무(근로기준법 제74조의2). 임금 삭감 불가.<br>
-      ✓ 신청서·의사 소견서 수령 후 즉시 허용. 거부 시 500만원 이하 벌금.
-    </div>
-  </div>
-
-  <div class="cal-issue-item">
-    <div class="cal-issue-label">👶 출산전후휴가</div>
-    <div class="cal-issue-detail">
-      단태아 <strong>90일</strong>(출산 후 45일 이상 배치), 다태아 <strong>120일</strong> 보장(근로기준법 제74조).<br>
-      ✓ 최초 60일(다태아 75일)은 <strong>사업주 유급</strong> 부담(우선지원대상기업은 고용보험에서 전액 지원).
-    </div>
-  </div>
-
-  <div class="cal-issue-item">
-    <div class="cal-issue-label">🍼 육아휴직 &amp; 육아기 근로시간 단축</div>
-    <div class="cal-issue-detail">
-      만 8세 이하(초등 2학년 이하) 자녀 1인당 <strong>최대 1년</strong> 육아휴직(남녀고용평등법 제19조). 부부 동시 사용 가능.<br>
-      ✓ <strong>육아기 근로시간 단축</strong>: 미사용 육아휴직 기간 2배 가산하여 단축 근무 사용 가능(최대 3년). 주 15~35시간 범위 내 적용.
-    </div>
-  </div>
-</div>
-
-<div class="cal-block">
-  <div class="cal-sub-title">파트 2 · 놓치면 손해인 지원금 알리미 — 사업주 혜택</div>
-
-  <div class="cal-subsidy">
-    <div class="cal-subsidy-name">출산육아기 고용안정장려금 (육아휴직 부여)</div>
-    <div class="cal-subsidy-meta">
-      <span class="cal-meta-tag">우선지원대상기업 (중소기업)</span>
-      <span class="cal-meta-tag amount">월 30만원 (초기 특례 월 최대 200만원)</span>
-      <span class="cal-meta-tag deadline">육아휴직 개시 후 신청</span>
-    </div>
-    <div class="cal-subsidy-tip">
-      ✓ 생후 <strong>12개월 이내</strong> 자녀에 대한 육아휴직 부여 시 첫 3개월간 <strong>월 200만원 초기 특례</strong> 지원(부모 모두 사용 시 각각 적용).<br>
-      ✓ 고용24(www.work24.go.kr) 또는 관할 고용센터에서 신청.
-    </div>
-  </div>
-
-  <div class="cal-subsidy">
-    <div class="cal-subsidy-name">육아기 근로시간 단축 지원금</div>
-    <div class="cal-subsidy-meta">
-      <span class="cal-meta-tag">우선지원대상기업</span>
-      <span class="cal-meta-tag amount">월 30만원 (최초 3인 추가 지원)</span>
-      <span class="cal-meta-tag deadline">단축 개시 후 신청</span>
-    </div>
-    <div class="cal-subsidy-tip">
-      ✓ 동일 사업장 내 <strong>최초 3인</strong>에 대해 1인당 <strong>월 10만원 추가</strong>(합계 월 40만원) 지원.<br>
-      ✓ 단축 근무자의 업무 분담 동료에 대한 임금 보전 지원금도 별도 신청 가능.
-    </div>
-  </div>
-
-  <div class="cal-quick-qa">
-    <div class="cal-qq-label">💡 노무사 TIP — 지원금 안전하게 받는 사후 관리 포인트</div>
-    <div class="cal-qq-a">
-      <strong>① 복직 후 6개월 이상 고용 유지</strong>가 지원금 수령의 핵심 요건입니다. 복직 즉시 퇴직·해고 처리 시 지원금 전액 반환 및 향후 3년간 지원 제한.<br>
-      <strong>② 서류 관리</strong>: 육아휴직 신청서, 확인서, 복직 확인서를 3년간 보관 의무.<br>
-      <strong>③ 대체인력 활용 시</strong> 대체인력지원금 중복 신청 가능하므로 반드시 사전 확인하세요.
-    </div>
-  </div>
-</div>
-"""
 
 # ── 최종 HTML 조립 ────────────────────────────────────
 NEWSLETTER_HTML = (
@@ -754,10 +807,10 @@ NEWSLETTER_HTML = (
     f"  {render_five_fewer(five_fewer)}\n"
     "</div>\n"
 
-    # 섹션 5 (고정 콘텐츠 — 모성보호 & 일·가정 양립)
+    # 섹션 5: 이번 주 주요 노동 판결
     '<div class="nl-section">\n'
-    '  <div class="kicker">Section 05 &nbsp;·&nbsp; 모성보호 &amp; 일·가정 양립 지원 제도</div>\n'
-    f"  {SECTION5_HTML}\n"
+    '  <div class="kicker">Section 05 &nbsp;·&nbsp; 이번 주 주요 노동 판결</div>\n'
+    f"  {render_section5_ruling(rulings)}\n"
     "</div>\n"
 
     # 공유 바 (링크 복사)
