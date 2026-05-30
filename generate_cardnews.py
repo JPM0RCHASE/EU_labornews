@@ -7,6 +7,7 @@ JP Labor News - 텔레그램 일간 카드뉴스 생성
 - 텔레그램 자동 발송
 """
 import os, re, json, requests, urllib.parse
+import socket, shutil, threading, http.server, socketserver
 from datetime import datetime, timezone, timedelta
 import anthropic
 
@@ -24,10 +25,12 @@ DATE_STR    = TODAY.strftime("%Y%m%d")
 DATE_LABEL  = TODAY.strftime("%Y. %m. %d.")
 WEEKDAY     = ["월","화","수","목","금","토","일"][TODAY.weekday()]
 
-FOLDER   = DATE_STR
+FOLDER    = DATE_STR
 NEWS_FILE = f"labornews_{DATE_STR}.html"
 SEND_FILE = f"send_{DATE_STR}.html"
+PNG_FILE  = f"labornews_{DATE_STR}.png"
 VERCEL_URL = f"https://eu-labornews.vercel.app/{FOLDER}/{NEWS_FILE}"
+REPO_ROOT  = os.path.dirname(os.path.abspath(__file__))
 
 # OG 이미지: 쿼리스트링으로 매일 새 이미지로 인식
 OG_IMAGE = f"https://eu-labornews.vercel.app/thumbnail_telegram.png?v={DATE_STR}"
@@ -423,6 +426,45 @@ with open(f"{FOLDER}/{NEWS_FILE}", "w", encoding="utf-8") as f:
     f.write(NEWS_HTML)
 with open(f"{FOLDER}/{SEND_FILE}", "w", encoding="utf-8") as f:
     f.write(SEND_HTML)
+
+
+def generate_png(html_rel_path: str, png_path: str) -> bool:
+    try:
+        from playwright.sync_api import sync_playwright
+    except ImportError:
+        print("⚠ playwright 미설치 — PNG 생성 건너뜀")
+        return False
+    with socket.socket() as _s:
+        _s.bind(("", 0))
+        port = _s.getsockname()[1]
+
+    class _SilentHandler(http.server.SimpleHTTPRequestHandler):
+        def log_message(self, *args): pass
+
+    handler_factory = lambda *a, **kw: _SilentHandler(*a, directory=REPO_ROOT, **kw)
+    try:
+        with socketserver.TCPServer(("127.0.0.1", port), handler_factory) as httpd:
+            t = threading.Thread(target=httpd.serve_forever, daemon=True)
+            t.start()
+            try:
+                with sync_playwright() as pw:
+                    browser = pw.chromium.launch()
+                    page = browser.new_page(viewport={"width": 600, "height": 900}, device_scale_factor=2)
+                    page.goto(f"http://127.0.0.1:{port}/{html_rel_path}", wait_until="networkidle", timeout=30_000)
+                    page.wait_for_timeout(2_000)
+                    page.screenshot(path=png_path, full_page=True)
+                    browser.close()
+            finally:
+                httpd.shutdown()
+        print(f"✅ PNG 저장: {png_path}")
+        return True
+    except Exception as e:
+        print(f"⚠ PNG 생성 실패: {e}")
+        return False
+
+
+print("PNG 생성 중...")
+generate_png(f"{FOLDER}/{NEWS_FILE}", f"{FOLDER}/{PNG_FILE}")
 
 # 텔레그램 자동 발송
 resp = requests.post(

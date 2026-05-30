@@ -24,8 +24,10 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: 패키지 설치
-        run: pip install anthropic requests
+      - name: 패키지 설치 (Python 라이브러리 + Playwright)
+        run: |
+          pip install anthropic requests playwright
+          playwright install chromium --with-deps
 
       - name: 텔레그램 카드뉴스 생성 및 발송
         env:
