@@ -676,13 +676,13 @@ def render_qa(qa: dict) -> str:
         '<div class="qa-wrap">'
         '<div class="qa-label">JP\'s Weekly Insight · 이번 주 가장 많이 받은 질문</div>'
         '<div class="qa-q">'
-        '<span class="qa-open-q">“</span>'
+        '<span class="qa-open-q">"</span>'
         f'{qa.get("question", "")}'
-        '<span class=”qa-close-q”>”</span>'
-        “</div>”
-        '<div class=”qa-a-label”>공인노무사 JP의 답변</div>'
-        f”{paras}”
-        “</div>”
+        '<span class="qa-close-q">"</span>'
+        "</div>"
+        '<div class="qa-a-label">공인노무사 JP의 답변</div>'
+        f"{paras}"
+        "</div>"
     )
 
 
