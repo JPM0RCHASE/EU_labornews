@@ -32,6 +32,8 @@ jobs:
           MAILY_API_KEY:        ${{ secrets.MAILY_API_KEY }}
           MAILY_PROJECT_ID:     ${{ secrets.MAILY_PROJECT_ID }}
           KAKAO_JS_KEY:         ${{ secrets.KAKAO_JS_KEY }}
+          TELEGRAM_BOT_TOKEN:   ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID:     ${{ secrets.TELEGRAM_CHAT_ID }}
         run: python generate_newsletter.py
 
       - name: GitHub에 자동 커밋

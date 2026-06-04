@@ -20,9 +20,11 @@ import anthropic
 ANTHROPIC_API_KEY   = os.environ["ANTHROPIC_API_KEY"]
 NAVER_CLIENT_ID     = os.environ["NAVER_CLIENT_ID"]
 NAVER_CLIENT_SECRET = os.environ["NAVER_CLIENT_SECRET"]
-MAILY_API_KEY       = os.environ.get("MAILY_API_KEY", "")    # Maily API 키 (maily.so 대시보드에서 발급)
-MAILY_PROJECT_ID    = os.environ.get("MAILY_PROJECT_ID", "")  # Maily 프로젝트(채널) ID
-KAKAO_JS_KEY        = os.environ.get("KAKAO_JS_KEY", "")      # 카카오 JavaScript 키 (선택)
+MAILY_API_KEY       = os.environ.get("MAILY_API_KEY", "")
+MAILY_PROJECT_ID    = os.environ.get("MAILY_PROJECT_ID", "")
+KAKAO_JS_KEY        = os.environ.get("KAKAO_JS_KEY", "")
+TELEGRAM_BOT_TOKEN  = os.environ.get("TELEGRAM_BOT_TOKEN", "")
+TELEGRAM_CHAT_ID    = os.environ.get("TELEGRAM_CHAT_ID", "")
 
 # ── 날짜 설정 ──────────────────────────────────────────
 KST         = timezone(timedelta(hours=9))
@@ -677,5 +679,33 @@ send_via_maily(
     subject=f"[JP Labor Letter] {week_label} — 노동·HR·건설 핵심 브리핑",
     html_content=NEWSLETTER_HTML,
 )
+
+# ── 텔레그램 채널 발송 ─────────────────────────────────
+if TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID:
+    tg_caption = "\n".join([
+        f"📰 *JP Labor Letter* — {week_label}",
+        "",
+        "이번 주 Top 3:",
+    ] + [
+        f"{['1️⃣','2️⃣','3️⃣'][n['rank']-1]} {n['title']}"
+        for n in top3
+    ] + [
+        "",
+        f"🔗 전체 뉴스레터 보기\n{VERCEL_URL}",
+        "",
+        "📌 *JP Labor News* 채널 구독 → @jplabornews",
+    ])[:1024]
+
+    tg_resp = requests.post(
+        f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage",
+        data={"chat_id": TELEGRAM_CHAT_ID, "text": tg_caption, "parse_mode": "Markdown"},
+        timeout=10
+    )
+    if tg_resp.json().get("ok"):
+        print("✅ 텔레그램 뉴스레터 발송 성공!")
+    else:
+        print(f"❌ 텔레그램 발송 실패: {tg_resp.text}")
+else:
+    print("⚠ TELEGRAM 환경변수 없음 — 텔레그램 발송 건너뜀")
 
 print(f"🎉 완료! 웹 URL: {VERCEL_URL}")
