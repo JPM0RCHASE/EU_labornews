@@ -65,20 +65,23 @@ body{background:var(--navy);color:var(--text-body);font-family:'Apple SD Gothic 
 /* ── 공유 바 ── */
 .share-bar{
   background:#111827;border-top:1px solid var(--navy-border);
-  padding:12px 16px 10px;
+  padding:14px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  margin-top:16px;
+  /* 모바일 하단 sticky */
   position:sticky;bottom:0;z-index:90;
 }
-.share-row{display:flex;gap:10px;}
+.share-label{font-size:12px;color:var(--text-muted);margin-right:2px}
 .share-btn{
-  flex:1;display:flex;align-items:center;justify-content:center;gap:6px;
-  padding:13px 0;font-size:15px;font-weight:700;
-  border:none;border-radius:6px;cursor:pointer;
+  display:inline-flex;align-items:center;gap:6px;
+  padding:9px 16px;font-size:13px;font-weight:700;
+  border:none;border-radius:4px;cursor:pointer;
   text-decoration:none;transition:opacity .2s;
 }
 .share-btn:hover{opacity:.82}
 .share-copy{background:var(--navy-border);color:var(--cream)}
 .share-kakao{background:#FEE500;color:#3A1D1D}
-#copy-msg{font-size:12px;color:var(--gold);display:none;text-align:center;padding-top:6px;}
+.share-telegram{background:#0088cc;color:#fff}
+#copy-msg{font-size:12px;color:var(--gold);display:none;white-space:nowrap}
 /* ── 푸터 ── */
 .footer{border-top:1px solid var(--navy-border);background:#111827;padding:24px 20px;text-align:center;margin-top:0}
 .footer-logo{font-size:14px;font-weight:700;color:var(--gold);margin-bottom:6px}
@@ -93,99 +96,99 @@ body{background:var(--navy);color:var(--text-body);font-family:'Apple SD Gothic 
   <div class="headline-list"><a class="headline-item" href="#news1">
   <div class="headline-num">1</div>
   <div class="headline-content">
-    <div class="headline-source">📰 파이낸셜포스트 · 2026.06.04</div>
-    <div class="headline-title">노란봉투법 시행 3개월, 원청 경영에 족쇄로 작용</div>
+    <div class="headline-source">📰 매일노동뉴스 · 2026.06.04</div>
+    <div class="headline-title">울산지노위, 현대차 원청 사용자성 판단 또 연기</div>
     <span class="headline-tag tag-high">🔴 핵심 이슈</span>
   </div>
 </a><a class="headline-item" href="#news2">
   <div class="headline-num">2</div>
   <div class="headline-content">
-    <div class="headline-source">📰 경제신문 · 2026.06.03</div>
-    <div class="headline-title">삼성전자 수억 성과급 합의 후폭풍, 주요 대기업 임단협 전선 확대</div>
+    <div class="headline-source">📰 중앙일보 · 2026.06.04</div>
+    <div class="headline-title">삼성전자 성과급 격차 논란...메모리 최대 6억 vs 비메모리 1.6억</div>
     <span class="headline-tag tag-high">🔴 핵심 이슈</span>
   </div>
 </a><a class="headline-item" href="#news3">
   <div class="headline-num">3</div>
   <div class="headline-content">
-    <div class="headline-source">📰 딜사이트 · 2026.06.04</div>
-    <div class="headline-title">현대차 하청노조 사용자성 판단 지연, 완성차 업계 긴장</div>
+    <div class="headline-source">📰 노컷뉴스 · 2026.06.04</div>
+    <div class="headline-title">현대차그룹 10만 노조, 삼성 성과급에 자극받아 집단행동 검토</div>
     <span class="headline-tag tag-high">🔴 핵심 이슈</span>
   </div>
 </a><a class="headline-item" href="#news4">
   <div class="headline-num">4</div>
   <div class="headline-content">
     <div class="headline-source">📰 매일노동뉴스 · 2026.06.04</div>
-    <div class="headline-title">이재명 정부 1년, 개정 노조법 통과하며 '노동유연성' 꺼내</div>
-    <span class="headline-tag tag-med">⚠️ 주요 동향</span>
+    <div class="headline-title">이재명 정부 1년, 개정 노조법 통과하며 '노동유연성' 병행 추진</div>
+    <span class="headline-tag tag-med">⚠ 주요 동향</span>
   </div>
 </a><a class="headline-item" href="#news5">
   <div class="headline-num">5</div>
   <div class="headline-content">
-    <div class="headline-source">📰 디지털뉴스 · 2026.06.04</div>
-    <div class="headline-title">삼성물산, 건설노조 교섭요구 공고…10대 건설사 중 최초</div>
-    <span class="headline-tag tag-high">🔴 핵심 이슈</span>
+    <div class="headline-source">📰 한국경제 · 2026.06.04</div>
+    <div class="headline-title">[율촌 노동법] 영업이익은 누구의 것인가</div>
+    <span class="headline-tag tag-info">ℹ 전문가 분석</span>
   </div>
 </a></div>
 </section>
 <div class="news-card" id="news1">
-  <div class="source-bar"><span class="source-name">📰 파이낸셜포스트</span><span class="source-date">2026.06.04</span></div>
+  <div class="source-bar"><span class="source-name">📰 매일노동뉴스</span><span class="source-date">2026.06.04</span></div>
   <div class="card-inner">
     <div class="risk-tag risk-high">🔴 핵심 이슈</div>
     <div class="card-category">노란봉투법</div>
-    <h2 class="card-title">노란봉투법 시행 3개월, 원청 경영에 족쇄로 작용</h2>
-    <ul class="bullet-list"><li>노동위원회 사용자성 인정 잇따르며 하청노조의 원청 교섭 압박 가세</li><li>원청 기업의 경영 판단을 가로막는 족쇄로 작용, 단 하루 조업 중단도 수주 신뢰 무너뜨려</li><li>산업계 '성과급·하청노조' 이중 갈등 직면, 규제 개혁 요구 확산</li></ul>
-    <div class="insight"><div class="insight-label">실무 시사점</div><div class="insight-text">3월 시행 후 3개월간 노동위 사용자성 인정 사례 증가로 원청의 교섭 부담 급증. 하청노조 교섭 대응 매뉴얼 재정비 필수.</div></div>
+    <h2 class="card-title">울산지노위, 현대차 원청 사용자성 판단 또 연기</h2>
+    <ul class="bullet-list"><li>울산지노위, 현대차 하청노조 교섭요구에 대한 사용자성 판단 재차 미뤄</li><li>법정 심판기한 20일 훌쩍 넘기며 생산·식당·보안·판매 분야별 사용자성 검토 중</li><li>노동위, 교섭의제 중 한 가지만 사용자성 인정돼도 원청 교섭 의무 발생</li></ul>
+    <div class="insight"><div class="insight-label">실무 시사점</div><div class="insight-text">노조법 개정 후 첫 완성차 원청 사용자성 판단이 지연되며 실무적 기준 마련이 더뎌지고 있어, 제조업 원청의 교섭 대응 전략 수립에 불확실성이 가중되고 있습니다.</div></div>
   </div>
-  <div class="read-more"><span class="wm-small">© JP Labor News</span><a href="https://www.financialpost.co.kr/news/articleView.html?idxno=261362" target="_blank">자세히 보기</a></div>
+  <div class="read-more"><span class="wm-small">© JP Labor News</span><a href="https://www.labortoday.co.kr/news/articleView.html?idxno=234916" target="_blank">자세히 보기</a></div>
 </div><div class="news-card" id="news2">
-  <div class="source-bar"><span class="source-name">📰 경제신문</span><span class="source-date">2026.06.03</span></div>
+  <div class="source-bar"><span class="source-name">📰 중앙일보</span><span class="source-date">2026.06.04</span></div>
   <div class="card-inner">
     <div class="risk-tag risk-high">🔴 핵심 이슈</div>
-    <div class="card-category">대기업 노사갈등</div>
-    <h2 class="card-title">삼성전자 수억 성과급 합의 후폭풍, 주요 대기업 임단협 전선 확대</h2>
-    <ul class="bullet-list"><li>삼성전자 성과급 합의 이후 삼성바이오·현대차·카카오·LGU+ 등 '영업이익 N% 성과급' 요구 확산</li><li>현대차 노조 순이익 30% 성과급·상여금 800% 인상 요구, SK·삼성 반도체 호황에 '성과 배분' 압박</li><li>대·중기 양극화 심화 우려, 노사관계 새 국면 진입</li></ul>
-    <div class="insight"><div class="insight-label">실무 시사점</div><div class="insight-text">삼성전자 사례가 업계 전반의 성과급 기준점으로 작용하며 임단협 난이도 급상승. 성과급 산정 기준 사전 명확화 필요.</div></div>
+    <div class="card-category">대기업 노사</div>
+    <h2 class="card-title">삼성전자 성과급 격차 논란...메모리 최대 6억 vs 비메모리 1.6억</h2>
+    <ul class="bullet-list"><li>삼성전자 노사 파업 위기 극적 타결, 메모리 사업부 최대 6억·비메모리 최소 1.6억 성과급</li><li>사업부 간 4배 격차로 조직 내부 형평성 논란과 비메모리 부문 불만 고조</li><li>성과급 이슈가 제약·바이오 등 타 산업으로 확산되며 업계 전반 노사 긴장 지속</li></ul>
+    <div class="insight"><div class="insight-label">실무 시사점</div><div class="insight-text">사업부별 성과급 격차는 내부 형평성 문제와 조직 갈등을 야기하므로, 평가·보상체계 재설계 시 사업부 간 균형과 투명한 기준 마련이 필수적입니다.</div></div>
   </div>
-  <div class="read-more"><span class="wm-small">© JP Labor News</span><a href="https://www.ekn.kr/web/view.php?key=20260603024030129" target="_blank">자세히 보기</a></div>
+  <div class="read-more"><span class="wm-small">© JP Labor News</span><a href="https://www.joongang.co.kr/article/25433785" target="_blank">자세히 보기</a></div>
 </div><div class="news-card" id="news3">
-  <div class="source-bar"><span class="source-name">📰 딜사이트</span><span class="source-date">2026.06.04</span></div>
+  <div class="source-bar"><span class="source-name">📰 노컷뉴스</span><span class="source-date">2026.06.04</span></div>
   <div class="card-inner">
     <div class="risk-tag risk-high">🔴 핵심 이슈</div>
-    <div class="card-category">원청 사용자성</div>
-    <h2 class="card-title">현대차 하청노조 사용자성 판단 지연, 완성차 업계 긴장</h2>
-    <ul class="bullet-list"><li>6월 1일 현대차 하청노조의 원청 사용자성 인정 여부 결정 예정이었으나 판단 또 미뤄져</li><li>울산지노위 생산·식당·보안·판매 분야 사용자성 판단 진행 중, 20일 기한 훌쩍 넘겨</li><li>완성차 업계 '하청 리스크' 상수화, 모호한 법령에 산업계 불확실성 가중</li></ul>
-    <div class="insight"><div class="insight-label">실무 시사점</div><div class="insight-text">노동위 판단 지연으로 원청 대응 전략 수립 어려움 지속. 교섭의제별 사용자성 분리 판단 가능성에 대비 필요.</div></div>
+    <div class="card-category">임금협상</div>
+    <h2 class="card-title">현대차그룹 10만 노조, 삼성 성과급에 자극받아 집단행동 검토</h2>
+    <ul class="bullet-list"><li>현대차 노조, 기본급 14.96만원 인상·순이익 30% 성과급·상여금 800% 등 요구</li><li>삼성전자 성과급 이슈에 자극받아 현대차그룹 10만 조합원 연대 집단행동 가능성</li><li>완성차 업계 영업이익률 한계로 반도체급 보상 불가하나 노조 압박 강화</li></ul>
+    <div class="insight"><div class="insight-label">실무 시사점</div><div class="insight-text">타 기업 성과급 이슈가 연쇄 파업 압박으로 확산되고 있어, 업종별 수익구조 차이를 반영한 선제적 노사 커뮤니케이션과 합리적 보상 기준 제시가 시급합니다.</div></div>
   </div>
-  <div class="read-more"><span class="wm-small">© JP Labor News</span><a href="https://dealsite.co.kr/articles/162877" target="_blank">자세히 보기</a></div>
+  <div class="read-more"><span class="wm-small">© JP Labor News</span><a href="https://www.nocutnews.co.kr/news/6526822?utm_source=naver&utm_medium=article&utm_campaign=20260604073540" target="_blank">자세히 보기</a></div>
 </div><div class="news-card" id="news4">
   <div class="source-bar"><span class="source-name">📰 매일노동뉴스</span><span class="source-date">2026.06.04</span></div>
   <div class="card-inner">
-    <div class="risk-tag risk-med">⚠️ 주요 동향</div>
-    <div class="card-category">정부 노동정책</div>
-    <h2 class="card-title">이재명 정부 1년, 개정 노조법 통과하며 '노동유연성' 꺼내</h2>
-    <ul class="bullet-list"><li>정부 국정과제(93) '차별과 배제 없는 일터'에서 개정 노조법 통해 원·하청 다층적 구조 개선 추진</li><li>개정 노조법 통과 후 산업현장 혼란 속 노동유연성 정책 병행 논의</li><li>첫 국무회의부터 '산재사망' 이슈 제기, 중대재해처벌법과 맞물려 기업 규제 강화</li></ul>
-    <div class="insight"><div class="insight-label">실무 시사점</div><div class="insight-text">정부의 노동권 강화와 유연성 확대 양면 정책으로 기업 대응 복잡도 증가. 향후 노동법 개정 방향 예의주시 필요.</div></div>
+    <div class="risk-tag risk-med">⚠ 주요 동향</div>
+    <div class="card-category">노동정책</div>
+    <h2 class="card-title">이재명 정부 1년, 개정 노조법 통과하며 '노동유연성' 병행 추진</h2>
+    <ul class="bullet-list"><li>정부, 국정과제 '차별과 배제 없는 일터'에서 개정 노조법으로 원·하청 다층적 구조 개선</li><li>노조법 개정 후 정년 연장·일하는 사람 기본법 등 하반기 속도 예고</li><li>여당 절대다수 의석으로 충분한 검토 없이 밀어붙인 부작용 지적</li></ul>
+    <div class="insight"><div class="insight-label">실무 시사점</div><div class="insight-text">정부의 친노동 정책 기조 속 정년 연장·기본법 등 추가 입법이 예고되므로, HR 부서는 법 개정 동향 모니터링과 선제적 대응 체계 구축이 필요합니다.</div></div>
   </div>
   <div class="read-more"><span class="wm-small">© JP Labor News</span><a href="https://www.labortoday.co.kr/news/articleView.html?idxno=234904" target="_blank">자세히 보기</a></div>
 </div><div class="news-card" id="news5">
-  <div class="source-bar"><span class="source-name">📰 디지털뉴스</span><span class="source-date">2026.06.04</span></div>
+  <div class="source-bar"><span class="source-name">📰 한국경제</span><span class="source-date">2026.06.04</span></div>
   <div class="card-inner">
-    <div class="risk-tag risk-high">🔴 핵심 이슈</div>
-    <div class="card-category">건설업 노사</div>
-    <h2 class="card-title">삼성물산, 건설노조 교섭요구 공고…10대 건설사 중 최초</h2>
-    <ul class="bullet-list"><li>노란봉투법 시행 후 10대 종합건설사 중 첫 하청노조 교섭요구 공고 사례</li><li>삼성물산의 이번 결정으로 다른 대형 건설사를 향한 건설노조 압박 강화 전망</li><li>건설업계 전반으로 하청노조 교섭 요구 확산 우려</li></ul>
-    <div class="insight"><div class="insight-label">실무 시사점</div><div class="insight-text">건설업계 최초 사례로 향후 10대 건설사 전체로 확산 가능성 높음. 건설업 특성 반영한 교섭 대응 전략 시급.</div></div>
+    <div class="risk-tag risk-info">ℹ 전문가 분석</div>
+    <div class="card-category">HR 인사이트</div>
+    <h2 class="card-title">[율촌 노동법] 영업이익은 누구의 것인가</h2>
+    <ul class="bullet-list"><li>삼성전자 반도체 성과급 대립 타결 후, 영업이익 분배 요구의 법적·사회적 타당성 논란</li><li>노조의 파업 무기화한 이익 분배 요구가 법적 정당성 범위 넘는지 검토 필요</li><li>성과급 결정 시 경영권과 노동권 균형, 투명한 기준과 절차 중요성 강조</li></ul>
+    <div class="insight"><div class="insight-label">실무 시사점</div><div class="insight-text">영업이익 배분 요구가 확산되는 상황에서, 성과급 결정의 법적 한계와 경영권 보호를 위한 명확한 원칙과 근거 마련이 HR 리스크 관리의 핵심입니다.</div></div>
   </div>
-  <div class="read-more"><span class="wm-small">© JP Labor News</span><a href="https://www.dnews.co.kr/uhtml/view.jsp?idxno=202606021059166840856" target="_blank">자세히 보기</a></div>
+  <div class="read-more"><span class="wm-small">© JP Labor News</span><a href="https://www.hankyung.com/article/202606046418i" target="_blank">자세히 보기</a></div>
 </div>
 
 <!-- ── 공유 바: 마지막 카드 아래, 푸터 위 ── -->
 <div class="share-bar">
-  <div class="share-row">
-    <button class="share-btn share-copy" onclick="copyLink()">🔗 링크 복사</button>
-    <button class="share-btn share-kakao" onclick="shareKakao()">💬 카카오톡</button>
-  </div>
-  <div id="copy-msg">✅ 링크 복사됨!</div>
+  <span class="share-label">공유하기</span>
+  <button class="share-btn share-copy" onclick="copyLink()">🔗 링크 복사</button>
+  <span id="copy-msg">✅ 링크 복사됨!</span>
+  <button class="share-btn share-kakao" onclick="shareKakao()">💬 카카오톡</button>
+  <a class="share-btn share-telegram" href="https://t.me/share/url?url=https%3A//eu-labornews.vercel.app/20260604/labornews_20260604.html&text=%5BJP%20Labor%20Letter%5D%202026.%2006.%2004.%20%EB%85%B8%EB%8F%99%C2%B7HR%20%ED%95%B5%EC%8B%AC%20%EB%B8%8C%EB%A6%AC%ED%95%91%20%E2%80%94%20%EA%B3%B5%EC%9D%B8%EB%85%B8%EB%AC%B4%EC%82%AC%20JP" target="_blank" rel="noopener">✈️ 텔레그램</a>
 </div>
 
 <footer class="footer">
@@ -194,7 +197,11 @@ body{background:var(--navy);color:var(--text-body);font-family:'Apple SD Gothic 
 </footer>
 
 <script>
-  if (typeof Kakao !== "undefined" && !Kakao.isInitialized()) { Kakao.init("d9aebc68a07b969a791ba9bd2f1f7207"); }
+
+  if (typeof Kakao !== 'undefined') {
+    if (!Kakao.isInitialized()) { Kakao.init('d9aebc68a07b969a791ba9bd2f1f7207'); }
+  }
+
 function copyLink() {
   var url = 'https://eu-labornews.vercel.app/20260604/labornews_20260604.html';
   if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -216,37 +223,19 @@ function showCopyMsg() {
   setTimeout(function() { m.style.display = 'none'; }, 2500);
 }
 function shareKakao() {
-  var shareUrl  = 'https://eu-labornews.vercel.app/20260604/labornews_20260604.html';
-  var shareText = '[JP Labor Letter] 오늘의 인사노무 핵심 브리핑 · 2026. 06. 04.';
-
-  // ① Kakao SDK 정상 초기화 → 카드형 공유 (가장 풍부한 미리보기)
-  if (typeof Kakao !== 'undefined' && Kakao.isInitialized()) {
-    try {
-      Kakao.Share.sendDefault({
-        objectType: 'feed',
-        content: {
-          title: '[JP Labor Letter] — 공인노무사 JP',
-          description: '오늘의 인사노무 핵심 브리핑 · 2026. 06. 04.',
-          imageUrl: 'https://eu-labornews.vercel.app/thumbnail_telegram.png?v=20260604',
-          link: { mobileWebUrl: shareUrl, webUrl: shareUrl },
-        },
-        buttons: [{ title: '카드뉴스 보기', link: { mobileWebUrl: shareUrl, webUrl: shareUrl } }],
-      });
-      return;
-    } catch(e) {
-      console.warn('Kakao.Share 실패:', e);
-    }
+  if (typeof Kakao === 'undefined' || !Kakao.isInitialized()) {
+    window.open('https://t.me/share/url?url=https%3A//eu-labornews.vercel.app/20260604/labornews_20260604.html&text=%5BJP%20Labor%20Letter%5D%202026.%2006.%2004.%20%EB%85%B8%EB%8F%99%C2%B7HR%20%ED%95%B5%EC%8B%AC%20%EB%B8%8C%EB%A6%AC%ED%95%91%20%E2%80%94%20%EA%B3%B5%EC%9D%B8%EB%85%B8%EB%AC%B4%EC%82%AC%20JP', '_blank'); return;
   }
-
-  // ② 모바일 네이티브 공유시트 (Android/iOS) — KakaoTalk 포함
-  if (navigator.share) {
-    navigator.share({ title: '[JP Labor Letter]', text: shareText, url: shareUrl })
-      .catch(function(e) { console.log('native share cancelled:', e); });
-    return;
-  }
-
-  // ③ 최후 fallback: 오픈채팅방 직접 열기
-  window.open('https://open.kakao.com/o/gOaNVSwi', '_blank');
+  Kakao.Share.sendDefault({
+    objectType: 'feed',
+    content: {
+      title: '[JP Labor Letter] — 공인노무사 JP',
+      description: '오늘의 인사노무 핵심 브리핑 · 2026. 06. 04.',
+      imageUrl: 'https://eu-labornews.vercel.app/thumbnail_telegram.png?v=20260604',
+      link: { mobileWebUrl: 'https://eu-labornews.vercel.app/20260604/labornews_20260604.html', webUrl: 'https://eu-labornews.vercel.app/20260604/labornews_20260604.html' },
+    },
+    buttons: [{ title: '카드뉴스 보기', link: { mobileWebUrl: 'https://eu-labornews.vercel.app/20260604/labornews_20260604.html', webUrl: 'https://eu-labornews.vercel.app/20260604/labornews_20260604.html' } }],
+  });
 }
 </script>
 </body>

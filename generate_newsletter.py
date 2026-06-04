@@ -29,11 +29,11 @@ import anthropic
 ANTHROPIC_API_KEY   = os.environ["ANTHROPIC_API_KEY"]
 NAVER_CLIENT_ID     = os.environ["NAVER_CLIENT_ID"]
 NAVER_CLIENT_SECRET = os.environ["NAVER_CLIENT_SECRET"]
-MAILY_API_KEY        = os.environ.get("MAILY_API_KEY", "")
-MAILY_PROJECT_ID     = os.environ.get("MAILY_PROJECT_ID", "")
-KAKAO_JS_KEY         = os.environ.get("KAKAO_JS_KEY", "")
-TELEGRAM_BOT_TOKEN   = os.environ.get("TELEGRAM_BOT_TOKEN", "")
-TELEGRAM_CHAT_ID     = os.environ.get("TELEGRAM_CHAT_ID", "")
+MAILY_API_KEY       = os.environ.get("MAILY_API_KEY", "")
+MAILY_PROJECT_ID    = os.environ.get("MAILY_PROJECT_ID", "")
+KAKAO_JS_KEY        = os.environ.get("KAKAO_JS_KEY", "")
+TELEGRAM_BOT_TOKEN  = os.environ.get("TELEGRAM_BOT_TOKEN", "")
+TELEGRAM_CHAT_ID    = os.environ.get("TELEGRAM_CHAT_ID", "")
 
 # ── 날짜 설정 ─────────────────────────────────────────
 KST        = timezone(timedelta(hours=9))

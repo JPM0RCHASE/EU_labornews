@@ -2,11 +2,11 @@ name: Daily Telegram Cardnews
 
 on:
   schedule:
-    - cron: '0 22 * * 0'
-    - cron: '0 22 * * 1'
-    - cron: '0 22 * * 2'
-    - cron: '0 22 * * 3'
-    - cron: '0 22 * * 4'
+    - cron: '0 23 * * 0'
+    - cron: '0 23 * * 1'
+    - cron: '0 23 * * 2'
+    - cron: '0 23 * * 3'
+    - cron: '0 23 * * 4'
   workflow_dispatch:
 
 jobs:
@@ -45,4 +45,20 @@ jobs:
           git config --global user.name "GitHub Actions"
           git add .
           git diff --staged --quiet || git commit -m "Auto: $(date +'%Y%m%d') 텔레그램 카드뉴스 자동 생성"
-          git push origin main
+          git push origin HEAD
+
+      - name: jplabor 홈페이지에 카드뉴스 업로드
+        env:
+          JPLABOR_TOKEN: ${{ secrets.JPLABOR_TOKEN }}
+        run: |
+          DATE_STR=$(TZ=Asia/Seoul date +'%Y%m%d')
+          git clone https://x-access-token:${JPLABOR_TOKEN}@github.com/jpm0rchase/jplabor.git _jplabor
+          mkdir -p _jplabor/cardnews/${DATE_STR}
+          cp ${DATE_STR}/labornews_${DATE_STR}.html _jplabor/cardnews/${DATE_STR}/index.html
+          [ -f ${DATE_STR}/labornews_${DATE_STR}.png ] && cp ${DATE_STR}/labornews_${DATE_STR}.png _jplabor/cardnews/${DATE_STR}/
+          cd _jplabor
+          git config user.email "action@github.com"
+          git config user.name "GitHub Actions"
+          git add cardnews/
+          git diff --staged --quiet || git commit -m "Auto: ${DATE_STR} 카드뉴스 업데이트"
+          git push
