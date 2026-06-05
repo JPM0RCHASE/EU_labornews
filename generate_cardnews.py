@@ -468,9 +468,9 @@ print("PNG 생성 중...")
 generate_png(f"{FOLDER}/{NEWS_FILE}", f"{FOLDER}/{PNG_FILE}")
 
 # 텔레그램 자동 발송
-# 캡션: 헤드라인 + Vercel 링크 (1024자 제한)
+# 캡션: 헤드라인 + Vercel 링크 (1024자 제한, plain text)
 tg_full_caption = "\n".join([
-    f"📋 *오늘의 인사노무 브리핑* — {DATE_LABEL} ({WEEKDAY})",
+    f"📋 오늘의 인사노무 브리핑 — {DATE_LABEL} ({WEEKDAY})",
     "",
 ] + [
     f"{['1️⃣','2️⃣','3️⃣','4️⃣','5️⃣'][n['rank']-1]} {n['title']}"
@@ -479,25 +479,22 @@ tg_full_caption = "\n".join([
     "",
     f"🔗 전체 카드뉴스 보기\n{VERCEL_URL}",
     "",
-    "📌 *JP Labor News* 채널 구독 → @jplabornews",
+    "📌 JP Labor News 채널 구독 → @jplabornews",
 ])[:1024]
 
 png_path = f"{FOLDER}/{PNG_FILE}"
 if os.path.exists(png_path):
-    # PNG 파일 직접 업로드
     with open(png_path, "rb") as photo_file:
         resp = requests.post(
             f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendPhoto",
-            data={"chat_id": TELEGRAM_CHAT_ID, "caption": tg_full_caption, "parse_mode": "Markdown"},
+            data={"chat_id": TELEGRAM_CHAT_ID, "caption": tg_full_caption},
             files={"photo": photo_file},
             timeout=30
         )
 else:
-    # fallback: OG 이미지 URL로 발송
     resp = requests.post(
         f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendPhoto",
-        data={"chat_id": TELEGRAM_CHAT_ID, "photo": OG_IMAGE,
-              "caption": tg_full_caption, "parse_mode": "Markdown"},
+        data={"chat_id": TELEGRAM_CHAT_ID, "photo": OG_IMAGE, "caption": tg_full_caption},
         timeout=10
     )
 

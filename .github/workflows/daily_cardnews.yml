@@ -45,7 +45,7 @@ jobs:
           git config --global user.name "GitHub Actions"
           git add .
           git diff --staged --quiet || git commit -m "Auto: $(date +'%Y%m%d') 텔레그램 카드뉴스 자동 생성"
-          git pull --rebase origin main
+          git pull --rebase origin HEAD || true
           git push origin HEAD
 
       - name: jplabor 홈페이지에 카드뉴스 업로드
