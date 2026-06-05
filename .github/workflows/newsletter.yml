@@ -52,9 +52,9 @@ jobs:
         run: |
           DATE_STR=$(TZ=Asia/Seoul date +'%Y%m%d')
           git clone https://x-access-token:${JPLABOR_TOKEN}@github.com/jpm0rchase/jplabor.git _jplabor
-          mkdir -p _jplabor/newsletter
-          cp newsletter/newsletter_${DATE_STR}.html _jplabor/newsletter/${DATE_STR}.html
-          cp newsletter/newsletter_${DATE_STR}.html _jplabor/newsletter/latest.html
+          mkdir -p _jplabor/newsletter/${DATE_STR}
+          cp newsletter_${DATE_STR}.html _jplabor/newsletter/${DATE_STR}/index.html 2>/dev/null || true
+          cp newsletter_${DATE_STR}.png _jplabor/newsletter/${DATE_STR}/ 2>/dev/null || true
           cd _jplabor
           git config user.email "action@github.com"
           git config user.name "GitHub Actions"
