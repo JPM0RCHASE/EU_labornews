@@ -468,21 +468,11 @@ print("PNG 생성 중...")
 generate_png(f"{FOLDER}/{NEWS_FILE}", f"{FOLDER}/{PNG_FILE}")
 
 # 텔레그램 자동 발송
-png_path = f"{FOLDER}/{PNG_FILE}"
-if os.path.exists(png_path):
-    with open(png_path, "rb") as photo_file:
-        resp = requests.post(
-            f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendPhoto",
-            data={"chat_id": TELEGRAM_CHAT_ID, "caption": VERCEL_URL},
-            files={"photo": photo_file},
-            timeout=30
-        )
-else:
-    resp = requests.post(
-        f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendPhoto",
-        data={"chat_id": TELEGRAM_CHAT_ID, "photo": OG_IMAGE, "caption": VERCEL_URL},
-        timeout=10
-    )
+resp = requests.post(
+    f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendPhoto",
+    data={"chat_id": TELEGRAM_CHAT_ID, "photo": OG_IMAGE, "caption": VERCEL_URL},
+    timeout=10
+)
 
 if resp.json().get("ok"):
     print("✅ 텔레그램 발송 성공!")
