@@ -162,7 +162,31 @@ except json.JSONDecodeError:
     match = re.search(r'\{.*\}', raw, re.DOTALL)
     data = json.loads(match.group()) if match else {"news":[]}
 
-news_list = data["news"]
+news_list = data.get("news", [])
+
+# ── 필드 정규화: Claude가 일부 필드를 누락해도 죽지 않도록 기본값 채움 ──
+_RISK_LABEL_DEFAULT = {"high": "🔴 핵심 이슈", "med": "⚠ 주의", "info": "ℹ 참고"}
+_clean_list = []
+for i, n in enumerate(news_list):
+    if not isinstance(n, dict):
+        continue
+    rl = n.get("risk_level") or "info"
+    if rl not in ("high", "med", "info"):
+        rl = "info"
+    n["risk_level"] = rl
+    n["risk_label"] = n.get("risk_label") or _RISK_LABEL_DEFAULT[rl]
+    n["rank"]       = n.get("rank", i + 1)
+    n["source"]     = n.get("source", "")
+    n["date"]       = n.get("date", DATE_LABEL)
+    n["title"]      = n.get("title", "")
+    n["category"]   = n.get("category", "")
+    n["insight"]    = n.get("insight", "")
+    n["url"]        = n.get("url", VERCEL_URL)
+    bullets = n.get("bullets", [])
+    n["bullets"]    = bullets if isinstance(bullets, list) else [str(bullets)]
+    _clean_list.append(n)
+news_list = _clean_list
+
 print(f"카드뉴스 {len(news_list)}건 생성 완료")
 
 # ── HTML 생성 ────────────────────────────────────────
@@ -467,16 +491,18 @@ def generate_png(html_rel_path: str, png_path: str) -> bool:
 print("PNG 생성 중...")
 generate_png(f"{FOLDER}/{NEWS_FILE}", f"{FOLDER}/{PNG_FILE}")
 
-# 텔레그램 자동 발송
-resp = requests.post(
-    f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendPhoto",
-    data={"chat_id": TELEGRAM_CHAT_ID, "photo": OG_IMAGE, "caption": VERCEL_URL},
-    timeout=10
-)
-
-if resp.json().get("ok"):
-    print("✅ 텔레그램 발송 성공!")
-else:
-    print(f"❌ 텔레그램 발송 실패: {resp.text}")
+# 텔레그램 자동 발송 (네트워크 오류에도 워크플로우가 죽지 않도록 try/except)
+try:
+    resp = requests.post(
+        f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendPhoto",
+        data={"chat_id": TELEGRAM_CHAT_ID, "photo": OG_IMAGE, "caption": VERCEL_URL},
+        timeout=15
+    )
+    if resp.json().get("ok"):
+        print("✅ 텔레그램 발송 성공!")
+    else:
+        print(f"❌ 텔레그램 발송 실패: {resp.text}")
+except Exception as e:
+    print(f"❌ 텔레그램 발송 오류: {e}")
 
 print(f"✅ 완료: {FOLDER}/{NEWS_FILE}")
