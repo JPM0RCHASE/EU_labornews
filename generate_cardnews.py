@@ -492,17 +492,37 @@ print("PNG 생성 중...")
 generate_png(f"{FOLDER}/{NEWS_FILE}", f"{FOLDER}/{PNG_FILE}")
 
 # 텔레그램 자동 발송 (네트워크 오류에도 워크플로우가 죽지 않도록 try/except)
+_tg_base = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}"
+
+# 1) 썸네일 이미지 + 링크
 try:
     resp = requests.post(
-        f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendPhoto",
+        f"{_tg_base}/sendPhoto",
         data={"chat_id": TELEGRAM_CHAT_ID, "photo": OG_IMAGE, "caption": VERCEL_URL},
         timeout=15
     )
     if resp.json().get("ok"):
-        print("✅ 텔레그램 발송 성공!")
+        print("✅ 텔레그램 이미지 발송 성공!")
     else:
-        print(f"❌ 텔레그램 발송 실패: {resp.text}")
+        print(f"❌ 텔레그램 이미지 발송 실패: {resp.text}")
 except Exception as e:
-    print(f"❌ 텔레그램 발송 오류: {e}")
+    print(f"❌ 텔레그램 이미지 발송 오류: {e}")
+
+# 2) HTML 파일 첨부 발송
+_html_path = f"{FOLDER}/{NEWS_FILE}"
+try:
+    with open(_html_path, "rb") as _f:
+        resp2 = requests.post(
+            f"{_tg_base}/sendDocument",
+            data={"chat_id": TELEGRAM_CHAT_ID, "caption": f"📄 {DATE_LABEL} 카드뉴스 HTML 파일"},
+            files={"document": (NEWS_FILE, _f, "text/html")},
+            timeout=30
+        )
+    if resp2.json().get("ok"):
+        print("✅ 텔레그램 HTML 파일 발송 성공!")
+    else:
+        print(f"❌ 텔레그램 HTML 파일 발송 실패: {resp2.text}")
+except Exception as e:
+    print(f"❌ 텔레그램 HTML 파일 발송 오류: {e}")
 
 print(f"✅ 완료: {FOLDER}/{NEWS_FILE}")
