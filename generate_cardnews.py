@@ -505,6 +505,125 @@ def generate_png(html_rel_path: str, png_path: str) -> bool:
 print("PNG 생성 중...")
 generate_png(f"{FOLDER}/{NEWS_FILE}", f"{FOLDER}/{PNG_FILE}")
 
+
+# ── 데일리 요약 썸네일 생성 (네이버 블로그용 1200×630) ────────────────
+THUMBNAIL_FILE = f"thumbnail_{DATE_STR}.png"
+
+def generate_daily_thumbnail(items, date_label, png_path):
+    top3 = items[:3]
+    headlines_html = "\n".join([
+        f'<div class="hl"><span class="num">{i+1}</span>'
+        f'<span class="txt">{n["title"]}</span></div>'
+        for i, n in enumerate(top3)
+    ])
+    html = f"""<!DOCTYPE html><html><head><meta charset="UTF-8">
+<style>
+*{{margin:0;padding:0;box-sizing:border-box}}
+body{{width:1200px;height:630px;overflow:hidden;
+  background:#0d1b2a;
+  font-family:'Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif;
+  display:flex}}
+.left{{width:480px;height:630px;
+  background:linear-gradient(150deg,#0d1b2a 0%,#0f2540 100%);
+  padding:52px 44px;display:flex;flex-direction:column;justify-content:space-between;
+  border-right:1px solid #1e3a55}}
+.label{{font-size:12px;color:#c9a84c;letter-spacing:.2em;font-weight:700;text-transform:uppercase}}
+.main{{font-size:54px;font-weight:900;color:#f0ebe0;line-height:1.05;margin:22px 0 10px}}
+.main span{{color:#c9a84c}}
+.sub{{font-size:14px;color:#7a8fa8}}
+.date{{font-size:20px;color:#c9a84c;font-weight:800;margin-bottom:4px}}
+.brand{{font-size:13px;color:#3d5570}}
+.right{{flex:1;height:630px;background:#0e1e2e;
+  padding:50px 44px;display:flex;flex-direction:column;justify-content:center}}
+.hl-label{{font-size:11px;color:#c9a84c;letter-spacing:.18em;text-transform:uppercase;
+  font-weight:700;margin-bottom:26px;padding-bottom:14px;border-bottom:1px solid #1a3248}}
+.hl{{display:flex;gap:16px;align-items:flex-start;
+  padding:18px 0;border-bottom:1px solid #162a3c}}
+.hl:last-child{{border-bottom:none}}
+.num{{font-size:24px;font-weight:900;color:#c9a84c;min-width:30px;line-height:1.35}}
+.txt{{font-size:18px;color:#ccd8e8;line-height:1.55;font-weight:600;word-break:keep-all}}
+.footer{{margin-top:28px;padding-top:14px;border-top:1px solid #1a3248;
+  font-size:12px;color:#2e4a62}}
+</style></head><body>
+<div class="left">
+  <div>
+    <div class="label">Labor · HR · Daily Brief</div>
+    <div class="main">Today's<br><span>Labor</span><br>News</div>
+    <div class="sub">오늘의 인사노무 핵심 브리핑</div>
+  </div>
+  <div>
+    <div class="date">{date_label}</div>
+    <div class="brand">JP Labor News</div>
+  </div>
+</div>
+<div class="right">
+  <div class="hl-label">Today's Top Headlines</div>
+  {headlines_html}
+  <div class="footer">eu-labornews.vercel.app</div>
+</div>
+</body></html>"""
+
+    tmp = os.path.join(REPO_ROOT, FOLDER, f"_thumb_tmp_{DATE_STR}.html")
+    with open(tmp, "w", encoding="utf-8") as f:
+        f.write(html)
+    try:
+        from playwright.sync_api import sync_playwright
+        with sync_playwright() as pw:
+            browser = pw.chromium.launch()
+            page = browser.new_page(
+                viewport={"width": 1200, "height": 630},
+                device_scale_factor=2
+            )
+            page.goto(f"file://{os.path.abspath(tmp)}")
+            page.wait_for_timeout(1500)
+            page.screenshot(
+                path=png_path,
+                clip={"x": 0, "y": 0, "width": 1200, "height": 630}
+            )
+            browser.close()
+        os.remove(tmp)
+        print(f"✅ 데일리 썸네일 저장: {png_path}")
+        return True
+    except Exception as e:
+        if os.path.exists(tmp):
+            os.remove(tmp)
+        print(f"⚠ 데일리 썸네일 생성 실패: {e}")
+        return False
+
+
+print("데일리 썸네일 생성 중...")
+generate_daily_thumbnail(news_list, DATE_LABEL, f"{FOLDER}/{THUMBNAIL_FILE}")
+
+
+# ── 네이버 블로그 포스팅 콘텐츠 자동 생성 ───────────────────────────────
+BLOG_FILE = f"blog_post_{DATE_STR}.txt"
+
+# SEO 최적화 제목: 오늘 기사 카테고리 3개 포함
+categories = [n.get("category", "") for n in news_list[:3] if n.get("category")]
+cat_str = " · ".join(categories) if categories else "노동법 이슈"
+blog_title = f"{DATE_LABEL} 인사노무 핵심 브리핑 — {cat_str}"
+
+blog_body_lines = [
+    f"📌 {DATE_LABEL} 오늘의 인사노무 핵심 이슈",
+    "",
+]
+_emojis = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"]
+for n in news_list:
+    emoji = _emojis[n["rank"] - 1] if 1 <= n["rank"] <= 5 else "•"
+    blog_body_lines.append(f"{emoji} {n['title']}")
+blog_body_lines += [
+    "",
+    "▶ 전체 카드뉴스 보기",
+    VERCEL_URL,
+    "",
+    HASHTAG_STR,
+]
+blog_content = "\n".join(blog_body_lines)
+
+with open(f"{FOLDER}/{BLOG_FILE}", "w", encoding="utf-8") as f:
+    f.write(f"[제목]\n{blog_title}\n\n[본문]\n{blog_content}")
+print(f"✅ 블로그 포스팅 내용 저장: {FOLDER}/{BLOG_FILE}")
+
 # 텔레그램 자동 발송 (네트워크 오류에도 워크플로우가 죽지 않도록 try/except)
 _tg_base = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}"
 
