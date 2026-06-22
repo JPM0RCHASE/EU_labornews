@@ -624,39 +624,47 @@ with open(f"{FOLDER}/{BLOG_FILE}", "w", encoding="utf-8") as f:
     f.write(f"[제목]\n{blog_title}\n\n[본문]\n{blog_content}")
 print(f"✅ 블로그 포스팅 내용 저장: {FOLDER}/{BLOG_FILE}")
 
-# 텔레그램 자동 발송 (네트워크 오류에도 워크플로우가 죽지 않도록 try/except)
+# ── 텔레그램 발송 (오류 발생해도 워크플로우 계속 진행) ───────────────────
 _tg_base = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}"
 
-# 1) 썸네일 이미지 + 링크
-try:
-    resp = requests.post(
-        f"{_tg_base}/sendPhoto",
-        data={"chat_id": TELEGRAM_CHAT_ID, "photo": OG_IMAGE,
-              "caption": f"{VERCEL_URL}\n\n{HASHTAG_STR}"},
-        timeout=15
-    )
-    if resp.json().get("ok"):
-        print("✅ 텔레그램 이미지 발송 성공!")
-    else:
-        print(f"❌ 텔레그램 이미지 발송 실패: {resp.text}")
-except Exception as e:
-    print(f"❌ 텔레그램 이미지 발송 오류: {e}")
+def tg_post(method, **kwargs):
+    try:
+        r = requests.post(f"{_tg_base}/{method}", timeout=30, **kwargs)
+        ok = r.json().get("ok")
+        return ok, r.text
+    except Exception as e:
+        return False, str(e)
 
-# 2) HTML 파일 첨부 발송
-_html_path = f"{FOLDER}/{NEWS_FILE}"
-try:
-    with open(_html_path, "rb") as _f:
-        resp2 = requests.post(
-            f"{_tg_base}/sendDocument",
-            data={"chat_id": TELEGRAM_CHAT_ID, "caption": f"📄 {DATE_LABEL} 카드뉴스 HTML 파일"},
-            files={"document": (NEWS_FILE, _f, "text/html")},
-            timeout=30
+# 1) 데일리 요약 썸네일 (1200×630) + 링크 + 해시태그  ← 블로그 대표이미지용
+_thumb_path = f"{FOLDER}/{THUMBNAIL_FILE}"
+if os.path.exists(_thumb_path):
+    with open(_thumb_path, "rb") as _f:
+        ok, msg = tg_post(
+            "sendPhoto",
+            data={"chat_id": TELEGRAM_CHAT_ID,
+                  "caption": f"🖼 {DATE_LABEL} 블로그 썸네일\n\n{VERCEL_URL}\n\n{HASHTAG_STR}"},
+            files={"photo": (_thumb_path, _f, "image/png")},
         )
-    if resp2.json().get("ok"):
-        print("✅ 텔레그램 HTML 파일 발송 성공!")
-    else:
-        print(f"❌ 텔레그램 HTML 파일 발송 실패: {resp2.text}")
-except Exception as e:
-    print(f"❌ 텔레그램 HTML 파일 발송 오류: {e}")
+    print("✅ 텔레그램 썸네일 발송!" if ok else f"❌ 썸네일 발송 실패: {msg}")
+else:
+    print("⚠ 데일리 썸네일 파일 없음 — 건너뜀")
+
+# 2) 카드뉴스 전체 스크린샷 PNG
+_png_path = f"{FOLDER}/{PNG_FILE}"
+if os.path.exists(_png_path):
+    with open(_png_path, "rb") as _f:
+        ok, msg = tg_post(
+            "sendDocument",
+            data={"chat_id": TELEGRAM_CHAT_ID,
+                  "caption": f"📸 {DATE_LABEL} 카드뉴스 전체 스크린샷"},
+            files={"document": (PNG_FILE, _f, "image/png")},
+        )
+    print("✅ 텔레그램 스크린샷 발송!" if ok else f"❌ 스크린샷 발송 실패: {msg}")
+
+# 3) 블로그 본문 텍스트 메시지 (복붙용)
+_blog_msg = f"📝 네이버 블로그 포스팅용\n\n[제목]\n{blog_title}\n\n[본문]\n{blog_content}"
+ok, msg = tg_post("sendMessage",
+    data={"chat_id": TELEGRAM_CHAT_ID, "text": _blog_msg[:4096]})
+print("✅ 텔레그램 블로그 본문 발송!" if ok else f"❌ 본문 발송 실패: {msg}")
 
 print(f"✅ 완료: {FOLDER}/{NEWS_FILE}")
