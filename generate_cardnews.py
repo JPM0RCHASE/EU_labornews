@@ -143,8 +143,16 @@ JSON만 응답. 다른 텍스트 절대 금지:
       "bullets": ["핵심 내용 1", "핵심 내용 2", "핵심 내용 3"],
       "insight": "실무 시사점 1~2문장"
     }}
-  ]
+  ],
+  "hashtags": ["오늘기사내용에서추출한태그1", "태그2", "태그3", "태그4", "태그5", "태그6", "태그7", "태그8", "태그9", "태그10"]
 }}
+
+【해시태그 작성 규칙】
+- 반드시 오늘 선별된 5개 기사 내용에서만 추출 (임의 생성 금지)
+- 10개 정확히 생성
+- 기사 주제·인물·법령·사건명 위주 (예: 노란봉투법, 최저임금, SK하이닉스파업, 중대재해처벌법)
+- 브랜딩·홍보성 태그 절대 금지 (공인노무사JP, 인사노무가이드 등)
+- 띄어쓰기 없이 붙여쓰기, # 기호 제외
 risk_level: high(🔴), med(⚠), info(ℹ)
 총 5건, rank 1~5 순서 고정"""
 
@@ -163,6 +171,12 @@ except json.JSONDecodeError:
     data = json.loads(match.group()) if match else {"news":[]}
 
 news_list = data.get("news", [])
+hashtags  = data.get("hashtags", [])
+if not isinstance(hashtags, list):
+    hashtags = []
+hashtags = [str(t).lstrip("#").strip() for t in hashtags if t][:10]
+HASHTAG_STR = " ".join(f"#{t}" for t in hashtags)
+print(f"해시태그 {len(hashtags)}개: {HASHTAG_STR}")
 
 # ── 필드 정규화: Claude가 일부 필드를 누락해도 죽지 않도록 기본값 채움 ──
 _RISK_LABEL_DEFAULT = {"high": "🔴 핵심 이슈", "med": "⚠ 주의", "info": "ℹ 참고"}
@@ -498,7 +512,8 @@ _tg_base = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}"
 try:
     resp = requests.post(
         f"{_tg_base}/sendPhoto",
-        data={"chat_id": TELEGRAM_CHAT_ID, "photo": OG_IMAGE, "caption": VERCEL_URL},
+        data={"chat_id": TELEGRAM_CHAT_ID, "photo": OG_IMAGE,
+              "caption": f"{VERCEL_URL}\n\n{HASHTAG_STR}"},
         timeout=15
     )
     if resp.json().get("ok"):
