@@ -502,11 +502,7 @@ def generate_png(html_rel_path: str, png_path: str) -> bool:
         return False
 
 
-print("PNG 생성 중...")
-generate_png(f"{FOLDER}/{NEWS_FILE}", f"{FOLDER}/{PNG_FILE}")
-
-
-# ── 데일리 요약 썸네일 생성 (네이버 블로그용 1200×630) ────────────────
+# ── 데일리 요약 썸네일 생성 (1200×630) ─────────────────────────────────
 THUMBNAIL_FILE = f"thumbnail_{DATE_STR}.png"
 
 def generate_daily_thumbnail(items, date_label, png_path):
@@ -594,37 +590,7 @@ body{{width:1200px;height:630px;overflow:hidden;
 print("데일리 썸네일 생성 중...")
 generate_daily_thumbnail(news_list, DATE_LABEL, f"{FOLDER}/{THUMBNAIL_FILE}")
 
-
-# ── 네이버 블로그 포스팅 콘텐츠 자동 생성 ───────────────────────────────
-BLOG_FILE = f"blog_post_{DATE_STR}.txt"
-
-# SEO 최적화 제목: 오늘 기사 카테고리 3개 포함
-categories = [n.get("category", "") for n in news_list[:3] if n.get("category")]
-cat_str = " · ".join(categories) if categories else "노동법 이슈"
-blog_title = f"{DATE_LABEL} 인사노무 핵심 브리핑 — {cat_str}"
-
-blog_body_lines = [
-    f"📌 {DATE_LABEL} 오늘의 인사노무 핵심 이슈",
-    "",
-]
-_emojis = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"]
-for n in news_list:
-    emoji = _emojis[n["rank"] - 1] if 1 <= n["rank"] <= 5 else "•"
-    blog_body_lines.append(f"{emoji} {n['title']}")
-blog_body_lines += [
-    "",
-    "▶ 전체 카드뉴스 보기",
-    VERCEL_URL,
-    "",
-    HASHTAG_STR,
-]
-blog_content = "\n".join(blog_body_lines)
-
-with open(f"{FOLDER}/{BLOG_FILE}", "w", encoding="utf-8") as f:
-    f.write(f"[제목]\n{blog_title}\n\n[본문]\n{blog_content}")
-print(f"✅ 블로그 포스팅 내용 저장: {FOLDER}/{BLOG_FILE}")
-
-# ── 텔레그램 발송 (오류 발생해도 워크플로우 계속 진행) ───────────────────
+# ── 텔레그램 발송 ───────────────────────────────────────────────────────
 _tg_base = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}"
 
 def tg_post(method, **kwargs):
@@ -635,36 +601,25 @@ def tg_post(method, **kwargs):
     except Exception as e:
         return False, str(e)
 
-# 1) 데일리 요약 썸네일 (1200×630) + 링크 + 해시태그  ← 블로그 대표이미지용
+# 1) 기존 유지 — 다크 네이비+별하늘 OG 이미지 + 링크 + 해시태그
+ok, msg = tg_post(
+    "sendPhoto",
+    data={"chat_id": TELEGRAM_CHAT_ID, "photo": OG_IMAGE,
+          "caption": f"{VERCEL_URL}\n\n{HASHTAG_STR}"},
+)
+print("✅ 텔레그램 OG 이미지 발송!" if ok else f"❌ OG 이미지 발송 실패: {msg}")
+
+# 2) 신규 — 데일리 요약 썸네일 (1200×630)
 _thumb_path = f"{FOLDER}/{THUMBNAIL_FILE}"
 if os.path.exists(_thumb_path):
     with open(_thumb_path, "rb") as _f:
         ok, msg = tg_post(
             "sendPhoto",
-            data={"chat_id": TELEGRAM_CHAT_ID,
-                  "caption": f"🖼 {DATE_LABEL} 블로그 썸네일\n\n{VERCEL_URL}\n\n{HASHTAG_STR}"},
-            files={"photo": (_thumb_path, _f, "image/png")},
+            data={"chat_id": TELEGRAM_CHAT_ID, "caption": f"🖼 {DATE_LABEL} 오늘의 헤드라인"},
+            files={"photo": (THUMBNAIL_FILE, _f, "image/png")},
         )
-    print("✅ 텔레그램 썸네일 발송!" if ok else f"❌ 썸네일 발송 실패: {msg}")
+    print("✅ 텔레그램 데일리 썸네일 발송!" if ok else f"❌ 데일리 썸네일 발송 실패: {msg}")
 else:
     print("⚠ 데일리 썸네일 파일 없음 — 건너뜀")
-
-# 2) 카드뉴스 전체 스크린샷 PNG
-_png_path = f"{FOLDER}/{PNG_FILE}"
-if os.path.exists(_png_path):
-    with open(_png_path, "rb") as _f:
-        ok, msg = tg_post(
-            "sendDocument",
-            data={"chat_id": TELEGRAM_CHAT_ID,
-                  "caption": f"📸 {DATE_LABEL} 카드뉴스 전체 스크린샷"},
-            files={"document": (PNG_FILE, _f, "image/png")},
-        )
-    print("✅ 텔레그램 스크린샷 발송!" if ok else f"❌ 스크린샷 발송 실패: {msg}")
-
-# 3) 블로그 본문 텍스트 메시지 (복붙용)
-_blog_msg = f"📝 네이버 블로그 포스팅용\n\n[제목]\n{blog_title}\n\n[본문]\n{blog_content}"
-ok, msg = tg_post("sendMessage",
-    data={"chat_id": TELEGRAM_CHAT_ID, "text": _blog_msg[:4096]})
-print("✅ 텔레그램 블로그 본문 발송!" if ok else f"❌ 본문 발송 실패: {msg}")
 
 print(f"✅ 완료: {FOLDER}/{NEWS_FILE}")
