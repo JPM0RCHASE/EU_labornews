@@ -1022,10 +1022,13 @@ def generate_weekly_thumbnail(items, week_label, png_path):
         for i, n in enumerate(tops)
     ])
     html = f"""<!DOCTYPE html><html><head><meta charset="UTF-8">
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
 <style>
-*{{margin:0;padding:0;box-sizing:border-box}}
+*{{margin:0;padding:0;box-sizing:border-box;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}}
 body{{width:1200px;height:630px;overflow:hidden;background:#1a6b3a;
-  font-family:'Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif;display:flex}}
+  font-family:'Pretendard','Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif;display:flex}}
 .left{{width:480px;height:630px;
   background:linear-gradient(150deg,#14532b 0%,#1a6b3a 100%);
   padding:52px 44px;display:flex;flex-direction:column;justify-content:space-between;
@@ -1071,9 +1074,16 @@ body{{width:1200px;height:630px;overflow:hidden;background:#1a6b3a;
         from playwright.sync_api import sync_playwright
         with sync_playwright() as pw:
             browser = pw.chromium.launch()
-            page = browser.new_page(viewport={"width": 1200, "height": 630}, device_scale_factor=2)
-            page.goto(f"file://{os.path.abspath(tmp)}")
-            page.wait_for_timeout(1500)
+            page = browser.new_page(viewport={"width": 1200, "height": 630}, device_scale_factor=3)
+            page.goto(f"file://{os.path.abspath(tmp)}", wait_until="networkidle")
+            try:
+                page.evaluate(
+                    "async () => { if (document.fonts && document.fonts.ready) "
+                    "{ await document.fonts.ready; } }"
+                )
+            except Exception:
+                pass
+            page.wait_for_timeout(1200)
             page.screenshot(path=png_path, clip={"x": 0, "y": 0, "width": 1200, "height": 630})
             browser.close()
         os.remove(tmp)

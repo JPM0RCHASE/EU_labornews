@@ -529,20 +529,24 @@ def generate_daily_thumbnail(items, date_label, png_path):
         for i, n in enumerate(top3)
     ])
     html = f"""<!DOCTYPE html><html><head><meta charset="UTF-8">
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@900&display=swap">
 <style>
-*{{margin:0;padding:0;box-sizing:border-box}}
+*{{margin:0;padding:0;box-sizing:border-box;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}}
 body{{width:1200px;height:630px;overflow:hidden;
   background:#0d1b2a;
-  font-family:'Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif;
+  font-family:'Pretendard','Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif;
   display:flex}}
 .left{{width:480px;height:630px;
   background:linear-gradient(150deg,#0d1b2a 0%,#0f2540 100%);
   padding:52px 44px;display:flex;flex-direction:column;justify-content:space-between;
   border-right:1px solid #1e3a55}}
 .label{{font-size:12px;color:#c9a84c;letter-spacing:.2em;font-weight:700;text-transform:uppercase}}
-.main{{font-size:54px;font-weight:900;color:#f0ebe0;line-height:1.05;margin:22px 0 10px}}
+.main{{font-family:'Playfair Display',serif;font-size:54px;font-weight:900;color:#f0ebe0;line-height:1.05;margin:22px 0 10px}}
 .main span{{color:#c9a84c}}
-.sub{{font-size:14px;color:#7a8fa8}}
+.sub{{font-size:14px;color:#9fb0c4}}
 .date{{font-size:20px;color:#c9a84c;font-weight:800;margin-bottom:4px}}
 .brand{{font-size:13px;color:#3d5570}}
 .right{{flex:1;height:630px;background:#0e1e2e;
@@ -584,10 +588,17 @@ body{{width:1200px;height:630px;overflow:hidden;
             browser = pw.chromium.launch()
             page = browser.new_page(
                 viewport={"width": 1200, "height": 630},
-                device_scale_factor=2
+                device_scale_factor=3
             )
-            page.goto(f"file://{os.path.abspath(tmp)}")
-            page.wait_for_timeout(1500)
+            page.goto(f"file://{os.path.abspath(tmp)}", wait_until="networkidle")
+            try:
+                page.evaluate(
+                    "async () => { if (document.fonts && document.fonts.ready) "
+                    "{ await document.fonts.ready; } }"
+                )
+            except Exception:
+                pass
+            page.wait_for_timeout(1200)
             page.screenshot(
                 path=png_path,
                 clip={"x": 0, "y": 0, "width": 1200, "height": 630}
