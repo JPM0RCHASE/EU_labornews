@@ -280,7 +280,7 @@ JSON만 응답. 다른 텍스트 절대 금지:
     }}
   ],
   "hashtags": ["이번주뉴스내용에서추출한태그1", "태그2", "태그3", "태그4", "태그5", "태그6", "태그7", "태그8", "태그9", "태그10"],
-  "blog_title": "노란봉투법 시행, 우리 회사도 영향 있을까?"
+  "blog_title": "노란봉투법·최저임금 인상·중대재해 판결"
 }}
 
 【해시태그 작성 규칙】
@@ -291,13 +291,13 @@ JSON만 응답. 다른 텍스트 절대 금지:
 - 띄어쓰기 없이 붙여쓰기, # 기호 제외
 
 【blog_title 작성 규칙 — 매우 중요】
-- 이번 주 Top1 뉴스의 핵심을 '질문형'으로 만들 것
-- 형식: "[핵심이슈], [독자가 궁금해할 질문]?"
-- 예시: "노란봉투법 시행, 우리 회사도 영향 있을까?"
-       "최저임금 또 오른다, 자영업자 부담 얼마나?"
-- 독자(인사담당자·사장님)가 클릭하고 싶게 궁금증 유발
-- 날짜·"주간 브리핑" 문구는 넣지 말 것 (코드에서 자동으로 붙임)
-- 25자 이내로 간결하게"""
+- 이번 주 핵심 이슈 3개(Top3 뉴스·정책·판결 중)를 '키워드 나열식'으로 만들 것
+- 형식: "키워드1·키워드2·키워드3" (가운뎃점 · 으로 연결, 정확히 3개)
+- 각 키워드는 2~6자의 구체적 표현 (예: "노란봉투법", "최저임금 인상", "중대재해 판결")
+- ※ 삼성·SK·현대차 등 대기업 노사·파업 키워드는 제외 (카드뉴스와 중복 방지)
+- 좋은 예: "노란봉투법·최저임금 인상·중대재해 판결"
+- 날짜·"뉴스레터" 문구는 넣지 말 것 (코드에서 자동으로 붙임)
+- 가운뎃점(·) 외 다른 기호·따옴표 금지"""
 
 print("Claude API 호출 중...")
 response = client.messages.create(
@@ -1033,21 +1033,21 @@ body{{width:1200px;height:630px;overflow:hidden;background:#1a6b3a;
   background:linear-gradient(150deg,#14532b 0%,#1a6b3a 100%);
   padding:52px 44px;display:flex;flex-direction:column;justify-content:space-between;
   border-right:1px solid #2e8b50}}
-.label{{font-size:12px;color:#ffe08a;letter-spacing:.2em;font-weight:700;text-transform:uppercase}}
-.main{{font-size:50px;font-weight:900;color:#fff;line-height:1.08;margin:22px 0 10px}}
+.label{{font-size:15px;color:#ffe08a;letter-spacing:.2em;font-weight:700;text-transform:uppercase}}
+.main{{font-size:58px;font-weight:900;color:#fff;line-height:1.08;margin:22px 0 12px}}
 .main span{{color:#ffe08a}}
-.sub{{font-size:14px;color:#cfe8d8}}
-.week{{font-size:20px;color:#ffe08a;font-weight:800;margin-bottom:4px}}
-.brand{{font-size:13px;color:#9ec9af}}
+.sub{{font-size:19px;color:#cfe8d8}}
+.week{{font-size:34px;color:#ffe08a;font-weight:800;margin-bottom:6px}}
+.brand{{font-size:17px;color:#9ec9af}}
 .right{{flex:1;height:630px;background:#f7faf8;
-  padding:50px 44px;display:flex;flex-direction:column;justify-content:center}}
-.hl-label{{font-size:11px;color:#1a6b3a;letter-spacing:.18em;text-transform:uppercase;
-  font-weight:700;margin-bottom:26px;padding-bottom:14px;border-bottom:2px solid #1a6b3a}}
-.hl{{display:flex;gap:16px;align-items:flex-start;padding:18px 0;border-bottom:1px solid #e0ece5}}
+  padding:46px 44px;display:flex;flex-direction:column;justify-content:center}}
+.hl-label{{font-size:15px;color:#1a6b3a;letter-spacing:.16em;text-transform:uppercase;
+  font-weight:700;margin-bottom:24px;padding-bottom:14px;border-bottom:2px solid #1a6b3a}}
+.hl{{display:flex;gap:16px;align-items:flex-start;padding:17px 0;border-bottom:1px solid #e0ece5}}
 .hl:last-child{{border-bottom:none}}
-.num{{font-size:24px;font-weight:900;color:#1a6b3a;min-width:30px;line-height:1.35}}
-.txt{{font-size:18px;color:#1d2b22;line-height:1.55;font-weight:600;word-break:keep-all}}
-.footer{{margin-top:28px;padding-top:14px;border-top:1px solid #d5e5db;font-size:12px;color:#7a9a86}}
+.num{{font-size:30px;font-weight:900;color:#1a6b3a;min-width:36px;line-height:1.3}}
+.txt{{font-size:24px;color:#1d2b22;line-height:1.45;font-weight:600;word-break:keep-all}}
+.footer{{margin-top:24px;padding-top:14px;border-top:1px solid #d5e5db;font-size:15px;color:#7a9a86}}
 </style></head><body>
 <div class="left">
   <div>
@@ -1100,13 +1100,16 @@ print("주간 썸네일 생성 중...")
 thumb_ok = generate_weekly_thumbnail(top3, week_label, THUMBNAIL_FILE)
 
 # ── 네이버 블로그 복붙용 본문 자동 생성 (가시성·매력도 최적화) ──────────────
-# 1) 제목: 핵심 키워드 나열 + " ｜ {주차} 인사노무 뉴스레터"
-_kw_pool = []
-for n in top3:
-    k = (n.get("category") or "").strip()
-    if k and k not in _kw_pool:
-        _kw_pool.append(k)
-_title_kw = "·".join(_kw_pool[:3]) if _kw_pool else "노동·HR·정책"
+# 1) 제목: Claude가 만든 키워드 나열 + " ｜ {주차} 인사노무 뉴스레터"
+if BLOG_TITLE_Q:
+    _title_kw = BLOG_TITLE_Q
+else:
+    _kw_pool = []
+    for n in top3:
+        k = (n.get("category") or "").strip()
+        if k and k not in _kw_pool:
+            _kw_pool.append(k)
+    _title_kw = "·".join(_kw_pool[:3]) if _kw_pool else "노동·HR·정책"
 BLOG_TITLE = f"{_title_kw} ｜ {week_label} 인사노무 뉴스레터"
 
 # 2) 후킹 첫 줄

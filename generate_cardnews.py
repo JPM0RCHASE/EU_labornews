@@ -146,7 +146,7 @@ JSON만 응답. 다른 텍스트 절대 금지:
     }}
   ],
   "hashtags": ["오늘기사내용에서추출한태그1", "태그2", "태그3", "태그4", "태그5", "태그6", "태그7", "태그8", "태그9", "태그10"],
-  "blog_title": "노란봉투법 시행, 우리 회사도 영향 있을까?"
+  "blog_title": "노란봉투법·현대차 파업·금융권 교섭"
 }}
 
 【해시태그 작성 규칙】
@@ -157,14 +157,14 @@ JSON만 응답. 다른 텍스트 절대 금지:
 - 띄어쓰기 없이 붙여쓰기, # 기호 제외
 
 【blog_title 작성 규칙 — 매우 중요】
-- 1번(rank 1) 뉴스의 핵심을 '질문형'으로 만들 것
-- 형식: "[핵심이슈], [독자가 궁금해할 질문]?"
-- 예시: "노란봉투법 시행, 우리 회사도 영향 있을까?"
-       "현대차 또 파업, 임금협상 어떻게 되나?"
-       "최저임금 또 오른다, 자영업자 부담 얼마나?"
-- 독자(인사담당자·사장님)가 클릭하고 싶게 궁금증 유발
-- 날짜·"오늘의 노동뉴스" 문구는 넣지 말 것 (코드에서 자동으로 붙임)
-- 25자 이내로 간결하게
+- 오늘 상위 3개 뉴스(rank 1~3)의 핵심 이슈를 '키워드 나열식'으로 만들 것
+- 형식: "키워드1·키워드2·키워드3" (가운뎃점 · 으로 연결, 정확히 3개)
+- 각 키워드는 2~6자의 구체적 표현 (예: "노란봉투법", "현대차 파업", "금융권 교섭", "최저임금 인상")
+- 실제 기사 내용에서 뽑되, 너무 추상적이지 않게 구체적으로
+- 좋은 예: "노란봉투법·현대차 파업·금융권 교섭"
+          "최저임금 인상·SK 파업·중대재해 판결"
+- 날짜·"카드뉴스" 문구는 넣지 말 것 (코드에서 자동으로 붙임)
+- 가운뎃점(·) 외 다른 기호·따옴표 금지
 
 risk_level: high(🔴), med(⚠), info(ℹ)
 총 5건, rank 1~5 순서 고정"""
@@ -543,23 +543,23 @@ body{{width:1200px;height:630px;overflow:hidden;
   background:linear-gradient(150deg,#0d1b2a 0%,#0f2540 100%);
   padding:52px 44px;display:flex;flex-direction:column;justify-content:space-between;
   border-right:1px solid #1e3a55}}
-.label{{font-size:12px;color:#c9a84c;letter-spacing:.2em;font-weight:700;text-transform:uppercase}}
-.main{{font-family:'Playfair Display',serif;font-size:54px;font-weight:900;color:#f0ebe0;line-height:1.05;margin:22px 0 10px}}
+.label{{font-size:15px;color:#c9a84c;letter-spacing:.2em;font-weight:700;text-transform:uppercase}}
+.main{{font-family:'Playfair Display',serif;font-size:62px;font-weight:900;color:#f0ebe0;line-height:1.05;margin:22px 0 12px}}
 .main span{{color:#c9a84c}}
-.sub{{font-size:14px;color:#9fb0c4}}
-.date{{font-size:20px;color:#c9a84c;font-weight:800;margin-bottom:4px}}
-.brand{{font-size:13px;color:#3d5570}}
+.sub{{font-size:19px;color:#9fb0c4}}
+.date{{font-size:34px;color:#c9a84c;font-weight:800;margin-bottom:6px}}
+.brand{{font-size:17px;color:#5a7290}}
 .right{{flex:1;height:630px;background:#0e1e2e;
-  padding:50px 44px;display:flex;flex-direction:column;justify-content:center}}
-.hl-label{{font-size:11px;color:#c9a84c;letter-spacing:.18em;text-transform:uppercase;
-  font-weight:700;margin-bottom:26px;padding-bottom:14px;border-bottom:1px solid #1a3248}}
+  padding:46px 44px;display:flex;flex-direction:column;justify-content:center}}
+.hl-label{{font-size:15px;color:#c9a84c;letter-spacing:.16em;text-transform:uppercase;
+  font-weight:700;margin-bottom:24px;padding-bottom:14px;border-bottom:1px solid #1a3248}}
 .hl{{display:flex;gap:16px;align-items:flex-start;
-  padding:18px 0;border-bottom:1px solid #162a3c}}
+  padding:17px 0;border-bottom:1px solid #162a3c}}
 .hl:last-child{{border-bottom:none}}
-.num{{font-size:24px;font-weight:900;color:#c9a84c;min-width:30px;line-height:1.35}}
-.txt{{font-size:18px;color:#ccd8e8;line-height:1.55;font-weight:600;word-break:keep-all}}
-.footer{{margin-top:28px;padding-top:14px;border-top:1px solid #1a3248;
-  font-size:12px;color:#2e4a62}}
+.num{{font-size:30px;font-weight:900;color:#c9a84c;min-width:36px;line-height:1.3}}
+.txt{{font-size:24px;color:#dde7f3;line-height:1.45;font-weight:600;word-break:keep-all}}
+.footer{{margin-top:24px;padding-top:14px;border-top:1px solid #1a3248;
+  font-size:15px;color:#3d5570}}
 </style></head><body>
 <div class="left">
   <div>
@@ -618,14 +618,17 @@ print("데일리 썸네일 생성 중...")
 generate_daily_thumbnail(news_list, DATE_LABEL, f"{FOLDER}/{THUMBNAIL_FILE}")
 
 # ── 네이버 블로그 복붙용 본문 자동 생성 (가시성·매력도 최적화) ──────────────
-# 1) 제목: 핵심 키워드 나열 + " ｜ M/D 인사노무 카드뉴스"
-_kw_pool = []
-for n in news_list[:3]:
-    k = n.get("category") or n.get("keyword") or ""
-    k = str(k).strip()
-    if k and k not in _kw_pool:
-        _kw_pool.append(k)
-_title_kw = "·".join(_kw_pool[:3]) if _kw_pool else "노동·HR 이슈"
+# 1) 제목: Claude가 만든 키워드 나열 + " ｜ M/D 인사노무 카드뉴스"
+if BLOG_TITLE_Q:
+    _title_kw = BLOG_TITLE_Q
+else:
+    # Claude가 blog_title을 안 주면 category 기반 폴백
+    _kw_pool = []
+    for n in news_list[:3]:
+        k = str(n.get("category") or n.get("keyword") or "").strip()
+        if k and k not in _kw_pool:
+            _kw_pool.append(k)
+    _title_kw = "·".join(_kw_pool[:3]) if _kw_pool else "노동·HR 이슈"
 BLOG_TITLE = f"{_title_kw} ｜ {DATE_SHORT} 인사노무 카드뉴스"
 
 # 2) 후킹 첫 줄
