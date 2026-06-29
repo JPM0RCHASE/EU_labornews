@@ -605,19 +605,15 @@ print("데일리 썸네일 생성 중...")
 generate_daily_thumbnail(news_list, DATE_LABEL, f"{FOLDER}/{THUMBNAIL_FILE}")
 
 # ── 네이버 블로그 복붙용 본문 자동 생성 (가시성·매력도 최적화) ──────────────
-# 1) 제목: 질문형 후킹 + " — M/D 오늘의 노동뉴스"
+# 1) 제목: 핵심 키워드 나열 + " ｜ M/D 인사노무 카드뉴스"
 _kw_pool = []
 for n in news_list[:3]:
     k = n.get("category") or n.get("keyword") or ""
     k = str(k).strip()
     if k and k not in _kw_pool:
         _kw_pool.append(k)
-if BLOG_TITLE_Q:
-    BLOG_TITLE = f"{BLOG_TITLE_Q} — {DATE_SHORT} 오늘의 노동뉴스"
-else:
-    # Claude가 blog_title을 안 주면 키워드 기반 폴백
-    _title_kw = "·".join(_kw_pool[:2]) if _kw_pool else "노동·HR 이슈"
-    BLOG_TITLE = f"{_title_kw}, 우리 회사도 영향 있을까? — {DATE_SHORT} 오늘의 노동뉴스"
+_title_kw = "·".join(_kw_pool[:3]) if _kw_pool else "노동·HR 이슈"
+BLOG_TITLE = f"{_title_kw} ｜ {DATE_SHORT} 인사노무 카드뉴스"
 
 # 2) 후킹 첫 줄
 _hook_kw = " · ".join(_kw_pool[:3]) if _kw_pool else "오늘의 노동·HR 핵심"
