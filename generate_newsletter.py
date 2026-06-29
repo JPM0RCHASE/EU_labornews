@@ -277,8 +277,16 @@ JSON만 응답. 다른 텍스트 절대 금지:
       "ruling": "판결 요지 2~3문장 — 법원의 판단 근거 포함",
       "insight": "중소·중견기업 인사담당자가 알아야 할 실무 시사점 2문장"
     }}
-  ]
-}}"""
+  ],
+  "hashtags": ["이번주뉴스내용에서추출한태그1", "태그2", "태그3", "태그4", "태그5", "태그6", "태그7", "태그8", "태그9", "태그10"]
+}}
+
+【해시태그 작성 규칙】
+- 반드시 이번 주 선별된 뉴스·정책·판결 내용에서만 추출 (임의 생성 금지)
+- 10개 정확히 생성
+- 주제·법령·사건명·기업명 위주 (예: 노란봉투법, 최저임금, 중대재해처벌법, 부당해고판결)
+- 브랜딩·홍보성 태그 절대 금지 (공인노무사JP, 인사노무가이드 등)
+- 띄어쓰기 없이 붙여쓰기, # 기호 제외"""
 
 print("Claude API 호출 중...")
 response = client.messages.create(
@@ -382,7 +390,13 @@ gov_policy = data.get("section2_gov_policy", {})
 weekly_qa  = data.get("section3_weekly_insight", {})
 five_fewer = data.get("section4_five_fewer", {})
 rulings    = data.get("section5_ruling", [])
-print("뉴스레터 콘텐츠 생성 완료")
+
+hashtags = data.get("hashtags", [])
+if not isinstance(hashtags, list):
+    hashtags = []
+hashtags = [str(t).lstrip("#").strip() for t in hashtags if t][:10]
+HASHTAG_STR = " ".join(f"#{t}" for t in hashtags)
+print(f"뉴스레터 콘텐츠 생성 완료 (해시태그 {len(hashtags)}개)")
 
 # ─────────────────────────────────────────────────────
 # CSS: 모든 특수문자는 실제 유니코드 문자 사용
@@ -985,46 +999,165 @@ def generate_preview_png(html_rel_path: str, preview_path: str) -> bool:
         return False
 
 
-# ── 텔레그램 발송 ─────────────────────────────────────
-def send_telegram_png(png_path: str) -> None:
-    if not TELEGRAM_BOT_TOKEN:
-        print("⚠ TELEGRAM_BOT_TOKEN 없음 — 텔레그램 발송 건너뜀")
-        return
-    if not TELEGRAM_CHAT_ID:
-        print("⚠ TELEGRAM_CHAT_ID 없음 — 텔레그램 발송 건너뜀")
-        return
-    if not os.path.exists(png_path):
-        print("⚠ PNG 파일 없음 — 텔레그램 발송 건너뜀")
-        return
+# ── 주간 요약 썸네일 생성 (네이버 블로그용 1200×630) ───────────────────
+THUMBNAIL_FILE = f"newsletter/thumbnail_{DATE_STR}.png"
 
-    caption = (
-        f"📋 인사 노무 뉴스레터 — {WEEK_LABEL}\n"
-        f"━━━━━━━━━━━━━━━━━━\n"
-        f"이번 주 인사·노무·정책 핵심 뉴스를 정리했습니다.\n\n"
-        f"🔗 전체 보기: {VERCEL_URL}"
-    )
+def generate_weekly_thumbnail(items, week_label, png_path):
+    tops = items[:3]
+    headlines_html = "\n".join([
+        f'<div class="hl"><span class="num">{i+1}</span>'
+        f'<span class="txt">{n.get("title","")}</span></div>'
+        for i, n in enumerate(tops)
+    ])
+    html = f"""<!DOCTYPE html><html><head><meta charset="UTF-8">
+<style>
+*{{margin:0;padding:0;box-sizing:border-box}}
+body{{width:1200px;height:630px;overflow:hidden;background:#1a6b3a;
+  font-family:'Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif;display:flex}}
+.left{{width:480px;height:630px;
+  background:linear-gradient(150deg,#14532b 0%,#1a6b3a 100%);
+  padding:52px 44px;display:flex;flex-direction:column;justify-content:space-between;
+  border-right:1px solid #2e8b50}}
+.label{{font-size:12px;color:#ffe08a;letter-spacing:.2em;font-weight:700;text-transform:uppercase}}
+.main{{font-size:50px;font-weight:900;color:#fff;line-height:1.08;margin:22px 0 10px}}
+.main span{{color:#ffe08a}}
+.sub{{font-size:14px;color:#cfe8d8}}
+.week{{font-size:20px;color:#ffe08a;font-weight:800;margin-bottom:4px}}
+.brand{{font-size:13px;color:#9ec9af}}
+.right{{flex:1;height:630px;background:#f7faf8;
+  padding:50px 44px;display:flex;flex-direction:column;justify-content:center}}
+.hl-label{{font-size:11px;color:#1a6b3a;letter-spacing:.18em;text-transform:uppercase;
+  font-weight:700;margin-bottom:26px;padding-bottom:14px;border-bottom:2px solid #1a6b3a}}
+.hl{{display:flex;gap:16px;align-items:flex-start;padding:18px 0;border-bottom:1px solid #e0ece5}}
+.hl:last-child{{border-bottom:none}}
+.num{{font-size:24px;font-weight:900;color:#1a6b3a;min-width:30px;line-height:1.35}}
+.txt{{font-size:18px;color:#1d2b22;line-height:1.55;font-weight:600;word-break:keep-all}}
+.footer{{margin-top:28px;padding-top:14px;border-top:1px solid #d5e5db;font-size:12px;color:#7a9a86}}
+</style></head><body>
+<div class="left">
+  <div>
+    <div class="label">Weekly · Labor · HR Briefing</div>
+    <div class="main">인사 노무<br><span>브리핑</span></div>
+    <div class="sub">이번 주 노동·HR·정책 핵심 정리</div>
+  </div>
+  <div>
+    <div class="week">{week_label}</div>
+    <div class="brand">JP Labor Letter</div>
+  </div>
+</div>
+<div class="right">
+  <div class="hl-label">This Week's Top Headlines</div>
+  {headlines_html}
+  <div class="footer">eu-labornews.vercel.app</div>
+</div>
+</body></html>"""
 
+    tmp = os.path.join(REPO_ROOT, f"newsletter/_thumb_tmp_{DATE_STR}.html")
+    with open(tmp, "w", encoding="utf-8") as f:
+        f.write(html)
     try:
-        url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendPhoto"
-        with open(png_path, "rb") as f:
-            resp = requests.post(
-                url,
-                data={"chat_id": TELEGRAM_CHAT_ID, "caption": caption[:1024]},
-                files={"photo": f},
-                timeout=30,
-            )
-        if resp.status_code == 200:
-            print("✅ 텔레그램 발송 성공!")
-        else:
-            print(f"❌ 텔레그램 발송 실패: HTTP {resp.status_code}\n{resp.text[:300]}")
+        from playwright.sync_api import sync_playwright
+        with sync_playwright() as pw:
+            browser = pw.chromium.launch()
+            page = browser.new_page(viewport={"width": 1200, "height": 630}, device_scale_factor=2)
+            page.goto(f"file://{os.path.abspath(tmp)}")
+            page.wait_for_timeout(1500)
+            page.screenshot(path=png_path, clip={"x": 0, "y": 0, "width": 1200, "height": 630})
+            browser.close()
+        os.remove(tmp)
+        print(f"✅ 주간 썸네일 저장: {png_path}")
+        return True
     except Exception as e:
-        print(f"❌ 텔레그램 API 오류: {e}")
+        if os.path.exists(tmp):
+            os.remove(tmp)
+        print(f"⚠ 주간 썸네일 생성 실패: {e}")
+        return False
 
 
-if ok:
-    print("텔레그램 프리뷰 PNG 생성 중...")
-    preview_ok = generate_preview_png(OUTPUT, PNG_PREVIEW)
-    send_telegram_png(PNG_PREVIEW if preview_ok else PNG_OUTPUT)
+print("주간 썸네일 생성 중...")
+thumb_ok = generate_weekly_thumbnail(top3, week_label, THUMBNAIL_FILE)
+
+# ── 네이버 블로그 복붙용 본문 자동 생성 (가시성·매력도 최적화) ──────────────
+# 1) SEO 제목: 핵심 키워드 앞 + 주차 (날짜코드 제거)
+_kw_pool = []
+for n in top3:
+    k = (n.get("category") or "").strip()
+    if k and k not in _kw_pool:
+        _kw_pool.append(k)
+_title_kw = "·".join(_kw_pool[:2]) if _kw_pool else "노동·HR·정책"
+BLOG_TITLE = f"{_title_kw} ｜ {week_label} 인사노무 주간 브리핑"
+
+# 2) 후킹 첫 줄
+_hook_kw = " · ".join(_kw_pool[:3]) if _kw_pool else "노동·HR·정책 핵심"
+BLOG_HOOK = f"이번 주 인사·노무 뉴스 핵심만 5분 정리 📌 {_hook_kw}"
+
+# 3) 본문: Top3 뉴스 + 주요 섹션 목차
+_emojis = ["1️⃣", "2️⃣", "3️⃣"]
+_body_lines = [BLOG_HOOK, "", "📍 이번 주 꼭 읽어야 할 뉴스 Top 3", ""]
+for i, n in enumerate(top3[:3]):
+    _summary = (n.get("insight") or n.get("summary") or "").strip()
+    if len(_summary) > 70:
+        _summary = _summary[:68].rstrip() + "…"
+    _body_lines.append(f"{_emojis[i]} {n.get('title','')}")
+    if _summary:
+        _body_lines.append(f"   → {_summary}")
+    _body_lines.append("")
+_body_lines += [
+    "📂 이번 주 뉴스레터 목차",
+    "· 정부·노동부·국회 정책동향",
+    "· JP's Weekly Insight (이번 주 많이 받은 질문)",
+    "· 5인 미만 사업장 집중 이슈",
+    "· 이번 주 주요 노동 판결",
+    "",
+    "▶ 뉴스레터 전체 보기",
+    VERCEL_URL,
+    "",
+    HASHTAG_STR,
+]
+BLOG_BODY = "\n".join(_body_lines)
+
+
+# ── 텔레그램 발송 ─────────────────────────────────────
+_tg_base = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}"
+
+def tg_post(method, **kwargs):
+    try:
+        r = requests.post(f"{_tg_base}/{method}", timeout=30, **kwargs)
+        return r.json().get("ok"), r.text
+    except Exception as e:
+        return False, str(e)
+
+if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
+    print("⚠ 텔레그램 토큰/채팅ID 없음 — 발송 건너뜀")
+else:
+    # 1) 프리뷰 PNG (뉴스레터 첫 화면) + 링크 + 해시태그
+    if ok:
+        print("텔레그램 프리뷰 PNG 생성 중...")
+        preview_ok = generate_preview_png(OUTPUT, PNG_PREVIEW)
+        _png = PNG_PREVIEW if preview_ok else PNG_OUTPUT
+        if os.path.exists(_png):
+            with open(_png, "rb") as f:
+                ts_ok, msg = tg_post("sendPhoto",
+                    data={"chat_id": TELEGRAM_CHAT_ID,
+                          "caption": f"📋 인사 노무 뉴스레터 — {week_label}\n\n🔗 {VERCEL_URL}\n\n{HASHTAG_STR}"[:1024]},
+                    files={"photo": f})
+            print("✅ 텔레그램 프리뷰 발송!" if ts_ok else f"❌ 프리뷰 발송 실패: {msg}")
+
+    # 2) 주간 썸네일 (1200×630) — 블로그 대표이미지용
+    if thumb_ok and os.path.exists(THUMBNAIL_FILE):
+        with open(THUMBNAIL_FILE, "rb") as f:
+            ts_ok, msg = tg_post("sendPhoto",
+                data={"chat_id": TELEGRAM_CHAT_ID,
+                      "caption": f"🖼 {week_label} 주간 헤드라인 (블로그 대표이미지)"},
+                files={"photo": (os.path.basename(THUMBNAIL_FILE), f, "image/png")})
+        print("✅ 텔레그램 주간 썸네일 발송!" if ts_ok else f"❌ 주간 썸네일 발송 실패: {msg}")
+
+    # 3) 네이버 블로그 복붙용 본문
+    _blog_msg = f"📝 네이버 블로그 복붙용\n\n[제목]\n{BLOG_TITLE}\n\n[본문]\n{BLOG_BODY}"
+    ts_ok, msg = tg_post("sendMessage",
+        data={"chat_id": TELEGRAM_CHAT_ID, "text": _blog_msg[:4096],
+              "disable_web_page_preview": True})
+    print("✅ 텔레그램 블로그 본문 발송!" if ts_ok else f"❌ 블로그 본문 발송 실패: {msg}")
 
 print(f"🎉 완료! 웹 URL: {VERCEL_URL}")
 if ok:

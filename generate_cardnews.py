@@ -590,6 +590,37 @@ body{{width:1200px;height:630px;overflow:hidden;
 print("데일리 썸네일 생성 중...")
 generate_daily_thumbnail(news_list, DATE_LABEL, f"{FOLDER}/{THUMBNAIL_FILE}")
 
+# ── 네이버 블로그 복붙용 본문 자동 생성 (가시성·매력도 최적화) ──────────────
+# 1) SEO 제목: 핵심 키워드 앞 + 날짜 + "오늘의 노동뉴스 5선" (날짜코드 제거)
+_kw_pool = []
+for n in news_list[:3]:
+    k = n.get("category") or n.get("keyword") or ""
+    k = str(k).strip()
+    if k and k not in _kw_pool:
+        _kw_pool.append(k)
+_title_kw = "·".join(_kw_pool[:2]) if _kw_pool else "노동·HR 이슈"
+BLOG_TITLE = f"{_title_kw} ｜ {DATE_LABEL} 오늘의 노동뉴스 {len(news_list)}선"
+
+# 2) 후킹 첫 줄
+_hook_kw = " · ".join(_kw_pool[:3]) if _kw_pool else "오늘의 노동·HR 핵심"
+BLOG_HOOK = f"오늘 노동 뉴스 핵심만 3분 정리 📌 {_hook_kw}"
+
+# 3) 본문: 뉴스 5건 제목 + 한 줄 요약(실무 시사점)
+_emojis = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"]
+_body_lines = [BLOG_HOOK, ""]
+for n in news_list:
+    rank = n["rank"]
+    emoji = _emojis[rank - 1] if 1 <= rank <= 5 else "•"
+    _summary = (n.get("insight") or "").strip()
+    if len(_summary) > 70:
+        _summary = _summary[:68].rstrip() + "…"
+    _body_lines.append(f"{emoji} {n['title']}")
+    if _summary:
+        _body_lines.append(f"   → {_summary}")
+    _body_lines.append("")
+_body_lines += ["▶ 카드뉴스 전체 보기", VERCEL_URL, "", HASHTAG_STR]
+BLOG_BODY = "\n".join(_body_lines)
+
 # ── 텔레그램 발송 ───────────────────────────────────────────────────────
 _tg_base = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}"
 
@@ -609,17 +640,24 @@ ok, msg = tg_post(
 )
 print("✅ 텔레그램 OG 이미지 발송!" if ok else f"❌ OG 이미지 발송 실패: {msg}")
 
-# 2) 신규 — 데일리 요약 썸네일 (1200×630)
+# 2) 데일리 요약 썸네일 (1200×630) — 블로그 대표이미지용
 _thumb_path = f"{FOLDER}/{THUMBNAIL_FILE}"
 if os.path.exists(_thumb_path):
     with open(_thumb_path, "rb") as _f:
         ok, msg = tg_post(
             "sendPhoto",
-            data={"chat_id": TELEGRAM_CHAT_ID, "caption": f"🖼 {DATE_LABEL} 오늘의 헤드라인"},
+            data={"chat_id": TELEGRAM_CHAT_ID, "caption": f"🖼 {DATE_LABEL} 오늘의 헤드라인 (블로그 대표이미지)"},
             files={"photo": (THUMBNAIL_FILE, _f, "image/png")},
         )
     print("✅ 텔레그램 데일리 썸네일 발송!" if ok else f"❌ 데일리 썸네일 발송 실패: {msg}")
 else:
     print("⚠ 데일리 썸네일 파일 없음 — 건너뜀")
+
+# 3) 신규 — 네이버 블로그 복붙용 본문 (제목 + 후킹 + 5줄 + 링크 + 해시태그)
+_blog_msg = f"📝 네이버 블로그 복붙용\n\n[제목]\n{BLOG_TITLE}\n\n[본문]\n{BLOG_BODY}"
+ok, msg = tg_post("sendMessage",
+    data={"chat_id": TELEGRAM_CHAT_ID, "text": _blog_msg[:4096],
+          "disable_web_page_preview": True})
+print("✅ 텔레그램 블로그 본문 발송!" if ok else f"❌ 블로그 본문 발송 실패: {msg}")
 
 print(f"✅ 완료: {FOLDER}/{NEWS_FILE}")
