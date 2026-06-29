@@ -619,15 +619,14 @@ generate_daily_thumbnail(news_list, DATE_LABEL, f"{FOLDER}/{THUMBNAIL_FILE}")
 
 # ── 네이버 블로그 복붙용 본문 자동 생성 (가시성·매력도 최적화) ──────────────
 # 1) 제목: Claude가 만든 키워드 나열 + " ｜ M/D 인사노무 카드뉴스"
+_kw_pool = []
+for n in news_list[:3]:
+    k = str(n.get("category") or n.get("keyword") or "").strip()
+    if k and k not in _kw_pool:
+        _kw_pool.append(k)
 if BLOG_TITLE_Q:
     _title_kw = BLOG_TITLE_Q
 else:
-    # Claude가 blog_title을 안 주면 category 기반 폴백
-    _kw_pool = []
-    for n in news_list[:3]:
-        k = str(n.get("category") or n.get("keyword") or "").strip()
-        if k and k not in _kw_pool:
-            _kw_pool.append(k)
     _title_kw = "·".join(_kw_pool[:3]) if _kw_pool else "노동·HR 이슈"
 BLOG_TITLE = f"{_title_kw} ｜ {DATE_SHORT} 인사노무 카드뉴스"
 
