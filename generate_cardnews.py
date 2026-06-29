@@ -23,6 +23,7 @@ KST      = timezone(timedelta(hours=9))
 TODAY    = datetime.now(KST)
 DATE_STR    = TODAY.strftime("%Y%m%d")
 DATE_LABEL  = TODAY.strftime("%Y. %m. %d.")
+DATE_SHORT  = f"{TODAY.month}/{TODAY.day}"
 WEEKDAY     = ["월","화","수","목","금","토","일"][TODAY.weekday()]
 
 FOLDER    = DATE_STR
@@ -144,7 +145,8 @@ JSON만 응답. 다른 텍스트 절대 금지:
       "insight": "실무 시사점 1~2문장"
     }}
   ],
-  "hashtags": ["오늘기사내용에서추출한태그1", "태그2", "태그3", "태그4", "태그5", "태그6", "태그7", "태그8", "태그9", "태그10"]
+  "hashtags": ["오늘기사내용에서추출한태그1", "태그2", "태그3", "태그4", "태그5", "태그6", "태그7", "태그8", "태그9", "태그10"],
+  "blog_title": "노란봉투법 시행, 우리 회사도 영향 있을까?"
 }}
 
 【해시태그 작성 규칙】
@@ -153,6 +155,17 @@ JSON만 응답. 다른 텍스트 절대 금지:
 - 기사 주제·인물·법령·사건명 위주 (예: 노란봉투법, 최저임금, SK하이닉스파업, 중대재해처벌법)
 - 브랜딩·홍보성 태그 절대 금지 (공인노무사JP, 인사노무가이드 등)
 - 띄어쓰기 없이 붙여쓰기, # 기호 제외
+
+【blog_title 작성 규칙 — 매우 중요】
+- 1번(rank 1) 뉴스의 핵심을 '질문형'으로 만들 것
+- 형식: "[핵심이슈], [독자가 궁금해할 질문]?"
+- 예시: "노란봉투법 시행, 우리 회사도 영향 있을까?"
+       "현대차 또 파업, 임금협상 어떻게 되나?"
+       "최저임금 또 오른다, 자영업자 부담 얼마나?"
+- 독자(인사담당자·사장님)가 클릭하고 싶게 궁금증 유발
+- 날짜·"오늘의 노동뉴스" 문구는 넣지 말 것 (코드에서 자동으로 붙임)
+- 25자 이내로 간결하게
+
 risk_level: high(🔴), med(⚠), info(ℹ)
 총 5건, rank 1~5 순서 고정"""
 
@@ -177,6 +190,7 @@ if not isinstance(hashtags, list):
 hashtags = [str(t).lstrip("#").strip() for t in hashtags if t][:10]
 HASHTAG_STR = " ".join(f"#{t}" for t in hashtags)
 print(f"해시태그 {len(hashtags)}개: {HASHTAG_STR}")
+BLOG_TITLE_Q = str(data.get("blog_title", "")).strip()
 
 # ── 필드 정규화: Claude가 일부 필드를 누락해도 죽지 않도록 기본값 채움 ──
 _RISK_LABEL_DEFAULT = {"high": "🔴 핵심 이슈", "med": "⚠ 주의", "info": "ℹ 참고"}
@@ -591,15 +605,19 @@ print("데일리 썸네일 생성 중...")
 generate_daily_thumbnail(news_list, DATE_LABEL, f"{FOLDER}/{THUMBNAIL_FILE}")
 
 # ── 네이버 블로그 복붙용 본문 자동 생성 (가시성·매력도 최적화) ──────────────
-# 1) SEO 제목: 핵심 키워드 앞 + 날짜 + "오늘의 노동뉴스 5선" (날짜코드 제거)
+# 1) 제목: 질문형 후킹 + " — M/D 오늘의 노동뉴스"
 _kw_pool = []
 for n in news_list[:3]:
     k = n.get("category") or n.get("keyword") or ""
     k = str(k).strip()
     if k and k not in _kw_pool:
         _kw_pool.append(k)
-_title_kw = "·".join(_kw_pool[:2]) if _kw_pool else "노동·HR 이슈"
-BLOG_TITLE = f"{_title_kw} ｜ {DATE_LABEL} 오늘의 노동뉴스 {len(news_list)}선"
+if BLOG_TITLE_Q:
+    BLOG_TITLE = f"{BLOG_TITLE_Q} — {DATE_SHORT} 오늘의 노동뉴스"
+else:
+    # Claude가 blog_title을 안 주면 키워드 기반 폴백
+    _title_kw = "·".join(_kw_pool[:2]) if _kw_pool else "노동·HR 이슈"
+    BLOG_TITLE = f"{_title_kw}, 우리 회사도 영향 있을까? — {DATE_SHORT} 오늘의 노동뉴스"
 
 # 2) 후킹 첫 줄
 _hook_kw = " · ".join(_kw_pool[:3]) if _kw_pool else "오늘의 노동·HR 핵심"

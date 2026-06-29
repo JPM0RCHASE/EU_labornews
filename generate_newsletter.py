@@ -278,7 +278,8 @@ JSON만 응답. 다른 텍스트 절대 금지:
       "insight": "중소·중견기업 인사담당자가 알아야 할 실무 시사점 2문장"
     }}
   ],
-  "hashtags": ["이번주뉴스내용에서추출한태그1", "태그2", "태그3", "태그4", "태그5", "태그6", "태그7", "태그8", "태그9", "태그10"]
+  "hashtags": ["이번주뉴스내용에서추출한태그1", "태그2", "태그3", "태그4", "태그5", "태그6", "태그7", "태그8", "태그9", "태그10"],
+  "blog_title": "노란봉투법 시행, 우리 회사도 영향 있을까?"
 }}
 
 【해시태그 작성 규칙】
@@ -286,7 +287,16 @@ JSON만 응답. 다른 텍스트 절대 금지:
 - 10개 정확히 생성
 - 주제·법령·사건명·기업명 위주 (예: 노란봉투법, 최저임금, 중대재해처벌법, 부당해고판결)
 - 브랜딩·홍보성 태그 절대 금지 (공인노무사JP, 인사노무가이드 등)
-- 띄어쓰기 없이 붙여쓰기, # 기호 제외"""
+- 띄어쓰기 없이 붙여쓰기, # 기호 제외
+
+【blog_title 작성 규칙 — 매우 중요】
+- 이번 주 Top1 뉴스의 핵심을 '질문형'으로 만들 것
+- 형식: "[핵심이슈], [독자가 궁금해할 질문]?"
+- 예시: "노란봉투법 시행, 우리 회사도 영향 있을까?"
+       "최저임금 또 오른다, 자영업자 부담 얼마나?"
+- 독자(인사담당자·사장님)가 클릭하고 싶게 궁금증 유발
+- 날짜·"주간 브리핑" 문구는 넣지 말 것 (코드에서 자동으로 붙임)
+- 25자 이내로 간결하게"""
 
 print("Claude API 호출 중...")
 response = client.messages.create(
@@ -396,6 +406,7 @@ if not isinstance(hashtags, list):
     hashtags = []
 hashtags = [str(t).lstrip("#").strip() for t in hashtags if t][:10]
 HASHTAG_STR = " ".join(f"#{t}" for t in hashtags)
+BLOG_TITLE_Q = str(data.get("blog_title", "")).strip()
 print(f"뉴스레터 콘텐츠 생성 완료 (해시태그 {len(hashtags)}개)")
 
 # ─────────────────────────────────────────────────────
@@ -1078,14 +1089,17 @@ print("주간 썸네일 생성 중...")
 thumb_ok = generate_weekly_thumbnail(top3, week_label, THUMBNAIL_FILE)
 
 # ── 네이버 블로그 복붙용 본문 자동 생성 (가시성·매력도 최적화) ──────────────
-# 1) SEO 제목: 핵심 키워드 앞 + 주차 (날짜코드 제거)
+# 1) 제목: 질문형 후킹 + " — {주차} 인사노무 주간 브리핑"
 _kw_pool = []
 for n in top3:
     k = (n.get("category") or "").strip()
     if k and k not in _kw_pool:
         _kw_pool.append(k)
-_title_kw = "·".join(_kw_pool[:2]) if _kw_pool else "노동·HR·정책"
-BLOG_TITLE = f"{_title_kw} ｜ {week_label} 인사노무 주간 브리핑"
+if BLOG_TITLE_Q:
+    BLOG_TITLE = f"{BLOG_TITLE_Q} — {week_label} 인사노무 주간 브리핑"
+else:
+    _title_kw = "·".join(_kw_pool[:2]) if _kw_pool else "노동·HR·정책"
+    BLOG_TITLE = f"{_title_kw}, 이번 주 꼭 알아야 할 이슈는? — {week_label} 인사노무 주간 브리핑"
 
 # 2) 후킹 첫 줄
 _hook_kw = " · ".join(_kw_pool[:3]) if _kw_pool else "노동·HR·정책 핵심"
