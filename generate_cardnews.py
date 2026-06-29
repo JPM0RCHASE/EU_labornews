@@ -409,7 +409,15 @@ function shareKakao() {{
   var shareUrl  = '{VERCEL_URL}';
   var shareText = '[JP Labor Letter] 오늘의 인사노무 핵심 브리핑 · {DATE_LABEL}';
 
-  // ① Kakao SDK 정상 초기화 → 카드형 공유 (가장 풍부한 미리보기)
+  // ① 모바일 네이티브 공유시트 (Android/iOS) — KakaoTalk 포함, 가장 안정적
+  //    공유된 링크는 OG 태그가 있어 카카오톡에서 미리보기 카드로 표시됨
+  if (navigator.share) {{
+    navigator.share({{ title: '[JP Labor Letter]', text: shareText, url: shareUrl }})
+      .catch(function(e) {{ console.log('native share cancelled:', e); }});
+    return;
+  }}
+
+  // ② Kakao SDK 카드형 공유 (PC + 카카오 개발자센터에 도메인 등록 시)
   if (typeof Kakao !== 'undefined' && Kakao.isInitialized()) {{
     try {{
       Kakao.Share.sendDefault({{
@@ -428,15 +436,9 @@ function shareKakao() {{
     }}
   }}
 
-  // ② 모바일 네이티브 공유시트 (Android/iOS) — KakaoTalk 포함
-  if (navigator.share) {{
-    navigator.share({{ title: '[JP Labor Letter]', text: shareText, url: shareUrl }})
-      .catch(function(e) {{ console.log('native share cancelled:', e); }});
-    return;
-  }}
-
-  // ③ 최후 fallback: 오픈채팅방 직접 열기
-  window.open('{KAKAO_CHAT_URL}', '_blank');
+  // ③ 최후 fallback: 링크 복사 (어디서든 동작 보장)
+  copyLink();
+  alert('공유 링크가 복사되었습니다. 카카오톡에 붙여넣어 보내주세요.');
 }}
 </script>
 </body>
