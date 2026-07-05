@@ -1101,14 +1101,14 @@ thumb_ok = generate_weekly_thumbnail(top3, week_label, THUMBNAIL_FILE)
 
 # ── 네이버 블로그 복붙용 본문 자동 생성 (가시성·매력도 최적화) ──────────────
 # 1) 제목: Claude가 만든 키워드 나열 + " ｜ {주차} 인사노무 뉴스레터"
+_kw_pool = []
+for n in top3:
+    k = (n.get("category") or "").strip()
+    if k and k not in _kw_pool:
+        _kw_pool.append(k)
 if BLOG_TITLE_Q:
     _title_kw = BLOG_TITLE_Q
 else:
-    _kw_pool = []
-    for n in top3:
-        k = (n.get("category") or "").strip()
-        if k and k not in _kw_pool:
-            _kw_pool.append(k)
     _title_kw = "·".join(_kw_pool[:3]) if _kw_pool else "노동·HR·정책"
 BLOG_TITLE = f"{_title_kw} ｜ {week_label} 인사노무 뉴스레터"
 
