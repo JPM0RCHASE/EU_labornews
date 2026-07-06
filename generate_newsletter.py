@@ -1015,55 +1015,104 @@ def generate_preview_png(html_rel_path: str, preview_path: str) -> bool:
 THUMBNAIL_FILE = f"newsletter/thumbnail_{DATE_STR}.png"
 
 def generate_weekly_thumbnail(items, week_label, png_path):
-    tops = items[:3]
-    headlines_html = "\n".join([
-        f'<div class="hl"><span class="num">{i+1}</span>'
-        f'<span class="txt">{n.get("title","")}</span></div>'
-        for i, n in enumerate(tops)
-    ])
+    # TOC is fixed — items arg kept for API compatibility but not displayed
     html = f"""<!DOCTYPE html><html><head><meta charset="UTF-8">
 <link rel="preconnect" href="https://cdn.jsdelivr.net">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
 <style>
-*{{margin:0;padding:0;box-sizing:border-box;
-  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}}
-body{{width:1200px;height:630px;overflow:hidden;background:#1a6b3a;
-  font-family:'Pretendard','Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif;display:flex}}
-.left{{width:480px;height:630px;
-  background:linear-gradient(150deg,#14532b 0%,#1a6b3a 100%);
-  padding:52px 44px;display:flex;flex-direction:column;justify-content:space-between;
-  border-right:1px solid #2e8b50}}
-.label{{font-size:15px;color:#ffe08a;letter-spacing:.2em;font-weight:700;text-transform:uppercase}}
-.main{{font-size:58px;font-weight:900;color:#fff;line-height:1.08;margin:22px 0 12px}}
-.main span{{color:#ffe08a}}
-.sub{{font-size:19px;color:#cfe8d8}}
-.week{{font-size:34px;color:#ffe08a;font-weight:800;margin-bottom:6px}}
-.brand{{font-size:17px;color:#9ec9af}}
-.right{{flex:1;height:630px;background:#f7faf8;
-  padding:46px 44px;display:flex;flex-direction:column;justify-content:center}}
-.hl-label{{font-size:15px;color:#1a6b3a;letter-spacing:.16em;text-transform:uppercase;
-  font-weight:700;margin-bottom:24px;padding-bottom:14px;border-bottom:2px solid #1a6b3a}}
-.hl{{display:flex;gap:16px;align-items:flex-start;padding:17px 0;border-bottom:1px solid #e0ece5}}
-.hl:last-child{{border-bottom:none}}
-.num{{font-size:30px;font-weight:900;color:#1a6b3a;min-width:36px;line-height:1.3}}
-.txt{{font-size:24px;color:#1d2b22;line-height:1.45;font-weight:600;word-break:keep-all}}
-.footer{{margin-top:24px;padding-top:14px;border-top:1px solid #d5e5db;font-size:15px;color:#7a9a86}}
+*{{margin:0;padding:0;box-sizing:border-box;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}}
+:root{{--green:#1ed760;--bg0:#1a1c1f;--bg1:#141618;--bg2:#0e0f11;--card:#1e2024;--border:#2a2d31}}
+body{{
+  width:1200px;height:628px;overflow:hidden;
+  background:linear-gradient(135deg,#1a1c1f 0%,#141618 50%,#0e0f11 100%);
+  font-family:'Pretendard','Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif;
+  display:flex;position:relative
+}}
+/* neon top glow line */
+body::before{{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,transparent 0%,#1ed760 30%,#1ed760 70%,transparent 100%);
+  box-shadow:0 0 18px #1ed760,0 0 36px rgba(30,215,96,.45);z-index:10
+}}
+/* left panel */
+.left{{
+  width:400px;height:628px;padding:52px 42px;
+  display:flex;flex-direction:column;justify-content:space-between;
+  border-right:1px solid #2a2d31
+}}
+.badge{{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(30,215,96,.12);border:1px solid rgba(30,215,96,.35);
+  border-radius:20px;padding:7px 16px;margin-bottom:30px;width:fit-content
+}}
+.badge-dot{{width:8px;height:8px;border-radius:50%;background:#1ed760;box-shadow:0 0 8px #1ed760}}
+.badge-txt{{font-size:11px;color:#1ed760;letter-spacing:.22em;font-weight:700;text-transform:uppercase}}
+.main{{font-size:52px;font-weight:900;color:#fff;line-height:1.1;margin-bottom:12px}}
+.main .accent{{color:#1ed760}}
+.sub{{font-size:15px;color:#888;line-height:1.65;word-break:keep-all}}
+.week{{font-size:26px;color:#e0e0e0;font-weight:800;margin-bottom:8px}}
+.brand{{font-size:12px;color:#444;letter-spacing:.2em;text-transform:uppercase}}
+/* divider */
+.divider{{width:1px;background:linear-gradient(to bottom,transparent,#2a2d31 15%,#2a2d31 85%,transparent)}}
+/* right panel */
+.right{{
+  flex:1;height:628px;padding:44px 44px;
+  display:flex;flex-direction:column;justify-content:center;gap:0
+}}
+.toc-label{{
+  font-size:11px;color:#1ed760;letter-spacing:.25em;font-weight:700;
+  text-transform:uppercase;margin-bottom:18px
+}}
+.toc-item{{
+  display:flex;align-items:center;gap:18px;
+  background:#1a1c1f;border:1px solid #262a2e;border-radius:12px;
+  padding:15px 22px;margin-bottom:10px
+}}
+.toc-item:last-child{{margin-bottom:0}}
+.toc-num{{
+  font-size:13px;font-weight:900;color:#1ed760;
+  min-width:28px;letter-spacing:.04em;font-variant-numeric:tabular-nums
+}}
+.toc-txt{{font-size:18px;color:#d4d4d4;font-weight:500;line-height:1.4;word-break:keep-all}}
+.toc-txt .g{{color:#1ed760;font-weight:700}}
 </style></head><body>
 <div class="left">
   <div>
-    <div class="label">Weekly · Labor · HR Briefing</div>
-    <div class="main">인사 노무<br><span>브리핑</span></div>
-    <div class="sub">이번 주 노동·HR·정책 핵심 정리</div>
+    <div class="badge">
+      <span class="badge-dot"></span>
+      <span class="badge-txt">Weekly Briefing</span>
+    </div>
+    <div class="main">인사 노무<br><span class="accent">브리핑</span></div>
+    <div class="sub">이번 주 노동·HR·정책<br>핵심 정리</div>
   </div>
   <div>
     <div class="week">{week_label}</div>
-    <div class="brand">JP Labor Letter</div>
+    <div class="brand">JP LABOR LETTER</div>
   </div>
 </div>
+<div class="divider"></div>
 <div class="right">
-  <div class="hl-label">This Week's Top Headlines</div>
-  {headlines_html}
-  <div class="footer">eu-labornews.vercel.app</div>
+  <div class="toc-label">This Week's Contents</div>
+  <div class="toc-item">
+    <span class="toc-num">01</span>
+    <span class="toc-txt">금주의 <span class="g">TOP 3 노동뉴스</span></span>
+  </div>
+  <div class="toc-item">
+    <span class="toc-num">02</span>
+    <span class="toc-txt">정부·노동부·국회 <span class="g">정책동향</span></span>
+  </div>
+  <div class="toc-item">
+    <span class="toc-num">03</span>
+    <span class="toc-txt">JP's Weekly Insight — 이번 주 많이 받은 질문</span>
+  </div>
+  <div class="toc-item">
+    <span class="toc-num">04</span>
+    <span class="toc-txt"><span class="g">5인 미만 사업장</span> 집중 이슈</span>
+  </div>
+  <div class="toc-item">
+    <span class="toc-num">05</span>
+    <span class="toc-txt">이번 주 주요 <span class="g">노동 판결</span></span>
+  </div>
 </div>
 </body></html>"""
 
@@ -1074,7 +1123,7 @@ body{{width:1200px;height:630px;overflow:hidden;background:#1a6b3a;
         from playwright.sync_api import sync_playwright
         with sync_playwright() as pw:
             browser = pw.chromium.launch()
-            page = browser.new_page(viewport={"width": 1200, "height": 630}, device_scale_factor=3)
+            page = browser.new_page(viewport={"width": 1200, "height": 628}, device_scale_factor=3)
             page.goto(f"file://{os.path.abspath(tmp)}", wait_until="networkidle")
             try:
                 page.evaluate(
@@ -1084,7 +1133,7 @@ body{{width:1200px;height:630px;overflow:hidden;background:#1a6b3a;
             except Exception:
                 pass
             page.wait_for_timeout(1200)
-            page.screenshot(path=png_path, clip={"x": 0, "y": 0, "width": 1200, "height": 630})
+            page.screenshot(path=png_path, clip={"x": 0, "y": 0, "width": 1200, "height": 628})
             browser.close()
         os.remove(tmp)
         print(f"✅ 주간 썸네일 저장: {png_path}")
