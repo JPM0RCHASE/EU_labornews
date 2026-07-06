@@ -1165,33 +1165,69 @@ BLOG_TITLE = f"{_title_kw} ｜ {week_label} 인사노무 뉴스레터"
 _hook_kw = " · ".join(_kw_pool[:3]) if _kw_pool else "노동·HR·정책 핵심"
 BLOG_HOOK = f"이번 주 인사·노무 뉴스 핵심만 5분 정리 📌 {_hook_kw}"
 
-# 3) 본문: Top3 뉴스 + 주요 섹션 목차
+# 3) 본문: 뉴스레터 전문 (5개 섹션 전체)
 _emojis = ["1️⃣", "2️⃣", "3️⃣"]
-_body_lines = [BLOG_HOOK, "", "📍 이번 주 꼭 읽어야 할 뉴스 Top 3", ""]
+_body_lines = [BLOG_HOOK, ""]
+
+# Section 1: TOP 3
+_body_lines += ["📌 금주의 TOP 3 노동뉴스", ""]
 for i, n in enumerate(top3[:3]):
-    _summary = (n.get("insight") or n.get("summary") or "").strip()
-    if len(_summary) > 70:
-        _summary = _summary[:68].rstrip() + "…"
+    _summary = (n.get("summary") or "").strip()
+    _insight = (n.get("insight") or "").strip()
     _body_lines.append(f"{_emojis[i]} {n.get('title','')}")
     if _summary:
-        _body_lines.append(f"   → {_summary}")
+        _body_lines.append(f"   {_summary}")
+    if _insight:
+        _body_lines.append(f"   💡 {_insight}")
     _body_lines.append("")
-_body_lines += [
-    "📂 이번 주 뉴스레터 목차",
-    "· 정부·노동부·국회 정책동향",
-    "· JP's Weekly Insight (이번 주 많이 받은 질문)",
-    "· 5인 미만 사업장 집중 이슈",
-    "· 이번 주 주요 노동 판결",
-    "",
-    "▶ 뉴스레터 전체 보기",
-    VERCEL_URL,
-    "",
-    HASHTAG_STR,
-]
+
+# Section 2: 정부·노동부·국회 정책동향
+_body_lines += ["📋 정부·노동부·국회 정책동향", ""]
+_lead = (gov_policy.get("lead") or "").strip()
+if _lead:
+    _body_lines += [_lead, ""]
+for b in (gov_policy.get("policy_bullets") or []):
+    _body_lines.append(f"· {b}")
+_pi = (gov_policy.get("policy_insight") or "").strip()
+if _pi:
+    _body_lines += ["", f"💡 {_pi}"]
+_body_lines.append("")
+
+# Section 3: JP's Weekly Insight
+_body_lines += ["💬 JP's Weekly Insight — 이번 주 많이 받은 질문", ""]
+_q = (weekly_qa.get("question") or "").strip()
+if _q:
+    _body_lines += [f"Q. {_q}", ""]
+for p in (weekly_qa.get("answer_paragraphs") or []):
+    if p.strip():
+        _body_lines += [p.strip(), ""]
+
+# Section 4: 5인 미만 사업장
+_ff_title = (five_fewer.get("title") or "5인 미만 사업장 집중 이슈").strip()
+_body_lines += [f"👥 {_ff_title}", ""]
+for kp in (five_fewer.get("key_points") or []):
+    _body_lines.append(f"· {kp}")
+_at = (five_fewer.get("action_tip") or "").strip()
+if _at:
+    _body_lines += ["", f"💡 {_at}"]
+_body_lines.append("")
+
+# Section 5: 주요 노동 판결
+_body_lines += ["⚖️ 이번 주 주요 노동 판결", ""]
+for r in rulings[:1]:
+    _body_lines.append(r.get("title", ""))
+    _ruling = (r.get("ruling") or "").strip()
+    if _ruling:
+        _body_lines += ["", _ruling]
+    _ri = (r.get("insight") or "").strip()
+    if _ri:
+        _body_lines += ["", f"💡 {_ri}"]
+_body_lines.append("")
+
 BLOG_BODY = "\n".join(_body_lines)
 
 
-# ── 텔레그램 발송 ─────────────────────────────────────
+# ── 텔레그램 발송 (3블록: 썸네일 / 뉴스레터 전문 / 링크) ──────────────
 _tg_base = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}"
 
 def tg_post(method, **kwargs):
@@ -1204,34 +1240,41 @@ def tg_post(method, **kwargs):
 if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
     print("⚠ 텔레그램 토큰/채팅ID 없음 — 발송 건너뜀")
 else:
-    # 1) 프리뷰 PNG (뉴스레터 첫 화면) + 링크 + 해시태그
-    if ok:
-        print("텔레그램 프리뷰 PNG 생성 중...")
-        preview_ok = generate_preview_png(OUTPUT, PNG_PREVIEW)
-        _png = PNG_PREVIEW if preview_ok else PNG_OUTPUT
-        if os.path.exists(_png):
-            with open(_png, "rb") as f:
-                ts_ok, msg = tg_post("sendPhoto",
-                    data={"chat_id": TELEGRAM_CHAT_ID,
-                          "caption": f"📋 인사 노무 뉴스레터 — {week_label}\n\n🔗 {VERCEL_URL}\n\n{HASHTAG_STR}"[:1024]},
-                    files={"photo": f})
-            print("✅ 텔레그램 프리뷰 발송!" if ts_ok else f"❌ 프리뷰 발송 실패: {msg}")
-
-    # 2) 주간 썸네일 (1200×630) — 블로그 대표이미지용
+    # ─ 블록 1: 썸네일 이미지 (블로그 대표이미지) ─
     if thumb_ok and os.path.exists(THUMBNAIL_FILE):
         with open(THUMBNAIL_FILE, "rb") as f:
             ts_ok, msg = tg_post("sendPhoto",
                 data={"chat_id": TELEGRAM_CHAT_ID,
-                      "caption": f"🖼 {week_label} 주간 헤드라인 (블로그 대표이미지)"},
+                      "caption": f"🖼 [{week_label}] 블로그 대표 썸네일\n👆 네이버 블로그 대표이미지로 삽입하세요"},
                 files={"photo": (os.path.basename(THUMBNAIL_FILE), f, "image/png")})
-        print("✅ 텔레그램 주간 썸네일 발송!" if ts_ok else f"❌ 주간 썸네일 발송 실패: {msg}")
+        print("✅ [1/3] 썸네일 발송!" if ts_ok else f"❌ [1/3] 썸네일 발송 실패: {msg}")
+    else:
+        print("⚠ [1/3] 썸네일 파일 없음 — 건너뜀")
 
-    # 3) 네이버 블로그 복붙용 본문
-    _blog_msg = f"📝 네이버 블로그 복붙용\n\n[제목]\n{BLOG_TITLE}\n\n[본문]\n{BLOG_BODY}"
+    # ─ 블록 2: 뉴스레터 전문 (제목 + 5섹션 전체) ─
+    _full_text = f"📝 [제목]\n{BLOG_TITLE}\n\n[본문]\n{BLOG_BODY}"
+    if len(_full_text) <= 4000:
+        ts_ok, msg = tg_post("sendMessage",
+            data={"chat_id": TELEGRAM_CHAT_ID, "text": _full_text,
+                  "disable_web_page_preview": True})
+        print("✅ [2/3] 뉴스레터 전문 발송!" if ts_ok else f"❌ [2/3] 전문 발송 실패: {msg}")
+    else:
+        # 4000자 초과 시 단락 기준으로 분할
+        _split_at = _full_text.rfind("\n\n", 0, 4000) or 4000
+        _part1, _part2 = _full_text[:_split_at], _full_text[_split_at:].lstrip()
+        for _part, _label in [(_part1, "전문 1/2"), (_part2, "전문 2/2")]:
+            ts_ok, msg = tg_post("sendMessage",
+                data={"chat_id": TELEGRAM_CHAT_ID,
+                      "text": f"📝 [{_label}]\n\n{_part}"[:4096],
+                      "disable_web_page_preview": True})
+            print(f"✅ [2/3] {_label} 발송!" if ts_ok else f"❌ [2/3] {_label} 발송 실패: {msg}")
+
+    # ─ 블록 3: 링크 + 해시태그 ─
+    _link_block = f"🔗 [{week_label}] 뉴스레터 링크\n\n{VERCEL_URL}\n\n{HASHTAG_STR}"
     ts_ok, msg = tg_post("sendMessage",
-        data={"chat_id": TELEGRAM_CHAT_ID, "text": _blog_msg[:4096],
+        data={"chat_id": TELEGRAM_CHAT_ID, "text": _link_block,
               "disable_web_page_preview": True})
-    print("✅ 텔레그램 블로그 본문 발송!" if ts_ok else f"❌ 블로그 본문 발송 실패: {msg}")
+    print("✅ [3/3] 링크 발송!" if ts_ok else f"❌ [3/3] 링크 발송 실패: {msg}")
 
 print(f"🎉 완료! 웹 URL: {VERCEL_URL}")
 if ok:
