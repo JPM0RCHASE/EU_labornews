@@ -142,40 +142,51 @@ PROMPT = f"""당신은 공인노무사이자 HR 전문가입니다. 오늘은 {D
 수집된 뉴스:
 {news_text}
 
-【카드 7장 주제 선별 기준】
-아래 7개 영역에서 각 1건씩 선별. 대기업에 국한하지 말고 중소·중견·업종별로 다양하게 선정하세요.
+【카드 7장 구성 — 2+4+1 구조】
+━━ [노동법 2장] ━━
+오늘 노동·HR 이슈 전체를 검토해 파급력 기준 상위 2건을 선정하세요.
+아래 범주 중에서 자유롭게 선택하되, 1번과 2번은 반드시 다른 범주:
+  · 노사관계: 노란봉투법·노조법 개정·원청 사용자성·단체교섭·파업·쟁의·부당노동행위
+  · 임금·근로시간: 최저임금·통상임금·연장근로·포괄임금제·임금체불·성과급·퇴직금·주52시간
+  · 산재·중대재해: 중대재해처벌법 판결·기소, 산업재해 사망사고, 직업병 인정, 안전보건
+  · 해고·판결: 부당해고·정리해고·해고복직 판결, 노동위 판정, 대법원 노동 판결
 
-1번 — 노동법·노사관계 핵심 (택 1)
-  · 노란봉투법·노조법 개정·원청 사용자성·단체교섭·파업·쟁의·부당노동행위 중 가장 중요한 것
-  · 해당 뉴스 없으면 → 해고·징계 판결 중 파급력 큰 것
+1번 — 노동법 핵심 ① (위 4개 범주 중 오늘 가장 파급력 큰 이슈)
+2번 — 노동법 핵심 ② (1번과 다른 범주에서 오늘의 두 번째 핵심 이슈)
+  → 대기업(삼성·SK·현대차·LG) 기사는 1·2번 합쳐서 최대 1건으로 제한
 
-2번 — 임금·근로시간·고용조건 (택 1)
-  · 최저임금·통상임금·연장근로·포괄임금제·임금체불·성과급·주52시간·퇴직금 중 오늘의 핵심
-  · 대기업뿐 아니라 중소·중견기업 사례도 우선 고려
+━━ [업종별 4장] ━━
+3번 — 건설·토목 업종
+  · 건설현장 산재·안전, 건설 노조, 건설 일용직·임금체불, 토목·플랜트 노동
+  · 건설업 외국인 근로자, 건설사 경영위기·구조조정 이슈
+  · 해당 뉴스 없으면 → 조선·중공업 노사 이슈로 대체
 
-3번 — 산재·안전·중대재해 (택 1)
-  · 중대재해처벌법 판결·기소, 산업재해 사망사고, 직업병 인정, 안전보건 제도 이슈
-  · 건설·제조·물류·IT 등 업종 불문 — 파급력 있는 사건 우선
+4번 — 제조·물류·운수 업종
+  · 제조업(자동차·반도체·철강·화학) 노사·임금·구조조정
+  · 물류·택배·배달 노동, 트럭운전·버스·운수업 노사
+  · 해당 뉴스 없으면 → 플랫폼·배달기사·특수고용 이슈로 대체
 
-4번 — 해고·판결·노동위원회 (택 1)
-  · 부당해고·정리해고·해고 복직 판결, 노동위 판정, 대법원 노동 판결
-  · 중소기업·스타트업·공공기관 사례 적극 포함
+5번 — IT·게임·스타트업·금융 업종
+  · IT·게임·스타트업 인사(구조조정·성과급·무급휴직·원격근무·MZ직장문화)
+  · 금융·보험·증권·핀테크 노조·임금·경영
+  · 해당 뉴스 없으면 → 미디어·방송·콘텐츠 업종 노사로 대체
 
-5번 — 업종별 노동 이슈 — 건설·제조·물류 (택 1)
-  · 건설현장 노동(외국인·일용직·노조·산재), 제조업 노사, 물류·택배·배달 노동 중 선택
-  · 해당 뉴스 없으면 → 플랫폼·특수고용·비정규직 이슈로 대체
-
-6번 — 업종별 노동 이슈 — IT·금융·서비스·유통 (택 1)
-  · IT·게임·스타트업 노동, 금융권 노조, 병원·의료, 항공, 유통·마트 노동 중 선택
+6번 — 유통·의료·서비스·항공 업종
+  · 대형마트·편의점·이커머스 노동, 병원·의원·요양 종사자 노사
+  · 항공·승무원·여행 업종, 호텔·외식 노동
   · 해당 뉴스 없으면 → 외국인 근로자·이주노동 이슈로 대체
 
+━━ [정책·HR 1장] ━━
 7번 — 정책·HR·사회 트렌드 (택 1)
-  · 고용노동부 정책·지침·행정해석·단속, 국회 노동법 개정, 정년연장, 청년·여성·육아휴직,
-    직장내 괴롭힘, HR 트렌드, 원격근무, MZ 직장문화, 인사평가 중 오늘 가장 새로운 것
+  · 고용노동부 정책·지침·행정해석·단속·과태료, 국회 노동법 개정안
+  · 정년연장·계속고용, 청년·여성·육아휴직·저출생 대책
+  · 직장내 괴롭힘·성희롱 처리, 4대보험·실업급여 제도 개편
+  · HR 트렌드·인사평가·조직문화, 원격근무·하이브리드 워크
+  · 오늘 가장 새롭고 현장 실무에 바로 쓸 수 있는 것
 
 ※ 각 카드는 서로 다른 기사·주제 사용 (중복 금지)
 ※ 노란봉투법·노조법 개정·원청 사용자성은 7장 전체에서 단 1건만 허용 — 같은 주제의 후속 보도·파생 기사도 동일하게 간주하여 중복 금지
-※ 대기업(삼성·SK·현대차·LG) 기사는 1~4번 중 최대 2건으로 제한 — 나머지는 중소·중견·다업종
+※ 대기업(삼성·SK·현대차·LG) 기사는 1~2번 합쳐서 최대 1건, 3~6번에서 최대 1건으로 제한 — 나머지는 중소·중견·다업종
 ※ 돌봄·요양·복지서비스·음식점·소매업·농업·종교 뉴스는 절대 포함하지 말 것
 ※ 5인 미만 사업장 단독 이슈는 제외 (뉴스레터에서 별도 다룸)
 
@@ -365,7 +376,23 @@ body{background:var(--navy);color:var(--text-body);font-family:'Apple SD Gothic 
 /* ── 푸터 ── */
 .footer{border-top:1px solid var(--navy-border);background:#111827;padding:24px 20px;text-align:center;margin-top:0}
 .footer-logo{font-size:14px;font-weight:700;color:var(--gold);margin-bottom:6px}
-.footer-disc{font-size:11px;color:var(--text-muted);line-height:1.8}"""
+.footer-disc{font-size:11px;color:var(--text-muted);line-height:1.8}
+/* ── 섹션 구분 헤더 (2+4+1) ── */
+.section-break{margin:24px 16px 0;padding:10px 16px;display:flex;align-items:center;gap:12px;border-radius:4px}
+.section-break-law{background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.25);border-left:4px solid var(--gold)}
+.section-break-industry{background:rgba(93,173,226,.07);border:1px solid rgba(93,173,226,.2);border-left:4px solid #5dade2}
+.section-break-policy{background:rgba(46,204,113,.07);border:1px solid rgba(46,204,113,.2);border-left:4px solid #2ecc71}
+.sb-icon{font-size:18px}
+.sb-body{flex:1}
+.sb-title{font-size:13px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
+.sb-law .sb-title{color:var(--gold)}
+.sb-industry .sb-title{color:#5dade2}
+.sb-policy .sb-title{color:#2ecc71}
+.sb-desc{font-size:11px;color:var(--text-muted);margin-top:2px}
+.sb-count{font-size:11px;font-weight:700;padding:3px 8px;border-radius:10px;align-self:center}
+.sb-law .sb-count{background:rgba(201,168,76,.15);color:var(--gold)}
+.sb-industry .sb-count{background:rgba(93,173,226,.12);color:#5dade2}
+.sb-policy .sb-count{background:rgba(46,204,113,.12);color:#2ecc71}"""
 
 headlines_html = ""
 for n in news_list:
@@ -379,11 +406,28 @@ for n in news_list:
   </div>
 </a>"""
 
+_SECTION_BREAKS = {
+    1: ("section-break-law",      "sb-law",      "⚖️", "노동법 핵심",    "노사관계·임금·산재·해고 중 오늘 가장 중요한 2건", "2건"),
+    3: ("section-break-industry", "sb-industry", "🏭", "업종별 이슈",    "건설·제조물류·IT금융·유통의료 4개 업종", "4건"),
+    7: ("section-break-policy",   "sb-policy",   "📋", "정책·HR·트렌드", "고용노동부 정책·HR 실무·사회 트렌드", "1건"),
+}
+
 cards_html = ""
 for n in news_list:
+    rank = n["rank"]
+    if rank in _SECTION_BREAKS:
+        sb_cls, sb_inner, sb_icon, sb_title, sb_desc, sb_count = _SECTION_BREAKS[rank]
+        cards_html += f"""<div class="section-break {sb_cls} {sb_inner}">
+  <span class="sb-icon">{sb_icon}</span>
+  <div class="sb-body">
+    <div class="sb-title">{sb_title}</div>
+    <div class="sb-desc">{sb_desc}</div>
+  </div>
+  <span class="sb-count">{sb_count}</span>
+</div>"""
     bullets = "".join(f"<li>{b}</li>" for b in n["bullets"])
     rc = RISK_CLS.get(n["risk_level"],"risk-info")
-    cards_html += f"""<div class="news-card" id="news{n['rank']}">
+    cards_html += f"""<div class="news-card" id="news{rank}">
   <div class="source-bar"><span class="source-name">📰 {n['source']}</span><span class="source-date">{n['date']}</span></div>
   <div class="card-inner">
     <div class="risk-tag {rc}">{n['risk_label']}</div>
@@ -581,12 +625,30 @@ def generate_png(html_rel_path: str, png_path: str) -> bool:
 THUMBNAIL_FILE = f"thumbnail_{DATE_STR}.png"
 
 def generate_daily_thumbnail(items, date_label, png_path):
-    top3 = items[:3]
-    headlines_html = "\n".join([
-        f'<div class="hl"><span class="num">{i+1}</span>'
-        f'<span class="txt">{n["title"]}</span></div>'
-        for i, n in enumerate(top3)
-    ])
+    law_items      = [n for n in items if n.get("rank") in (1, 2)][:2]
+    industry_items = [n for n in items if n.get("rank") in (3, 4, 5, 6)][:4]
+    policy_item    = [n for n in items if n.get("rank") == 7][:1]
+
+    def _row(icon, title, color):
+        return (f'<div class="row">'
+                f'<span class="ri" style="color:{color}">{icon}</span>'
+                f'<span class="rt">{title}</span>'
+                f'</div>')
+
+    rows_html = ""
+    for n in law_items:
+        rows_html += _row("⚖", n["title"], "#c9a84c")
+    for n in industry_items:
+        rows_html += _row("🏭", n["title"], "#5dade2")
+    for n in policy_item:
+        rows_html += _row("📋", n["title"], "#2ecc71")
+
+    counts_html = (
+        f'<span class="badge badge-law">⚖ 노동법 2</span>'
+        f'<span class="badge badge-ind">🏭 업종 4</span>'
+        f'<span class="badge badge-pol">📋 정책 1</span>'
+    )
+
     html = f"""<!DOCTYPE html><html><head><meta charset="UTF-8">
 <link rel="preconnect" href="https://cdn.jsdelivr.net">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
@@ -598,33 +660,39 @@ body{{width:1200px;height:630px;overflow:hidden;
   background:#0d1b2a;
   font-family:'Pretendard','Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif;
   display:flex}}
-.left{{width:480px;height:630px;
+.left{{width:400px;height:630px;
   background:linear-gradient(150deg,#0d1b2a 0%,#0f2540 100%);
-  padding:52px 44px;display:flex;flex-direction:column;justify-content:space-between;
+  padding:48px 38px;display:flex;flex-direction:column;justify-content:space-between;
   border-right:1px solid #1e3a55}}
-.label{{font-size:15px;color:#c9a84c;letter-spacing:.2em;font-weight:700;text-transform:uppercase}}
-.main{{font-family:'Playfair Display',serif;font-size:62px;font-weight:900;color:#f0ebe0;line-height:1.05;margin:22px 0 12px}}
+.label{{font-size:13px;color:#c9a84c;letter-spacing:.2em;font-weight:700;text-transform:uppercase;margin-bottom:18px}}
+.main{{font-family:'Playfair Display',serif;font-size:54px;font-weight:900;color:#f0ebe0;line-height:1.05;margin-bottom:14px}}
 .main span{{color:#c9a84c}}
-.sub{{font-size:19px;color:#9fb0c4}}
-.date{{font-size:34px;color:#c9a84c;font-weight:800;margin-bottom:6px}}
-.brand{{font-size:17px;color:#5a7290}}
+.sub{{font-size:17px;color:#9fb0c4;line-height:1.5;margin-bottom:24px}}
+.badges{{display:flex;flex-direction:column;gap:8px;margin-bottom:20px}}
+.badge{{font-size:13px;font-weight:700;padding:5px 12px;border-radius:4px;display:inline-block;width:fit-content}}
+.badge-law{{background:rgba(201,168,76,.15);color:#c9a84c;border:1px solid rgba(201,168,76,.3)}}
+.badge-ind{{background:rgba(93,173,226,.12);color:#5dade2;border:1px solid rgba(93,173,226,.25)}}
+.badge-pol{{background:rgba(46,204,113,.10);color:#2ecc71;border:1px solid rgba(46,204,113,.2)}}
+.date{{font-size:28px;color:#c9a84c;font-weight:800;margin-bottom:4px}}
+.brand{{font-size:15px;color:#5a7290}}
 .right{{flex:1;height:630px;background:#0e1e2e;
-  padding:46px 44px;display:flex;flex-direction:column;justify-content:center}}
-.hl-label{{font-size:15px;color:#c9a84c;letter-spacing:.16em;text-transform:uppercase;
-  font-weight:700;margin-bottom:24px;padding-bottom:14px;border-bottom:1px solid #1a3248}}
-.hl{{display:flex;gap:16px;align-items:flex-start;
-  padding:17px 0;border-bottom:1px solid #162a3c}}
-.hl:last-child{{border-bottom:none}}
-.num{{font-size:30px;font-weight:900;color:#c9a84c;min-width:36px;line-height:1.3}}
-.txt{{font-size:24px;color:#dde7f3;line-height:1.45;font-weight:600;word-break:keep-all}}
-.footer{{margin-top:24px;padding-top:14px;border-top:1px solid #1a3248;
-  font-size:15px;color:#3d5570}}
+  padding:40px 40px;display:flex;flex-direction:column;justify-content:center}}
+.hl-label{{font-size:13px;color:#c9a84c;letter-spacing:.16em;text-transform:uppercase;
+  font-weight:700;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid #1a3248}}
+.row{{display:flex;gap:12px;align-items:flex-start;
+  padding:10px 0;border-bottom:1px solid #162a3c}}
+.row:last-child{{border-bottom:none}}
+.ri{{font-size:18px;min-width:24px;line-height:1.5;flex-shrink:0}}
+.rt{{font-size:20px;color:#dde7f3;line-height:1.45;font-weight:600;word-break:keep-all}}
+.footer{{margin-top:18px;padding-top:12px;border-top:1px solid #1a3248;
+  font-size:13px;color:#3d5570}}
 </style></head><body>
 <div class="left">
   <div>
     <div class="label">Labor · HR · Daily Brief</div>
     <div class="main">Today's<br><span>Labor</span><br>News</div>
     <div class="sub">오늘의 인사노무 핵심 브리핑</div>
+    <div class="badges">{counts_html}</div>
   </div>
   <div>
     <div class="date">{date_label}</div>
@@ -632,8 +700,8 @@ body{{width:1200px;height:630px;overflow:hidden;
   </div>
 </div>
 <div class="right">
-  <div class="hl-label">Today's Top Headlines</div>
-  {headlines_html}
+  <div class="hl-label">Today's 7 Headlines — 2+4+1</div>
+  {rows_html}
   <div class="footer">eu-labornews.vercel.app</div>
 </div>
 </body></html>"""
