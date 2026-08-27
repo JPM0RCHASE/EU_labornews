@@ -99,6 +99,23 @@ headers = {"X-Naver-Client-Id": NAVER_CLIENT_ID, "X-Naver-Client-Secret": NAVER_
 seven_days_ago = TODAY - timedelta(days=7)
 collected, seen = [], set()
 
+# ── 전일 사용 기사 로드 (중복 방지) ──────────────────────────────────────
+USED_FILE = os.path.join(REPO_ROOT, "last_used.json")
+_prev_urls   = set()
+_prev_titles = set()
+try:
+    with open(USED_FILE, "r", encoding="utf-8") as _f:
+        _prev = json.load(_f)
+        _saved_date = _prev.get("date", "")
+        if _saved_date != DATE_STR:          # 같은 날 재실행이면 필터 안 함
+            _prev_urls   = set(_prev.get("urls", []))
+            _prev_titles = set(_prev.get("title_keys", []))
+    print(f"전일({_saved_date}) 사용 기사 {len(_prev_urls)}건 필터 등록")
+except FileNotFoundError:
+    print("전일 사용 기사 파일 없음 — 첫 실행으로 간주")
+except Exception as _e:
+    print(f"전일 파일 로드 실패(무시): {_e}")
+
 for kw in KEYWORDS:
     try:
         resp = requests.get(
@@ -125,8 +142,15 @@ for kw in KEYWORDS:
     except Exception as e:
         print(f"키워드 '{kw}' 오류: {e}")
 
-print(f"7일 이내 뉴스 {len(collected)}건 수집")
-news_pool = collected[:20]
+# 전일 기사 제거
+_before = len(collected)
+collected = [
+    item for item in collected
+    if item.get("link","") not in _prev_urls
+    and item.get("title","")[:22] not in _prev_titles
+]
+print(f"7일 이내 뉴스 {_before}건 수집 → 전일 중복 {_before - len(collected)}건 제거 → {len(collected)}건 사용")
+news_pool = collected[:25]   # 여유 있게 25건으로 확대
 
 # ── Claude API 카드뉴스 생성 ─────────────────────────
 client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
@@ -142,51 +166,61 @@ PROMPT = f"""당신은 공인노무사이자 HR 전문가입니다. 오늘은 {D
 수집된 뉴스:
 {news_text}
 
-【카드 7장 구성 — 2+4+1 구조】
-━━ [노동법 2장] ━━
-오늘 노동·HR 이슈 전체를 검토해 파급력 기준 상위 2건을 선정하세요.
-아래 범주 중에서 자유롭게 선택하되, 1번과 2번은 반드시 다른 범주:
-  · 노사관계: 노란봉투법·노조법 개정·원청 사용자성·단체교섭·파업·쟁의·부당노동행위
-  · 임금·근로시간: 최저임금·통상임금·연장근로·포괄임금제·임금체불·성과급·퇴직금·주52시간
-  · 산재·중대재해: 중대재해처벌법 판결·기소, 산업재해 사망사고, 직업병 인정, 안전보건
-  · 해고·판결: 부당해고·정리해고·해고복직 판결, 노동위 판정, 대법원 노동 판결
+【카드 7장 구성 — 인사쟁이 실무 시나리오형】
+독자가 "나한테도 일어날 수 있는 일"로 느낄 수 있게, 상황·스토리·실무 기준 중심으로 선별하세요.
+업종별 분류보다 상황·임팩트 중심으로 선정. 중소·중견기업 사례를 적극 포함하세요.
 
-1번 — 노동법 핵심 ① (위 4개 범주 중 오늘 가장 파급력 큰 이슈)
-2번 — 노동법 핵심 ② (1번과 다른 범주에서 오늘의 두 번째 핵심 이슈)
-  → 대기업(삼성·SK·현대차·LG) 기사는 1·2번 합쳐서 최대 1건으로 제한
+━━ [실무·사례 3장] ━━
 
-━━ [업종별 4장] ━━
-3번 — 건설·토목 업종
-  · 건설현장 산재·안전, 건설 노조, 건설 일용직·임금체불, 토목·플랜트 노동
-  · 건설업 외국인 근로자, 건설사 경영위기·구조조정 이슈
-  · 해당 뉴스 없으면 → 조선·중공업 노사 이슈로 대체
+1번 — 오늘의 판결·역전 (예상 밖 결과)
+  · 법원·노동위원회·행정심판이 뒤집은 해고·징계·임금·산재 사건
+  · "이러면 무효야?", "법원이 바꾼 기준", "회사가 패소한 이유는?" 유형
+  · 독자가 기존에 알던 상식을 뒤집는 판결 우선
+  · 해당 없으면 → 파급력 큰 대법원 노동 판결로 대체
 
-4번 — 제조·물류·운수 업종
-  · 제조업(자동차·반도체·철강·화학) 노사·임금·구조조정
-  · 물류·택배·배달 노동, 트럭운전·버스·운수업 노사
-  · 해당 뉴스 없으면 → 플랫폼·배달기사·특수고용 이슈로 대체
+2번 — 인사팀이 자주 틀리는 계산·기준
+  · 반드시 구체적 수치(금액·배율·일수·비율)가 있는 임금·수당·가산율 이슈
+  · 예: "노동절 출근 2.5배 vs 2배+대체휴일", "포괄임금 초과 수당 계산법"
+  · 임금체불·연차수당·퇴직금 계산·최저임금 위반 사례 등
+  · 해당 없으면 → 임금 관련 실무 판례로 대체
 
-5번 — IT·게임·스타트업·금융 업종
-  · IT·게임·스타트업 인사(구조조정·성과급·무급휴직·원격근무·MZ직장문화)
-  · 금융·보험·증권·핀테크 노조·임금·경영
-  · 해당 뉴스 없으면 → 미디어·방송·콘텐츠 업종 노사로 대체
+3번 — 직장 속 사건·사고 (이런 일 실제로...)
+  · 직장내 괴롭힘·갑질의 구체적 에피소드, 해고통보 실수, 직장 소문·명예훼손
+  · 회사 기밀 유출 후 해고 무효 판결, 채용 갑질, 직원 불법 감시 등
+  · 제목은 대화체·따옴표 인용 적극 활용 ("김대리, 내 차 운전 좀 해줌" 스타일)
+  · 독자가 "우리 회사에서도 생길 수 있다"고 느낄 수 있는 스토리 필수
+  · 해당 없으면 → 직장내 괴롭힘 인정 기준 사례로 대체
 
-6번 — 유통·의료·서비스·항공 업종
-  · 대형마트·편의점·이커머스 노동, 병원·의원·요양 종사자 노사
-  · 항공·승무원·여행 업종, 호텔·외식 노동
-  · 해당 뉴스 없으면 → 외국인 근로자·이주노동 이슈로 대체
+━━ [이슈 2장] ━━
 
-━━ [정책·HR 1장] ━━
-7번 — 정책·HR·사회 트렌드 (택 1)
-  · 고용노동부 정책·지침·행정해석·단속·과태료, 국회 노동법 개정안
-  · 정년연장·계속고용, 청년·여성·육아휴직·저출생 대책
-  · 직장내 괴롭힘·성희롱 처리, 4대보험·실업급여 제도 개편
-  · HR 트렌드·인사평가·조직문화, 원격근무·하이브리드 워크
-  · 오늘 가장 새롭고 현장 실무에 바로 쓸 수 있는 것
+4번 — 이번 주 바뀐 것 (HR이 즉시 적용해야 할 것)
+  · 새 법령 시행, 행정해석 변경, 지침 개정 — 오늘부터 실무가 달라진 것
+  · 취업규칙·근로계약서·지급 기준을 지금 당장 수정해야 하는 이슈
+  · 예: "낙임치료 휴가 유급 의무화", "육아기 단축 급여 인상" 등
+  · 해당 없으면 → 고용부 최신 행정해석(Q&A 형태)으로 대체
+
+5번 — 오늘의 핵심 노동 이슈
+  · 노사관계·파업·쟁의·임금협상·산재·중대재해 중 오늘 가장 파급력 큰 1건
+  · 노란봉투법·노조법 개정·원청 사용자성 이슈도 여기에 포함 (전체에서 단 1건)
+  · 대기업·중소기업 불문, 오늘 노동계에서 가장 임팩트 큰 뉴스
+
+━━ [트렌드·정책 2장] ━━
+
+6번 — 해외·트렌드 (우리도 곧?)
+  · 일본·미국·유럽·호주 등 해외 노동법·근무제 변화 ("월 45시간 잔업 빠지는 日")
+  · 주4일제·원격근무·하이브리드 확산, MZ 직장문화 트렌드
+  · HR Tech·AI 채용·AI 인사관리·자동화·HR SaaS 동향
+  · 해당 뉴스 없으면 → 국내 조직문화·HR 트렌드 이슈로 대체
+
+7번 — 고용노동부·국회·정책
+  · 고용노동부 정책 발표·지침·행정해석·단속·과태료 부과 결과
+  · 국회 환경노동위원회 입법 동향, 노동법 개정안 심의·통과·부결
+  · 정부 지원금·고용보험·산재보험·직업훈련·고용장려금 제도 변경
+  · 정년연장·계속고용·청년고용·외국인 고용허가 정책 발표
 
 ※ 각 카드는 서로 다른 기사·주제 사용 (중복 금지)
-※ 노란봉투법·노조법 개정·원청 사용자성은 7장 전체에서 단 1건만 허용 — 같은 주제의 후속 보도·파생 기사도 동일하게 간주하여 중복 금지
-※ 대기업(삼성·SK·현대차·LG) 기사는 1~2번 합쳐서 최대 1건, 3~6번에서 최대 1건으로 제한 — 나머지는 중소·중견·다업종
+※ 노란봉투법·노조법 개정·원청 사용자성은 5번에서만 허용 — 7장 전체에서 단 1건
+※ 대기업(삼성·SK·현대차·LG) 기사는 7장 전체에서 최대 2건으로 제한
 ※ 돌봄·요양·복지서비스·음식점·소매업·농업·종교 뉴스는 절대 포함하지 말 것
 ※ 5인 미만 사업장 단독 이슈는 제외 (뉴스레터에서 별도 다룸)
 
@@ -286,6 +320,19 @@ for i, n in enumerate(news_list):
 news_list = _clean_list
 
 print(f"카드뉴스 {len(news_list)}건 생성 완료")
+
+# ── 오늘 사용 기사 저장 (내일 중복 방지용) ───────────────────────────────
+try:
+    _used_data = {
+        "date": DATE_STR,
+        "urls": [n.get("url","") for n in news_list if n.get("url","")],
+        "title_keys": [n.get("title","")[:22] for n in news_list if n.get("title","")],
+    }
+    with open(USED_FILE, "w", encoding="utf-8") as _f:
+        json.dump(_used_data, _f, ensure_ascii=False, indent=2)
+    print(f"✅ 사용 기사 {len(_used_data['urls'])}건 저장: {USED_FILE}")
+except Exception as _e:
+    print(f"⚠ 사용 기사 저장 실패(무시): {_e}")
 
 # ── HTML 생성 ────────────────────────────────────────
 RISK_CLS = {"high":"risk-high","med":"risk-med","info":"risk-info"}
@@ -407,19 +454,17 @@ for n in news_list:
 </a>"""
 
 _SECTION_BREAKS = {
-    1: ("section-break-law",      "sb-law",      "⚖️", "노동법 핵심",    "노사관계·임금·산재·해고 중 오늘 가장 중요한 2건", "2건"),
-    3: ("section-break-industry", "sb-industry", "🏭", "업종별 이슈",    "건설·제조물류·IT금융·유통의료 4개 업종", "4건"),
-    7: ("section-break-policy",   "sb-policy",   "📋", "정책·HR·트렌드", "고용노동부 정책·HR 실무·사회 트렌드", "1건"),
+    1: ("section-break-law",      "sb-law",      "실무·사례",    "판결·계산기준·직장사건 — 인사쟁이 필독 3장", "3장"),
+    4: ("section-break-industry", "sb-industry", "핵심 이슈",    "즉시 적용 변경사항 + 오늘의 핵심 노동뉴스", "2장"),
+    6: ("section-break-policy",   "sb-policy",   "트렌드·정책",  "해외동향·HR Tech + 고용노동부·국회 뉴스", "2장"),
 }
 
 cards_html = ""
 for n in news_list:
     rank = n["rank"]
-    # 섹션 구분 헤더 삽입
     if rank in _SECTION_BREAKS:
-        sb_cls, sb_inner, sb_icon, sb_title, sb_desc, sb_count = _SECTION_BREAKS[rank]
+        sb_cls, sb_inner, sb_title, sb_desc, sb_count = _SECTION_BREAKS[rank]
         cards_html += f"""<div class="section-break {sb_cls} {sb_inner}">
-  <span class="sb-icon">{sb_icon}</span>
   <div class="sb-body">
     <div class="sb-title">{sb_title}</div>
     <div class="sb-desc">{sb_desc}</div>
@@ -626,29 +671,29 @@ def generate_png(html_rel_path: str, png_path: str) -> bool:
 THUMBNAIL_FILE = f"thumbnail_{DATE_STR}.png"
 
 def generate_daily_thumbnail(items, date_label, png_path):
-    # 2+4+1 구조로 섹션별 대표 제목 추출
-    law_items      = [n for n in items if n.get("rank") in (1, 2)][:2]
-    industry_items = [n for n in items if n.get("rank") in (3, 4, 5, 6)][:4]
-    policy_item    = [n for n in items if n.get("rank") == 7][:1]
+    # 카드 색상 매핑 (이모지 없이 색상만으로 구분)
+    _RANK_COLORS = {
+        1: "#c9a84c", 2: "#f0b429", 3: "#e74c3c",
+        4: "#5dade2", 5: "#e67e22",
+        6: "#2ecc71", 7: "#9b59b6",
+    }
 
-    def _row(icon, title, color):
+    def _row(num, title, color):
         return (f'<div class="row">'
-                f'<span class="ri" style="color:{color}">{icon}</span>'
+                f'<span class="ri" style="color:{color}">{num}</span>'
                 f'<span class="rt">{title}</span>'
                 f'</div>')
 
     rows_html = ""
-    for n in law_items:
-        rows_html += _row("⚖", n["title"], "#c9a84c")
-    for n in industry_items:
-        rows_html += _row("🏭", n["title"], "#5dade2")
-    for n in policy_item:
-        rows_html += _row("📋", n["title"], "#2ecc71")
+    for n in sorted(items, key=lambda x: x.get("rank", 99))[:7]:
+        rank = n.get("rank", 0)
+        color = _RANK_COLORS.get(rank, "#888")
+        rows_html += _row(rank, n["title"], color)
 
     counts_html = (
-        f'<span class="badge badge-law">⚖ 노동법 2</span>'
-        f'<span class="badge badge-ind">🏭 업종 4</span>'
-        f'<span class="badge badge-pol">📋 정책 1</span>'
+        f'<span class="badge badge-law">실무·사례 3</span>'
+        f'<span class="badge badge-ind">핵심이슈 2</span>'
+        f'<span class="badge badge-pol">정책·트렌드 2</span>'
     )
 
     html = f"""<!DOCTYPE html><html><head><meta charset="UTF-8">
@@ -684,7 +729,7 @@ body{{width:1200px;height:630px;overflow:hidden;
 .row{{display:flex;gap:12px;align-items:flex-start;
   padding:10px 0;border-bottom:1px solid #162a3c}}
 .row:last-child{{border-bottom:none}}
-.ri{{font-size:18px;min-width:24px;line-height:1.5;flex-shrink:0}}
+.ri{{font-size:20px;font-weight:900;min-width:28px;line-height:1.5;flex-shrink:0;font-family:'Playfair Display',serif}}
 .rt{{font-size:20px;color:#dde7f3;line-height:1.45;font-weight:600;word-break:keep-all}}
 .footer{{margin-top:18px;padding-top:12px;border-top:1px solid #1a3248;
   font-size:13px;color:#3d5570}}
