@@ -773,7 +773,7 @@ body{{width:1200px;height:630px;overflow:hidden;
   </div>
 </div>
 <div class="right">
-  <div class="hl-label">Today's 7 Headlines — 2+4+1</div>
+  <div class="hl-label">Today's 7 Headlines — 3+2+2</div>
   {rows_html}
   <div class="footer">eu-labornews.vercel.app</div>
 </div>
