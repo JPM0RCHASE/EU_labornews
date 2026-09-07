@@ -281,11 +281,37 @@ response = client.messages.create(
 )
 raw = response.content[0].text.strip()
 raw = re.sub(r"```json|```", "", raw).strip()
-try:
-    data = json.loads(raw)
-except json.JSONDecodeError:
-    match = re.search(r'\{.*\}', raw, re.DOTALL)
-    data = json.loads(match.group()) if match else {"news":[]}
+
+
+def _safe_parse_json(text: str) -> dict:
+    """JSON 파싱 3단계 폴백 — Claude 응답이 약간 깨져도 죽지 않도록."""
+    # 1단계: 전체 텍스트 직접 파싱
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        pass
+    # 2단계: { ... } 블록 추출 후 파싱
+    match = re.search(r'\{.*\}', text, re.DOTALL)
+    if match:
+        try:
+            return json.loads(match.group())
+        except json.JSONDecodeError as e:
+            print(f"⚠ JSON 2차 파싱 실패: {e}")
+    # 3단계: 제어문자·잘못된 따옴표 제거 후 재시도
+    if match:
+        cleaned = re.sub(r'[\x00-\x08\x0b\x0c\x0e-\x1f]', '', match.group())
+        cleaned = cleaned.replace('“', '"').replace('”', '"') \
+                         .replace('‘', "'").replace('’', "'")
+        try:
+            return json.loads(cleaned)
+        except json.JSONDecodeError as e:
+            print(f"⚠ JSON 3차 파싱 실패: {e}\n원시 응답(500자):\n{text[:500]}")
+    # 최종 폴백: 빈 뉴스 목록으로 워크플로 계속 진행
+    print("⚠ JSON 파싱 전부 실패 — 빈 데이터로 계속 진행")
+    return {"news": []}
+
+
+data = _safe_parse_json(raw)
 
 news_list = data.get("news", [])
 hashtags  = data.get("hashtags", [])
