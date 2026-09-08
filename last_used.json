@@ -1,5 +1,21 @@
 {
   "date": "20260908",
-  "urls": [],
-  "title_keys": []
+  "urls": [
+    "http://www.worklaw.co.kr/view/view.asp?accessSite=Naver&accessMethod=Search&accessMenu=News&in_cate=122&in_cate2=0&gopage=1&bi_pidx=39538",
+    "https://www.yna.co.kr/view/AKR20260908023800530?input=1195m",
+    "https://www.the-today.com/news/articleView.html?idxno=89521",
+    "https://www.mt.co.kr/opinion/2026/09/04/2026090317132457997",
+    "https://www.labortoday.co.kr/news/articleView.html?idxno=236647",
+    "https://www.khan.co.kr/article/202609071609001",
+    "https://www.pinpointnews.co.kr/news/articleView.html?idxno=484762"
+  ],
+  "title_keys": [
+    "법원 \"수서행 KTX 운행 요구 파업, ",
+    "노동부 \"삼성전자 'N% 성과급' 요구 ",
+    "현대차, 하청노동자 '진짜 사장' 판정.",
+    "노란봉투법 시행지침, 법적 구속력 없어 ",
+    "민주노총, '원청교섭 시행령 폐기' 요구",
+    "네이버 계열사 첫 파업 초읽기...노조 ",
+    "대한항공 조종사노조, '서열 기준' 놓고"
+  ]
 }
