@@ -284,7 +284,7 @@ raw = re.sub(r"```json|```", "", raw).strip()
 
 
 def _safe_parse_json(text: str) -> dict:
-    """JSON 파싱 3단계 폴백 — Claude 응답이 약간 깨져도 죽지 않도록."""
+    """JSON 파싱 4단계 폴백 — Claude가 따옴표 이스케이프 누락해도 복구."""
     # 1단계: 전체 텍스트 직접 파싱
     try:
         return json.loads(text)
@@ -297,15 +297,26 @@ def _safe_parse_json(text: str) -> dict:
             return json.loads(match.group())
         except json.JSONDecodeError as e:
             print(f"⚠ JSON 2차 파싱 실패: {e}")
-    # 3단계: 제어문자·잘못된 따옴표 제거 후 재시도
+    # 3단계: 제어문자·유니코드 따옴표 정규화 후 재시도
     if match:
         cleaned = re.sub(r'[\x00-\x08\x0b\x0c\x0e-\x1f]', '', match.group())
-        cleaned = cleaned.replace('“', '"').replace('”', '"') \
-                         .replace('‘', "'").replace('’', "'")
+        cleaned = cleaned.replace('\u201c', '\\"').replace('\u201d', '\\"') \
+                         .replace('\u2018', "'").replace('\u2019', "'")
         try:
             return json.loads(cleaned)
         except json.JSONDecodeError as e:
             print(f"⚠ JSON 3차 파싱 실패: {e}\n원시 응답(500자):\n{text[:500]}")
+    # 4단계: json-repair 라이브러리로 자동 복구 (따옴표 이스케이프 누락 등 처리)
+    try:
+        from json_repair import repair_json
+        target = match.group() if match else text
+        repaired = repair_json(target, return_objects=True)
+        if isinstance(repaired, dict) and repaired.get("news"):
+            print(f"✅ json-repair로 복구 성공: {len(repaired['news'])}건")
+            return repaired
+        print(f"⚠ json-repair 복구 결과 비어있음")
+    except Exception as e:
+        print(f"⚠ json-repair 실패: {e}\n원시 응답(500자):\n{text[:500]}")
     # 최종 폴백: 빈 뉴스 목록으로 워크플로 계속 진행
     print("⚠ JSON 파싱 전부 실패 — 빈 데이터로 계속 진행")
     return {"news": []}

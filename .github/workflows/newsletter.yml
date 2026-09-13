@@ -44,6 +44,7 @@ jobs:
           git push origin HEAD
 
       - name: jplabor 홈페이지에 뉴스레터 업로드
+        continue-on-error: true
         env:
           JPLABOR_TOKEN: ${{ secrets.JPLABOR_TOKEN }}
         run: |
