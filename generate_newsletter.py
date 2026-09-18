@@ -1261,6 +1261,45 @@ _body_lines.append("")
 BLOG_BODY = "\n".join(_body_lines)
 
 
+# ── 링크 발송 전 배포 완료 대기 ───────────────────────────────────────
+# 링크를 먼저 보내면 Vercel 배포가 끝나기 전이라 404가 뜬다.
+# HTML을 먼저 푸시하고 URL이 실제로 열릴 때까지 기다린 뒤 발송한다.
+def publish_and_wait(timeout: int = 300) -> bool:
+    import time
+    import subprocess
+
+    def git(*args):
+        return subprocess.run(["git", *args], cwd=REPO_ROOT,
+                              capture_output=True, text=True)
+
+    git("config", "user.email", "action@github.com")
+    git("config", "user.name", "GitHub Actions")
+    git("add", "newsletter/")
+    if git("diff", "--staged", "--quiet").returncode != 0:
+        git("commit", "-m", f"Auto: {DATE_STR} 인사 노무 브리핑 뉴스레터 생성 (HTML+PNG)")
+        git("pull", "--rebase", "--autostash", "origin", "main")
+        push = git("push", "origin", "HEAD:main")
+        if push.returncode != 0:
+            print(f"⚠ 푸시 실패 — 링크가 바로 안 열릴 수 있음: {push.stderr.strip()[:300]}")
+            return False
+        print("✅ 뉴스레터 HTML 푸시 완료 — Vercel 배포 대기")
+
+    deadline = time.time() + timeout
+    while time.time() < deadline:
+        try:
+            if requests.head(VERCEL_URL, timeout=10, allow_redirects=True).status_code == 200:
+                print("✅ Vercel 배포 확인 — 링크 발송 진행")
+                return True
+        except Exception:
+            pass
+        time.sleep(10)
+    print(f"⚠ {timeout}초 내 배포 미확인 — 링크는 잠시 뒤 열립니다")
+    return False
+
+
+publish_and_wait()
+
+
 # ── 텔레그램 발송 (3블록: 썸네일 / 뉴스레터 전문 / 링크) ──────────────
 _tg_base = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}"
 
