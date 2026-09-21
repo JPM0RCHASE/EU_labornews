@@ -404,7 +404,8 @@ body{background:var(--navy);color:var(--text-body);font-family:'Apple SD Gothic 
 .hero-label{font-size:12px;letter-spacing:.2em;color:var(--gold);text-transform:uppercase;margin-bottom:10px;text-align:center}
 .hero-title{font-size:26px;font-weight:900;color:var(--cream);line-height:1.2;margin-bottom:6px;text-align:center}
 .hero-title span{color:var(--gold)}
-.hero-sub{font-size:13px;color:var(--text-muted);line-height:1.7;text-align:center;margin-bottom:20px}
+.hero-sub{font-size:13px;color:var(--text-muted);line-height:1.7;text-align:center;margin-bottom:12px}
+.hero-byline{font-size:12px;letter-spacing:.06em;color:var(--gold);text-align:center;margin-bottom:20px;opacity:.85}
 .headline-list{background:rgba(31,50,96,.3);border:1px solid var(--navy-border);border-radius:4px;overflow:hidden}
 .headline-item{display:flex;align-items:flex-start;gap:12px;padding:13px 16px;border-bottom:1px solid var(--navy-border);text-decoration:none;transition:background 0.2s}
 .headline-item:hover{background:rgba(31,50,96,.5)}
@@ -519,7 +520,7 @@ for n in news_list:
     <ul class="bullet-list">{bullets}</ul>
     <div class="insight"><div class="insight-label">실무 시사점</div><div class="insight-text">{n['insight']}</div></div>
   </div>
-  <div class="read-more"><span class="wm-small">© JP Labor News</span><a href="{n['url']}" target="_blank">자세히 보기</a></div>
+  <div class="read-more"><span class="wm-small">공인노무사 JP</span><a href="{n['url']}" target="_blank">자세히 보기</a></div>
 </div>"""
 
 # 카카오톡 공유 버튼 (JS 키가 있을 때만 표시)
@@ -551,6 +552,7 @@ NEWS_HTML = f"""<!DOCTYPE html>
   <div class="hero-label">인사노무 핵심 브리핑</div>
   <h1 class="hero-title">오늘의 <span>Labor</span> 이슈</h1>
   <p class="hero-sub">꼭 알아야 할 핵심 이슈</p>
+  <div class="hero-byline">공인노무사 JP</div>
   <div class="headline-list">{headlines_html}</div>
 </section>
 {cards_html}
@@ -565,7 +567,7 @@ NEWS_HTML = f"""<!DOCTYPE html>
 </div>
 
 <footer class="footer">
-  <div class="footer-logo">JP Labor News</div>
+  <div class="footer-logo">공인노무사 JP</div>
   <div class="footer-disc">Powered by Claude AI · 자동 생성<br>본 카드뉴스는 정보 제공 목적입니다.<br>© 2026 JP Labor News</div>
 </footer>
 
