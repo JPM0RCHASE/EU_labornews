@@ -63,6 +63,24 @@ def load_recent_news(days: int = NEWS_DAYS) -> list:
                 "title": n.get("title", ""),
                 "insight": n.get("insight", ""),
             })
+    if items:
+        return items
+
+    # news_*.json 은 카드뉴스를 돌려야 쌓인다. 그 전까지는 이미 만들어 둔
+    # 카드뉴스 HTML에서 헤드라인만 뽑아 글감으로 쓴다.
+    print("news_*.json 없음 — 카드뉴스 HTML에서 헤드라인을 뽑습니다.")
+    for path in sorted(glob.glob(os.path.join(REPO_ROOT, "2*/labornews_*.html")), reverse=True)[:days]:
+        try:
+            with open(path, encoding="utf-8") as f:
+                html = f.read()
+        except Exception as e:
+            print(f"⚠ {os.path.basename(path)} 읽기 실패(건너뜀): {e}")
+            continue
+        date = os.path.basename(os.path.dirname(path))
+        for title in re.findall(r'class="card-title"[^>]*>([^<]+)<', html):
+            title = title.strip()
+            if title:
+                items.append({"date": date, "title": title, "insight": ""})
     return items
 
 
@@ -125,12 +143,18 @@ def tg_send(text: str) -> None:
         print(f"{'✅' if ok else '❌'} 텔레그램 {i}/{len(chunks)}" + ("" if ok else f" — {r}"))
 
 
+def fail(msg: str) -> None:
+    """워크플로가 초록불인데 텔레그램만 조용한 상황을 막는다."""
+    print(f"⚠ {msg}")
+    tg_send(f"⚠️ 해설글 생성 실패\n\n{msg}")
+    raise SystemExit(1)
+
+
 # ── 후보 모드 ────────────────────────────────────────────────────────
 def run_candidates(style: str) -> None:
     news = load_recent_news()
     if not news:
-        print("⚠ 글감으로 쓸 뉴스 JSON이 없습니다. 카드뉴스를 먼저 몇 번 돌려주세요.")
-        return
+        fail("글감이 될 카드뉴스 기록이 없습니다. 카드뉴스 워크플로를 한 번 먼저 실행해 주세요.")
     print(f"글감 {len(news)}건으로 후보 선정 중...")
 
     news_text = "\n".join(f"- [{n['date']}] {n['title']} / {n['insight']}" for n in news)
@@ -166,8 +190,7 @@ def run_candidates(style: str) -> None:
     data = parse_json(ask_claude(prompt, style, 2000))
     candidates = data.get("candidates", [])
     if not candidates:
-        print("⚠ 후보를 뽑지 못했습니다.")
-        return
+        fail("Claude가 후보를 뽑지 못했습니다. 다시 실행해 주세요.")
 
     with open(CANDIDATES_FILE, "w", encoding="utf-8") as f:
         json.dump({"date": DATE_STR, "candidates": candidates}, f, ensure_ascii=False, indent=2)
@@ -195,10 +218,10 @@ def resolve_topic(raw: str) -> dict:
         with open(CANDIDATES_FILE, encoding="utf-8") as f:
             candidates = json.load(f).get("candidates", [])
     except FileNotFoundError:
-        raise SystemExit("⚠ 후보 파일이 없습니다. topic을 비우고 먼저 실행해 후보를 받으세요.")
+        fail("후보 파일이 없습니다. topic을 비우고 먼저 실행해 후보를 받으세요.")
     idx = int(raw) - 1
     if not 0 <= idx < len(candidates):
-        raise SystemExit(f"⚠ 후보 번호는 1~{len(candidates)} 사이여야 합니다.")
+        fail(f"후보 번호는 1~{len(candidates)} 사이여야 합니다.")
     return candidates[idx]
 
 
@@ -233,8 +256,7 @@ body 는 줄바꿈을 \\n 으로 넣은 순수 텍스트입니다. 마크다운 
     data = parse_json(ask_claude(prompt, style, 8000))
     title, body = data.get("title", ""), data.get("body", "")
     if not body:
-        print("⚠ 본문 생성 실패.")
-        return
+        fail("본문 생성에 실패했습니다. 다시 실행해 주세요.")
 
     tags = " ".join(f"#{t.lstrip('#')}" for t in data.get("hashtags", []))
     slug = re.sub(r"[^0-9A-Za-z가-힣]+", "_", title)[:40] or "explainer"
