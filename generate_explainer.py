@@ -143,6 +143,79 @@ def tg_send(text: str) -> None:
         print(f"{'✅' if ok else '❌'} 텔레그램 {i}/{len(chunks)}" + ("" if ok else f" — {r}"))
 
 
+def tg_photo(path: str, caption: str) -> None:
+    url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendPhoto"
+    try:
+        with open(path, "rb") as f:
+            r = requests.post(url, timeout=60,
+                              data={"chat_id": TELEGRAM_CHAT_ID, "caption": caption},
+                              files={"photo": (os.path.basename(path), f, "image/png")})
+        ok = r.json().get("ok")
+    except Exception as e:
+        ok, r = False, e
+    print(f"{'✅' if ok else '❌'} 썸네일 발송" + ("" if ok else f" — {r}"))
+
+
+def make_thumbnail(title: str, keyword: str, png_path: str) -> bool:
+    """네이버 블로그 대표이미지(1200x630). 해설글은 한 편짜리라 제목이 주인공이다."""
+    size = 68 if len(title) <= 20 else 58 if len(title) <= 30 else 50 if len(title) <= 40 else 42
+    html = f"""<!DOCTYPE html><html><head><meta charset="UTF-8">
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<style>
+*{{margin:0;padding:0;box-sizing:border-box;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}}
+body{{width:1200px;height:630px;overflow:hidden;
+  background:linear-gradient(145deg,#0d1b2a 0%,#12294a 100%);
+  font-family:'Pretendard','Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif;
+  padding:74px 86px;display:flex;flex-direction:column}}
+.bar{{width:64px;height:5px;background:#c9a84c;margin-bottom:30px}}
+.label{{font-size:19px;color:#c9a84c;letter-spacing:.22em;font-weight:700}}
+.title{{flex:1;display:flex;align-items:center;
+  font-size:{size}px;font-weight:800;color:#f0ebe0;line-height:1.3;
+  word-break:keep-all;letter-spacing:-.02em}}
+.foot{{display:flex;align-items:center;justify-content:space-between;
+  border-top:1px solid #23415f;padding-top:24px}}
+.brand{{font-size:25px;font-weight:700;color:#c9a84c}}
+.kw{{font-size:19px;color:#7d94ad}}
+</style></head><body>
+<div>
+  <div class="bar"></div>
+  <div class="label">인사노무 실무 해설</div>
+</div>
+<div class="title">{title}</div>
+<div class="foot">
+  <div class="brand">공인노무사 JP</div>
+  <div class="kw">{keyword}</div>
+</div>
+</body></html>"""
+
+    tmp = os.path.join(OUT_DIR, "_thumb_tmp.html")
+    with open(tmp, "w", encoding="utf-8") as f:
+        f.write(html)
+    try:
+        from playwright.sync_api import sync_playwright
+        with sync_playwright() as pw:
+            browser = pw.chromium.launch()
+            page = browser.new_page(viewport={"width": 1200, "height": 630}, device_scale_factor=3)
+            page.goto(f"file://{os.path.abspath(tmp)}", wait_until="networkidle")
+            try:
+                page.evaluate("async () => { if (document.fonts) await document.fonts.ready; }")
+            except Exception:
+                pass
+            page.wait_for_timeout(1200)
+            page.screenshot(path=png_path, clip={"x": 0, "y": 0, "width": 1200, "height": 630})
+            browser.close()
+        print(f"✅ 썸네일 저장: {png_path}")
+        return True
+    except Exception as e:
+        print(f"⚠ 썸네일 생성 실패(본문은 계속 발송): {e}")
+        return False
+    finally:
+        if os.path.exists(tmp):
+            os.remove(tmp)
+
+
 def fail(msg: str) -> None:
     """워크플로가 초록불인데 텔레그램만 조용한 상황을 막는다."""
     print(f"⚠ {msg}")
@@ -264,6 +337,10 @@ body 는 줄바꿈을 \\n 으로 넣은 순수 텍스트입니다. 마크다운 
     with open(path, "w", encoding="utf-8") as f:
         f.write(f"[제목]\n{title}\n\n[본문]\n{body}\n\n[해시태그]\n{tags}\n")
     print(f"✅ 저장: {path} (본문 {len(body)}자)")
+
+    png = os.path.join(OUT_DIR, f"{DATE_STR}_{slug}.png")
+    if make_thumbnail(title, picked.get("keyword", ""), png):
+        tg_photo(png, "🖼 블로그 대표이미지로 삽입하세요")
 
     tg_send(f"📝 네이버 블로그 복붙용 ({len(body)}자)\n\n[제목]\n{title}\n\n[본문]\n{body}\n\n{tags}")
     if data.get("check"):

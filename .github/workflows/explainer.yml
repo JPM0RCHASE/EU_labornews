@@ -24,7 +24,9 @@ jobs:
           python-version: '3.11'
 
       - name: 패키지 설치
-        run: pip install anthropic requests json-repair
+        run: |
+          pip install anthropic requests json-repair playwright
+          playwright install chromium --with-deps
 
       - name: 해설글 생성 및 텔레그램 발송
         env:
