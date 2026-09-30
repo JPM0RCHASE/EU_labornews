@@ -371,6 +371,16 @@ try:
 except Exception as _e:
     print(f"⚠ 사용 기사 저장 실패(무시): {_e}")
 
+# ── 뉴스 원본 저장 (해설글 생성기 글감용) ──────────────────────────────
+try:
+    os.makedirs(FOLDER, exist_ok=True)
+    _archive = os.path.join(FOLDER, f"news_{DATE_STR}.json")
+    with open(_archive, "w", encoding="utf-8") as _f:
+        json.dump({"date": DATE_STR, "news": news_list}, _f, ensure_ascii=False, indent=2)
+    print(f"✅ 뉴스 원본 저장: {_archive}")
+except Exception as _e:
+    print(f"⚠ 뉴스 원본 저장 실패(무시): {_e}")
+
 # ── HTML 생성 ────────────────────────────────────────
 RISK_CLS = {"high":"risk-high","med":"risk-med","info":"risk-info"}
 TAG_CLS  = {"high":"tag-high","med":"tag-med","info":"tag-info"}
