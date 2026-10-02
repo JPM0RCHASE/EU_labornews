@@ -18,10 +18,12 @@ import requests
 from datetime import datetime, timezone, timedelta
 import anthropic
 
-ANTHROPIC_API_KEY  = os.environ["ANTHROPIC_API_KEY"]
-TELEGRAM_BOT_TOKEN = os.environ["TELEGRAM_BOT_TOKEN"]
-TELEGRAM_CHAT_ID   = os.environ["TELEGRAM_CHAT_ID"]
-TOPIC              = os.environ.get("TOPIC", "").strip()
+ANTHROPIC_API_KEY   = os.environ["ANTHROPIC_API_KEY"]
+TELEGRAM_BOT_TOKEN  = os.environ["TELEGRAM_BOT_TOKEN"]
+TELEGRAM_CHAT_ID    = os.environ["TELEGRAM_CHAT_ID"]
+NAVER_CLIENT_ID     = os.environ.get("NAVER_CLIENT_ID", "")
+NAVER_CLIENT_SECRET = os.environ.get("NAVER_CLIENT_SECRET", "")
+TOPIC               = os.environ.get("TOPIC", "").strip()
 
 KST        = timezone(timedelta(hours=9))
 TODAY      = datetime.now(KST)
@@ -32,9 +34,23 @@ REPO_ROOT       = os.path.dirname(os.path.abspath(__file__))
 SKILL_FILE      = os.path.join(REPO_ROOT, ".claude/skills/labor-blog-writing/SKILL.md")
 OUT_DIR         = os.path.join(REPO_ROOT, "explainer")
 CANDIDATES_FILE = os.path.join(OUT_DIR, "candidates.json")
+WRITTEN_FILE    = os.path.join(OUT_DIR, "written.json")
 
 MODEL      = "claude-sonnet-4-5"
 NEWS_DAYS  = 14
+
+# 자동완성을 긁을 씨드. 사람들이 실제로 치는 질문은 이걸 입력하면 네이버가 알려준다.
+# 상담에서 자주 받는 질문이 있으면 여기에 추가하면 정확도가 올라간다.
+SEED_KEYWORDS = [
+    "연차", "연차수당", "해고", "부당해고", "권고사직", "퇴직금", "실업급여",
+    "5인미만 사업장", "수습기간", "직장내 괴롭힘", "연장근로", "임금체불",
+    "근로계약서", "주휴수당", "육아휴직", "산재", "포괄임금", "취업규칙",
+    "징계", "경조사 휴가",
+]
+# 데이터랩은 요청 안에서만 상대값을 주므로, 모든 배치에 같은 기준어를 넣고
+# 그 값으로 나눠야 배치끼리 비교가 된다.
+VOLUME_ANCHOR = "연차수당"
+MAX_PHRASES   = 100
 
 os.makedirs(OUT_DIR, exist_ok=True)
 client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
@@ -47,8 +63,103 @@ def load_style_guide() -> str:
     return re.sub(r"^---.*?---\s*", "", body, count=1, flags=re.S).strip()
 
 
+def load_written() -> list:
+    try:
+        with open(WRITTEN_FILE, encoding="utf-8") as f:
+            return json.load(f).get("topics", [])
+    except Exception:
+        return []
+
+
+def remember_written(title: str, keyword: str) -> None:
+    topics = load_written()
+    topics.append({"date": DATE_STR, "title": title, "keyword": keyword})
+    with open(WRITTEN_FILE, "w", encoding="utf-8") as f:
+        json.dump({"topics": topics}, f, ensure_ascii=False, indent=2)
+
+
+def fetch_autocomplete(seed: str) -> list:
+    """네이버 자동완성 = 사람들이 그 단어 뒤에 실제로 뭘 치는지. 인기순으로 온다."""
+    try:
+        r = requests.get("https://ac.search.naver.com/nx/ac", timeout=10,
+                         params={"q": seed, "st": 100, "r_format": "json",
+                                 "r_enc": "UTF-8", "r_unicode": 0, "q_enc": "UTF-8"})
+        groups = r.json().get("items") or []
+    except Exception as e:
+        print(f"⚠ 자동완성 실패 [{seed}]: {e}")
+        return []
+
+    phrases = []
+    for group in groups:
+        for entry in group or []:
+            phrase = entry[0] if isinstance(entry, list) and entry else entry
+            if isinstance(phrase, str) and phrase.strip() != seed:
+                phrases.append(phrase.strip())
+    return phrases
+
+
+def collect_demand_phrases() -> list:
+    """씨드마다 자동완성 상위를 모은다. 자동완성 자체가 이미 인기순이다."""
+    seen, phrases = set(), []
+    for seed in SEED_KEYWORDS:
+        for phrase in fetch_autocomplete(seed)[:5]:
+            # 기준어가 후보에 섞이면 데이터랩 배치에 같은 이름이 두 번 들어간다.
+            if phrase not in seen and phrase != VOLUME_ANCHOR:
+                seen.add(phrase)
+                phrases.append(phrase)
+    print(f"자동완성 수집: {len(phrases)}개")
+    return phrases[:MAX_PHRASES]
+
+
+def rank_by_search_volume(phrases: list) -> list:
+    """데이터랩으로 검색량 순위를 매긴다. 키가 없거나 실패하면 자동완성 순서를 쓴다."""
+    if not (NAVER_CLIENT_ID and NAVER_CLIENT_SECRET):
+        print("⚠ 네이버 키 없음 — 자동완성 순서를 그대로 사용")
+        return [{"phrase": p, "score": None} for p in phrases]
+
+    end = TODAY.date()
+    start = end - timedelta(days=90)
+    headers = {"X-Naver-Client-Id": NAVER_CLIENT_ID,
+               "X-Naver-Client-Secret": NAVER_CLIENT_SECRET,
+               "Content-Type": "application/json"}
+
+    def volumes(batch: list) -> dict:
+        groups = [{"groupName": p, "keywords": [p]} for p in batch]
+        body = {"startDate": str(start), "endDate": str(end),
+                "timeUnit": "month", "keywordGroups": groups}
+        r = requests.post("https://openapi.naver.com/v1/datalab/search",
+                          headers=headers, json=body, timeout=20)
+        r.raise_for_status()
+        out = {}
+        for res in r.json().get("results", []):
+            out[res.get("title", "")] = sum(d.get("ratio", 0) for d in res.get("data", []))
+        return out
+
+    ranked = []
+    # 기준어 1개 + 후보 4개씩. 기준어 값으로 나눠야 배치끼리 비교가 된다.
+    for i in range(0, len(phrases), 4):
+        batch = phrases[i:i + 4]
+        try:
+            vols = volumes([VOLUME_ANCHOR] + batch)
+        except Exception as e:
+            print(f"⚠ 데이터랩 배치 실패(자동완성 순서로 대체): {e}")
+            ranked += [{"phrase": p, "score": None} for p in batch]
+            continue
+        anchor = vols.get(VOLUME_ANCHOR, 0)
+        for p in batch:
+            raw = vols.get(p, 0)
+            ranked.append({"phrase": p, "score": round(raw / anchor, 3) if anchor else None})
+
+    scored = [r for r in ranked if r["score"] is not None]
+    if not scored:
+        print("⚠ 검색량을 하나도 못 받음 — 자동완성 순서를 사용")
+        return ranked
+    scored.sort(key=lambda r: r["score"], reverse=True)
+    print(f"검색량 순위 완료: 상위 {scored[0]['phrase']} ({scored[0]['score']})")
+    return scored
+
+
 def load_recent_news(days: int = NEWS_DAYS) -> list:
-    """최근 날짜 폴더의 news_*.json 을 모아 글감 후보로 돌려준다."""
     items = []
     for path in sorted(glob.glob(os.path.join(REPO_ROOT, "2*/news_*.json")), reverse=True)[:days]:
         try:
@@ -225,26 +336,43 @@ def fail(msg: str) -> None:
 
 # ── 후보 모드 ────────────────────────────────────────────────────────
 def run_candidates(style: str) -> None:
-    news = load_recent_news()
-    if not news:
-        fail("글감이 될 카드뉴스 기록이 없습니다. 카드뉴스 워크플로를 한 번 먼저 실행해 주세요.")
-    print(f"글감 {len(news)}건으로 후보 선정 중...")
+    phrases = collect_demand_phrases()
+    if not phrases:
+        fail("네이버 자동완성에서 검색어를 하나도 못 받았습니다. 잠시 후 다시 실행해 주세요.")
+    ranked = rank_by_search_volume(phrases)[:40]
 
-    news_text = "\n".join(f"- [{n['date']}] {n['title']} / {n['insight']}" for n in news)
-    prompt = f"""아래는 최근 수집한 노동·인사노무 뉴스 목록입니다.
+    demand_text = "\n".join(
+        f"- {r['phrase']}" + (f" (검색량 {r['score']})" if r["score"] is not None else "")
+        for r in ranked
+    )
+    written = load_written()
+    written_text = "\n".join(f"- {w['title']} ({w['keyword']})" for w in written) or "(없음)"
+    news = load_recent_news()
+    news_text = "\n".join(f"- {n['title']}" for n in news[:30]) or "(없음)"
+
+    prompt = f"""아래는 네이버에서 **사람들이 실제로 검색하고 있는** 노동·인사노무 관련 검색어입니다.
+자동완성에서 수집했고, 검색량은 기준어 대비 상대값입니다(클수록 많이 검색됨).
+
+{demand_text}
+
+참고 — 최근 노동 뉴스 (타이밍이 좋은 주제에만 가산점. 주제 자체를 여기서 뽑지 말 것):
 
 {news_text}
 
-이 중에서 **네이버 검색 유입을 노리는 실무 해설글 주제** 3개를 뽑아주세요.
+이미 쓴 글 (중복 금지):
 
-주제 선정 기준 (중요도 순):
-1. 인사담당자나 근로자가 **실제로 검색창에 칠 법한 질문**이어야 한다.
-   좋은 예: "5인미만 사업장 연차", "권고사직 실업급여", "부당해고 구제신청 기간"
-2. **언론사가 다루지 않는 실무 각도**여야 한다. 시사 이슈 자체(노란봉투법 통과, OO기업 파업)는
-   언론사가 검색 상위를 독점하므로 그대로 쓰면 안 된다. 뉴스는 힌트로만 쓰고,
-   그 뉴스가 촉발하는 **실무 질문**으로 바꿔라.
-3. **통념이 틀린 지점**이 있어야 한다. "당연히 된다/안 된다"고 믿는데 실제로는 다른 지점.
-4. 한 번 쓰면 몇 달간 검색 유입이 유지되는 **상시 주제**여야 한다. 그날만 유효한 속보는 제외.
+{written_text}
+
+위 검색어 목록에서 **네이버 검색 유입을 노리는 실무 해설글 주제** 3개를 뽑아주세요.
+
+선정 기준 (중요도 순):
+1. **검색량이 큰 것을 우선**한다. 아무리 주제가 흥미로워도 검색하는 사람이 없으면 소용없다.
+2. 검색어는 단어일 뿐이니, 그 사람이 **무엇을 알고 싶어서 그걸 쳤는지** 실무 질문으로 복원한다.
+   예: "연차수당 계산" → "연차수당, 통상임금으로 계산하는 게 맞나요?"
+3. **통념이 틀린 지점**이 있어야 한다. 검색해서 들어온 사람이 "어, 내가 알던 것과 다르네"가 되어야
+   끝까지 읽고 체류시간이 올라간다.
+4. 한 번 쓰면 몇 달간 유입이 유지되는 **상시 주제**여야 한다. 그날만 유효한 속보는 제외.
+5. 언론사가 상위를 독점하는 시사 키워드(노란봉투법, OO기업 파업)는 제외한다.
 
 아래 JSON만 출력하세요. 다른 말은 쓰지 마세요.
 
@@ -253,7 +381,8 @@ def run_candidates(style: str) -> None:
     {{
       "topic": "해설글이 답할 실무 질문 한 문장",
       "title": "통념 반박형 제목안 (25자 내외)",
-      "keyword": "노리는 검색 키워드",
+      "keyword": "노리는 검색 키워드 (위 목록에서 고를 것)",
+      "volume": "그 검색어의 검색량 값 (없으면 미상)",
       "reader": "사용자" 또는 "근로자",
       "why": "이 주제를 고른 이유 한 문장"
     }}
@@ -269,12 +398,13 @@ def run_candidates(style: str) -> None:
         json.dump({"date": DATE_STR, "candidates": candidates}, f, ensure_ascii=False, indent=2)
     print(f"✅ 후보 {len(candidates)}건 저장: {CANDIDATES_FILE}")
 
-    lines = [f"📌 [{DATE_LABEL}] 해설글 주제 후보", ""]
+    lines = [f"📌 [{DATE_LABEL}] 해설글 주제 후보 (검색량 기준)", ""]
     for i, c in enumerate(candidates, 1):
         lines += [
             f"{i}. {c.get('title','')}",
             f"   주제: {c.get('topic','')}",
-            f"   키워드: {c.get('keyword','')} / 시점: {c.get('reader','')}",
+            f"   키워드: {c.get('keyword','')} (검색량 {c.get('volume','미상')})",
+            f"   시점: {c.get('reader','')}",
             f"   이유: {c.get('why','')}",
             "",
         ]
@@ -341,6 +471,8 @@ body 는 줄바꿈을 \\n 으로 넣은 순수 텍스트입니다. 마크다운 
     png = os.path.join(OUT_DIR, f"{DATE_STR}_{slug}.png")
     if make_thumbnail(title, picked.get("keyword", ""), png):
         tg_photo(png, "🖼 블로그 대표이미지로 삽입하세요")
+
+    remember_written(title, picked.get("keyword", ""))
 
     tg_send(f"📝 네이버 블로그 복붙용 ({len(body)}자)\n\n[제목]\n{title}\n\n[본문]\n{body}\n\n{tags}")
     if data.get("check"):
