@@ -27,9 +27,15 @@ DATE_SHORT  = f"{TODAY.month}/{TODAY.day}"
 WEEKDAY     = ["월","화","수","목","금","토","일"][TODAY.weekday()]
 
 FOLDER    = DATE_STR
-NEWS_FILE = f"labornews_{DATE_STR}.html"
-SEND_FILE = f"send_{DATE_STR}.html"
-PNG_FILE  = f"labornews_{DATE_STR}.png"
+# EDITION=construction 이면 레미콘·건자재·건설 중심의 별도 판(v2)을 만든다.
+# 같은 날 두 판이 같이 돌아도 파일이 겹치지 않도록 접미사를 붙인다.
+EDITION   = os.environ.get("EDITION", "daily").strip().lower()
+IS_CON    = EDITION == "construction"
+SUFFIX    = "_con" if IS_CON else ""
+HL_LABEL  = "건설·자재 3 + 중요이슈 4" if IS_CON else "3+2+2"
+NEWS_FILE = f"labornews{SUFFIX}_{DATE_STR}.html"
+SEND_FILE = f"send{SUFFIX}_{DATE_STR}.html"
+PNG_FILE  = f"labornews{SUFFIX}_{DATE_STR}.png"
 VERCEL_URL = f"https://eu-labornews.vercel.app/{FOLDER}/{NEWS_FILE}"
 REPO_ROOT  = os.path.dirname(os.path.abspath(__file__))
 
@@ -37,7 +43,7 @@ REPO_ROOT  = os.path.dirname(os.path.abspath(__file__))
 OG_IMAGE = f"https://eu-labornews.vercel.app/thumbnail_telegram.png?v={DATE_STR}"
 
 os.makedirs(FOLDER, exist_ok=True)
-print(f"[{DATE_LABEL}] 텔레그램 카드뉴스 생성 시작...")
+print(f"[{DATE_LABEL}] 텔레그램 카드뉴스 생성 시작... (판: {EDITION})")
 
 # ── Naver 뉴스 수집 ──────────────────────────────────
 KEYWORDS = [
@@ -95,12 +101,29 @@ KEYWORDS = [
     "인사평가 성과관리",
 ]
 
+# 건설판(v2)은 1~3번을 레미콘·건자재유통·건설로 채우므로 해당 키워드를 더 넓게 수집한다.
+CONSTRUCTION_KEYWORDS = [
+    # 레미콘
+    "레미콘 운송료", "레미콘 노조 파업", "레미콘 단가 협상",
+    "레미콘 업계", "시멘트 가격 인상", "시멘트 수급",
+    # 건자재 유통
+    "건설자재 가격", "건자재 유통", "철근 가격 시황",
+    "건설자재 수급 차질", "자재비 상승 공사비",
+    # 건설
+    "건설사 부도 폐업", "건설경기 수주", "건설업 불황",
+    "하도급 대금 체불", "전문건설 종합건설", "건설현장 중대재해",
+    "건설업 임금체불", "건설노조 단체교섭", "공사비 분쟁",
+]
+if IS_CON:
+    KEYWORDS = CONSTRUCTION_KEYWORDS + KEYWORDS
+    print(f"건설판 키워드 {len(CONSTRUCTION_KEYWORDS)}개 우선 수집")
+
 headers = {"X-Naver-Client-Id": NAVER_CLIENT_ID, "X-Naver-Client-Secret": NAVER_CLIENT_SECRET}
 seven_days_ago = TODAY - timedelta(days=7)
 collected, seen = [], set()
 
 # ── 전일 사용 기사 로드 (중복 방지) ──────────────────────────────────────
-USED_FILE = os.path.join(REPO_ROOT, "last_used.json")
+USED_FILE = os.path.join(REPO_ROOT, f"last_used{SUFFIX}.json")
 _prev_urls   = set()
 _prev_titles = set()
 try:
@@ -160,13 +183,7 @@ news_text = "\n\n".join([
     for i, n in enumerate(news_pool)
 ]) if news_pool else "수집된 뉴스 없음"
 
-PROMPT = f"""당신은 공인노무사이자 HR 전문가입니다. 오늘은 {DATE_LABEL} {WEEKDAY}요일입니다.
-아래 수집된 뉴스에서 7건을 선별하여 텔레그램 카드뉴스를 작성하세요.
-
-수집된 뉴스:
-{news_text}
-
-【카드 7장 구성 — 인사쟁이 실무 시나리오형】
+DAILY_COMPOSITION = """【카드 7장 구성 — 인사쟁이 실무 시나리오형】
 독자가 "나한테도 일어날 수 있는 일"로 느낄 수 있게, 상황·스토리·실무 기준 중심으로 선별하세요.
 업종별 분류보다 상황·임팩트 중심으로 선정. 중소·중견기업 사례를 적극 포함하세요.
 
@@ -222,8 +239,56 @@ PROMPT = f"""당신은 공인노무사이자 HR 전문가입니다. 오늘은 {D
 ※ 노란봉투법·노조법 개정·원청 사용자성은 5번에서만 허용 — 7장 전체에서 단 1건
 ※ 대기업(삼성·SK·현대차·LG) 기사는 7장 전체에서 최대 2건으로 제한
 ※ 돌봄·요양·복지서비스·음식점·소매업·농업·종교 뉴스는 절대 포함하지 말 것
-※ 5인 미만 사업장 단독 이슈는 제외 (뉴스레터에서 별도 다룸)
+※ 5인 미만 사업장 단독 이슈는 제외 (뉴스레터에서 별도 다룸)"""
 
+CON_COMPOSITION = """【카드 7장 구성 — 건설·건자재 특화판】
+1~3번은 반드시 레미콘·건자재 유통·건설 관련 기사로 채웁니다.
+4~7번은 그 외 노동·인사 뉴스 중 오늘 가장 중요한 것부터 중요도 순으로 배치합니다.
+
+━━ [건설·건자재 3장] ━━
+
+1번 — 레미콘·시멘트
+  · 레미콘 운송료 협상, 레미콘 노조 파업·쟁의, 믹서트럭 기사 분쟁
+  · 시멘트 가격 인상·수급, 레미콘 단가 협상, 업계 구조조정
+  · 해당 뉴스 없으면 → 건설자재 가격·수급 이슈로 대체
+
+2번 — 건자재 유통·가격
+  · 철근·골재·시멘트 등 자재 가격 시황, 수급 차질, 유통 구조 문제
+  · 자재비 상승에 따른 공사비 분쟁, 자재 담합·단가 조사
+  · 해당 뉴스 없으면 → 건설 원가·공사비 관련 이슈로 대체
+
+3번 — 건설 현장·건설사
+  · 건설사 부도·폐업·워크아웃, 건설경기·수주 동향
+  · 건설현장 중대재해·산재, 하도급 대금 체불, 건설 임금체불
+  · 전문건설·종합건설 업계 갈등, 건설노조 단체교섭
+  · 해당 뉴스 없으면 → 건설업 고용·노무 이슈로 대체
+
+━━ [중요 노동 이슈 4장 — 중요도 순] ━━
+
+4~7번 — 오늘 노동·인사 분야에서 가장 중요한 뉴스를 파급력 큰 순서대로
+  · 판결·행정해석 변경, 법령 시행, 노사분규, 임금·근로시간, 산재, 정책 발표 등
+  · 업종 제한 없이 "오늘 인사담당자가 알아야 할 순서"로 4번이 가장 중요
+  · 1~3번에서 다룬 건설·자재 주제와 겹치지 않을 것
+  · 각 카드는 서로 다른 기사·주제 사용
+
+※ 1~3번에 건설·자재 뉴스가 부족하면 수집된 뉴스 중 가장 가까운 것을 쓰되,
+   억지로 무관한 기사를 건설로 분류하지 말 것. 정말 없으면 그 자리를
+   4~7번과 같은 기준의 중요 노동 뉴스로 채우고 category에 사유를 적을 것
+※ 노란봉투법·노조법 개정·원청 사용자성은 4~7번에서 최대 1건
+※ 대기업(삼성·SK·현대차·LG) 기사는 7장 전체에서 최대 2건으로 제한
+※ 돌봄·요양·복지서비스·음식점·소매업·농업·종교 뉴스는 절대 포함하지 말 것
+※ 5인 미만 사업장 단독 이슈는 제외 (뉴스레터에서 별도 다룸)
+"""
+
+COMPOSITION = CON_COMPOSITION if IS_CON else DAILY_COMPOSITION
+
+PROMPT = f"""당신은 공인노무사이자 HR 전문가입니다. 오늘은 {DATE_LABEL} {WEEKDAY}요일입니다.
+아래 수집된 뉴스에서 7건을 선별하여 텔레그램 카드뉴스를 작성하세요.
+
+수집된 뉴스:
+{news_text}
+
+{COMPOSITION}
 【언론사 우선순위】
 1순위: 조선일보, 중앙일보, 동아일보, 연합뉴스, YTN, MBC, KBS, SBS
 2순위: 한겨레, 경향신문, 한국경제, 매일경제, 서울경제, 헤럴드경제
@@ -374,7 +439,7 @@ except Exception as _e:
 # ── 뉴스 원본 저장 (해설글 생성기 글감용) ──────────────────────────────
 try:
     os.makedirs(FOLDER, exist_ok=True)
-    _archive = os.path.join(FOLDER, f"news_{DATE_STR}.json")
+    _archive = os.path.join(FOLDER, f"news{SUFFIX}_{DATE_STR}.json")
     with open(_archive, "w", encoding="utf-8") as _f:
         json.dump({"date": DATE_STR, "news": news_list}, _f, ensure_ascii=False, indent=2)
     print(f"✅ 뉴스 원본 저장: {_archive}")
@@ -717,7 +782,7 @@ def generate_png(html_rel_path: str, png_path: str) -> bool:
 
 
 # ── 데일리 요약 썸네일 생성 (1200×630) ─────────────────────────────────
-THUMBNAIL_FILE = f"thumbnail_{DATE_STR}.png"
+THUMBNAIL_FILE = f"thumbnail{SUFFIX}_{DATE_STR}.png"
 
 def generate_daily_thumbnail(items, date_label, png_path):
     # 카드 색상 매핑 (이모지 없이 색상만으로 구분)
@@ -796,7 +861,7 @@ body{{width:1200px;height:630px;overflow:hidden;
   </div>
 </div>
 <div class="right">
-  <div class="hl-label">Today's 7 Headlines — 3+2+2</div>
+  <div class="hl-label">Today's 7 Headlines — {HL_LABEL}</div>
   {rows_html}
   <div class="footer">eu-labornews.vercel.app</div>
 </div>
