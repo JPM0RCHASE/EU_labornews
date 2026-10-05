@@ -6,7 +6,7 @@ JP Labor News - 텔레그램 일간 카드뉴스 생성
 - Claude API로 5건 카드뉴스 생성
 - 텔레그램 자동 발송
 """
-import os, re, json, requests, urllib.parse
+import os, re, json, glob, requests, urllib.parse
 import socket, shutil, threading, http.server, socketserver
 from datetime import datetime, timezone, timedelta
 import anthropic
@@ -272,16 +272,7 @@ CON_COMPOSITION = """【카드 7장 구성 — 건설·건자재 특화판】
     중요 노동 뉴스로 채우고 category에 "건설 뉴스 부족"이라고 적는다
   · 1~3번끼리 같은 사건을 중복해 다루지 않는다
 
-━━ [일반 노동 4장 — 중요도 순] ━━
-
-4~7번 — 오늘 노동·인사 분야에서 가장 중요한 뉴스를 파급력 큰 순서대로
-  · 판결·행정해석 변경, 법령 시행, 노사분규, 임금·근로시간, 산재, 정책 발표 등
-  · "오늘 인사담당자가 알아야 할 순서"로 배치하며 4번이 가장 중요
-  · 각 카드는 서로 다른 기사·주제 사용
-
-  · 건설·건자재·레미콘 뉴스는 4~7번에 넣지 않는다. 같은 사건이든 다른 사건이든
-    건설·자재 관련 기사는 1~3번 세 장이 전부다
-  · 즉 7장 전체에서 건설·건자재는 정확히 3건, 그 외 노동 이슈가 정확히 4건이다
+__SECTION_4_7__
 
 ※ 노란봉투법·노조법 개정·원청 사용자성은 4~7번에서 최대 1건
 ※ 대기업(삼성·SK·현대차·LG) 기사는 7장 전체에서 최대 2건으로 제한
@@ -290,6 +281,52 @@ CON_COMPOSITION = """【카드 7장 구성 — 건설·건자재 특화판】
 """
 
 COMPOSITION = CON_COMPOSITION if IS_CON else DAILY_COMPOSITION
+
+if IS_CON:
+    # 건설판 4~7번은 그날 데일리 카드뉴스에 실린 기사에서 고른다.
+    # news_con_*.json 은 건설판 자신의 기록이라 news_2*.json 패턴으로 자연히 걸러진다.
+    _daily = sorted(glob.glob(os.path.join(REPO_ROOT, "2*", "news_2*.json")), reverse=True)
+    _pool = []
+    if _daily:
+        try:
+            with open(_daily[0], encoding="utf-8") as _f:
+                _dd = json.load(_f)
+            _pool = _dd.get("news", [])
+            if _dd.get("date") != DATE_STR:
+                print(f"⚠ 오늘 데일리 카드뉴스가 없어 {_dd.get('date')}분을 4~7번 후보로 사용")
+            else:
+                print(f"데일리 카드뉴스 {len(_pool)}건을 4~7번 후보로 사용")
+        except Exception as _e:
+            print(f"⚠ 데일리 카드뉴스 읽기 실패: {_e}")
+
+    if _pool:
+        _pool_text = "\n".join(
+            f"[D{n.get('rank')}] {n.get('title','')}\n"
+            f"      링크:{n.get('url','')}\n"
+            f"      시사점:{n.get('insight','')}"
+            for n in _pool)
+        SECTION_4_7 = (
+            "\u2501\u2501 [일반 노동 4장 \u2014 데일리 카드뉴스에서 추출] \u2501\u2501\n\n"
+            "4~7번은 아래 [데일리 카드뉴스 기사] 목록 안에서만 4건을 골라 중요도 순으로 배치합니다.\n"
+            "위에 수집된 뉴스에서 새로 고르지 말고, 반드시 이 목록에서만 선택하세요.\n\n"
+            "[데일리 카드뉴스 기사]\n" + _pool_text + "\n\n"
+            "  \u00b7 7건 중 파급력이 큰 4건을 골라 4번이 가장 중요하도록 배치\n"
+            "  \u00b7 제목\u00b7불릿\u00b7시사점은 이 카드뉴스에 맞게 다시 쓰되 기사와 링크는 그대로 유지\n"
+            "  \u00b7 건설\u00b7건자재\u00b7레미콘 기사가 섞여 있으면 4~7번에서는 제외한다\n"
+            "    (건설\u00b7자재는 1~3번 세 장이 전부)\n"
+            "  \u00b7 1~3번에서 쓴 기사와 중복되지 않을 것\n"
+            "  \u00b7 즉 7장 전체에서 건설\u00b7건자재 3건, 그 외 노동 이슈 4건\n")
+    else:
+        print("⚠ 데일리 카드뉴스 기록 없음 — 4~7번을 수집 뉴스에서 직접 고릅니다")
+        SECTION_4_7 = (
+            "\u2501\u2501 [일반 노동 4장 \u2014 중요도 순] \u2501\u2501\n\n"
+            "4~7번 \u2014 오늘 노동\u00b7인사 분야에서 가장 중요한 뉴스를 파급력 큰 순서대로\n"
+            "  \u00b7 판결\u00b7행정해석 변경, 법령 시행, 노사분규, 임금\u00b7근로시간, 산재, 정책 발표 등\n"
+            "  \u00b7 4번이 가장 중요하도록 배치하고, 각 카드는 서로 다른 기사\u00b7주제를 쓸 것\n"
+            "  \u00b7 건설\u00b7건자재\u00b7레미콘 기사는 4~7번에 넣지 않는다\n"
+            "    (건설\u00b7자재는 1~3번 세 장이 전부)\n"
+            "  \u00b7 즉 7장 전체에서 건설\u00b7건자재 3건, 그 외 노동 이슈 4건\n")
+    COMPOSITION = COMPOSITION.replace("__SECTION_4_7__", SECTION_4_7)
 
 PROMPT = f"""당신은 공인노무사이자 HR 전문가입니다. 오늘은 {DATE_LABEL} {WEEKDAY}요일입니다.
 아래 수집된 뉴스에서 7건을 선별하여 텔레그램 카드뉴스를 작성하세요.
