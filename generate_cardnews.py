@@ -245,37 +245,33 @@ DAILY_COMPOSITION = """【카드 7장 구성 — 인사쟁이 실무 시나리�
 ※ 5인 미만 사업장 단독 이슈는 제외 (뉴스레터에서 별도 다룸)"""
 
 CON_COMPOSITION = """【카드 7장 구성 — 건설·건자재 특화판】
-1~3번은 건설·건자재 뉴스 3건, 4~7번은 일반 노동·인사 뉴스 4건으로 채웁니다.
+1~3번: 건설·건자재 뉴스 3건
+4~7번: 건설과 무관한 일반 노동 뉴스 4건
+합계 정확히 7건.
 
-━━ [건설·건자재 3장] ━━
+━━ [1~3번 — 건설·건자재 3장] ━━
 
-1~3번은 아래 우선순위로 3건을 고릅니다. 순위가 높은 범주부터 채우세요.
+1번 — 레미콘 (필수)
+  · 반드시 레미콘 기사를 넣는다
+  · 레미콘 운송료, 레미콘 노조·파업·쟁의, 믹서트럭 기사, 레미콘 단가·수급,
+    레미콘 공장·업계, 시멘트 가격·수급
+  · 수집된 뉴스에 레미콘 기사가 하나라도 있으면 무조건 1번에 배치할 것
+  · 정말 한 건도 없을 때만 건자재 기사로 대체하고,
+    category에 "레미콘 기사 없음"이라고 적는다
 
-  [1순위] 레미콘
-    · 레미콘 운송료 협상, 레미콘 노조 파업·쟁의, 믹서트럭 기사 분쟁
-    · 레미콘 단가·수급, 레미콘 업계 구조조정, 시멘트 가격 인상
+2번 — 건자재
+  · 철근·골재·시멘트 등 자재 가격 시황, 수급 차질, 유통 구조
+  · 자재비 상승에 따른 공사비 분쟁, 자재 담합·단가 조사
 
-  [2순위] 건자재
-    · 철근·골재·시멘트 등 자재 가격 시황, 수급 차질, 유통 구조 문제
-    · 자재비 상승에 따른 공사비 분쟁, 자재 담합·단가 조사
+3번 — 유진기업(주) 우선, 없으면 건설 일반
+  · 제목이나 본문에 "유진기업" 또는 "유진그룹"이 나오는 기사가 있으면 무조건 여기 배치
+  · 없으면 건설 일반 뉴스: 건설사 부도·폐업·수주, 건설현장 중대재해,
+    하도급 대금 체불, 건설업 임금체불, 건설노조 단체교섭
 
-  [3순위] 유진기업(주) 언급 기사
-    · 제목이나 본문에 "유진기업" 또는 "유진그룹"이 나오는 기사
-    · 레미콘·건자재 기사가 충분하더라도, 유진기업 기사가 있으면 반드시 3장 안에 포함할 것
-
-배치 규칙:
-  · rank 1·2·3 순서는 위 우선순위를 따른다 (레미콘 → 건자재 → 유진기업)
-  · 레미콘 기사가 2건 이상이면 1·2번에 넣고 3번을 건자재 또는 유진기업으로 채운다
-  · 세 범주로 3장을 못 채우면 건설 일반 뉴스로 보충한다
-    (건설사 부도·수주, 건설현장 중대재해, 하도급 대금 체불, 건설업 임금체불)
-  · 그래도 부족하면 억지로 무관한 기사를 건설로 분류하지 말 것. 4~7번과 같은 기준의
-    중요 노동 뉴스로 채우고 category에 "건설 뉴스 부족"이라고 적는다
   · 1~3번끼리 같은 사건을 중복해 다루지 않는다
 
 __SECTION_4_7__
-
-※ 노란봉투법·노조법 개정·원청 사용자성은 4~7번에서 최대 1건
-※ 대기업(삼성·SK·현대차·LG) 기사는 7장 전체에서 최대 2건으로 제한
+※ 대기업(삼성·SK·현대차·LG) 기사는 4~7번에서 최대 2건
 ※ 돌봄·요양·복지서비스·음식점·소매업·농업·종교 뉴스는 절대 포함하지 말 것
 ※ 5인 미만 사업장 단독 이슈는 제외 (뉴스레터에서 별도 다룸)
 """
@@ -306,26 +302,34 @@ if IS_CON:
             f"      시사점:{n.get('insight','')}"
             for n in _pool)
         SECTION_4_7 = (
-            "\u2501\u2501 [일반 노동 4장 \u2014 데일리 카드뉴스에서 추출] \u2501\u2501\n\n"
-            "4~7번은 아래 [데일리 카드뉴스 기사] 목록 안에서만 4건을 골라 중요도 순으로 배치합니다.\n"
-            "위에 수집된 뉴스에서 새로 고르지 말고, 반드시 이 목록에서만 선택하세요.\n\n"
-            "[데일리 카드뉴스 기사]\n" + _pool_text + "\n\n"
-            "  \u00b7 7건 중 파급력이 큰 4건을 골라 4번이 가장 중요하도록 배치\n"
-            "  \u00b7 제목\u00b7불릿\u00b7시사점은 이 카드뉴스에 맞게 다시 쓰되 기사와 링크는 그대로 유지\n"
-            "  \u00b7 건설\u00b7건자재\u00b7레미콘 기사가 섞여 있으면 4~7번에서는 제외한다\n"
-            "    (건설\u00b7자재는 1~3번 세 장이 전부)\n"
-            "  \u00b7 1~3번에서 쓴 기사와 중복되지 않을 것\n"
-            "  \u00b7 즉 7장 전체에서 건설\u00b7건자재 3건, 그 외 노동 이슈 4건\n")
+            "\u2501\u2501 [4~7\ubc88 \u2014 \uc77c\ubc18 \ub178\ub3d9 4\uc7a5, \ub370\uc77c\ub9ac \uce74\ub4dc\ub274\uc2a4\uc5d0\uc11c \ucd94\ucd9c] \u2501\u2501\n\n"
+            "\uc544\ub798 [\ub370\uc77c\ub9ac \uce74\ub4dc\ub274\uc2a4 \uae30\uc0ac] \ubaa9\ub85d \uc548\uc5d0\uc11c\ub9cc 4\uac74\uc744 \uace8\ub77c \uc911\uc694\ub3c4 \uc21c\uc73c\ub85c \ubc30\uce58\ud569\ub2c8\ub2e4.\n"
+            "\uc704\uc5d0 \uc218\uc9d1\ub41c \ub274\uc2a4\uc5d0\uc11c \uc0c8\ub85c \uace0\ub974\uc9c0 \ub9d0\uace0, \ubc18\ub4dc\uc2dc \uc774 \ubaa9\ub85d\uc5d0\uc11c\ub9cc \uc120\ud0dd\ud558\uc138\uc694.\n\n"
+            "[\ub370\uc77c\ub9ac \uce74\ub4dc\ub274\uc2a4 \uae30\uc0ac]\n" + _pool_text + "\n\n"
+            "\uc544\ub798 \ub124 \ubd84\uc57c\uc5d0 \ud574\ub2f9\ud558\ub294 \uae30\uc0ac\ub9cc \uace0\ub985\ub2c8\ub2e4.\n"
+"  \u00b7 \uace0\uc6a9\ub178\ub3d9\ubd80 \u2014 \uc815\ucc45 \ubc1c\ud45c, \uc9c0\uce68\u00b7\ud589\uc815\ud574\uc11d, \ub2e8\uc18d\u00b7\uacfc\ud0dc\ub8cc\n"
+            "  \u00b7 \ub300\uae30\uc5c5 \ub178\uc0ac \u2014 \uc784\uae08\uad50\uc12d, \ud30c\uc5c5, \ub178\uc0ac\ubd84\uaddc, \uad6c\uc870\uc870\uc815\n"
+            "  \u00b7 \uadfc\ub85c\uae30\uc900\ubc95 \u2014 \uc784\uae08\u00b7\uadfc\ub85c\uc2dc\uac04\u00b7\uc5f0\ucc28\u00b7\ud574\uace0\u00b7\uc9d5\uacc4 \ud310\uacb0 \ubc0f \ubc95 \uac1c\uc815\n"
+            "  \u00b7 \ub178\ub3d9\ubc95 \uc77c\ubc18 \u2014 \ub178\uc870\ubc95, \uc0b0\uc5c5\uc548\uc804\ubcf4\uac74\ubc95, \uc911\ub300\uc7ac\ud574\ucc98\ubc8c\ubc95, \uad6d\ud68c \uc785\ubc95 \ub3d9\ud5a5\n"
+            "\n  \u00b7 4\ubc88\uc774 \uac00\uc7a5 \uc911\uc694\ud558\uace0 7\ubc88\uc73c\ub85c \uac08\uc218\ub85d \uc911\uc694\ub3c4\uac00 \ub0ae\uc544\uc9c0\uac8c \ubc30\uce58\n"
+            "  \u00b7 \uac74\uc124\u00b7\uac74\uc124\uc0ac\u00b7\uac74\uc790\uc7ac\u00b7\ub808\ubbf8\ucf58\uc774 \uc8fc\uc81c\uc778 \uae30\uc0ac\ub294 \uc808\ub300 \ub123\uc9c0 \uc54a\ub294\ub2e4\n"
+            "    (\uac74\uc124\u00b7\uc790\uc7ac\ub294 1~3\ubc88 \uc138 \uc7a5\uc774 \uc804\ubd80)\n"
+            "  \u00b7 \uc81c\ubaa9\u00b7\ubd88\ub9bf\u00b7\uc2dc\uc0ac\uc810\uc740 \ub2e4\uc2dc \uc4f0\ub418 \uae30\uc0ac\uc640 \ub9c1\ud06c\ub294 \uadf8\ub300\ub85c \uc720\uc9c0\n"
+            "  \u00b7 \uac01 \uce74\ub4dc\ub294 \uc11c\ub85c \ub2e4\ub978 \uae30\uc0ac\u00b7\uc8fc\uc81c \uc0ac\uc6a9\n")
     else:
         print("⚠ 데일리 카드뉴스 기록 없음 — 4~7번을 수집 뉴스에서 직접 고릅니다")
         SECTION_4_7 = (
-            "\u2501\u2501 [일반 노동 4장 \u2014 중요도 순] \u2501\u2501\n\n"
-            "4~7번 \u2014 오늘 노동\u00b7인사 분야에서 가장 중요한 뉴스를 파급력 큰 순서대로\n"
-            "  \u00b7 판결\u00b7행정해석 변경, 법령 시행, 노사분규, 임금\u00b7근로시간, 산재, 정책 발표 등\n"
-            "  \u00b7 4번이 가장 중요하도록 배치하고, 각 카드는 서로 다른 기사\u00b7주제를 쓸 것\n"
-            "  \u00b7 건설\u00b7건자재\u00b7레미콘 기사는 4~7번에 넣지 않는다\n"
-            "    (건설\u00b7자재는 1~3번 세 장이 전부)\n"
-            "  \u00b7 즉 7장 전체에서 건설\u00b7건자재 3건, 그 외 노동 이슈 4건\n")
+            "\u2501\u2501 [4~7\ubc88 \u2014 \uc77c\ubc18 \ub178\ub3d9 4\uc7a5, \uc911\uc694\ub3c4 \uc21c] \u2501\u2501\n\n"
+            "\uac74\uc124\u00b7\uac74\uc790\uc7ac\uc640 \ubb34\uad00\ud55c \uc77c\ubc18 \ub178\ub3d9 \ub274\uc2a4 4\uac74\uc744 \uace0\ub985\ub2c8\ub2e4.\n"
+            "\uc544\ub798 \ub124 \ubd84\uc57c\uc5d0 \ud574\ub2f9\ud558\ub294 \uae30\uc0ac\ub9cc \uace0\ub985\ub2c8\ub2e4.\n"
+"  \u00b7 \uace0\uc6a9\ub178\ub3d9\ubd80 \u2014 \uc815\ucc45 \ubc1c\ud45c, \uc9c0\uce68\u00b7\ud589\uc815\ud574\uc11d, \ub2e8\uc18d\u00b7\uacfc\ud0dc\ub8cc\n"
+            "  \u00b7 \ub300\uae30\uc5c5 \ub178\uc0ac \u2014 \uc784\uae08\uad50\uc12d, \ud30c\uc5c5, \ub178\uc0ac\ubd84\uaddc, \uad6c\uc870\uc870\uc815\n"
+            "  \u00b7 \uadfc\ub85c\uae30\uc900\ubc95 \u2014 \uc784\uae08\u00b7\uadfc\ub85c\uc2dc\uac04\u00b7\uc5f0\ucc28\u00b7\ud574\uace0\u00b7\uc9d5\uacc4 \ud310\uacb0 \ubc0f \ubc95 \uac1c\uc815\n"
+            "  \u00b7 \ub178\ub3d9\ubc95 \uc77c\ubc18 \u2014 \ub178\uc870\ubc95, \uc0b0\uc5c5\uc548\uc804\ubcf4\uac74\ubc95, \uc911\ub300\uc7ac\ud574\ucc98\ubc8c\ubc95, \uad6d\ud68c \uc785\ubc95 \ub3d9\ud5a5\n"
+            "\n  \u00b7 4\ubc88\uc774 \uac00\uc7a5 \uc911\uc694\ud558\uace0 7\ubc88\uc73c\ub85c \uac08\uc218\ub85d \uc911\uc694\ub3c4\uac00 \ub0ae\uc544\uc9c0\uac8c \ubc30\uce58\n"
+            "  \u00b7 \uac74\uc124\u00b7\uac74\uc124\uc0ac\u00b7\uac74\uc790\uc7ac\u00b7\ub808\ubbf8\ucf58\uc774 \uc8fc\uc81c\uc778 \uae30\uc0ac\ub294 \uc808\ub300 \ub123\uc9c0 \uc54a\ub294\ub2e4\n"
+            "    (\uac74\uc124\u00b7\uc790\uc7ac\ub294 1~3\ubc88 \uc138 \uc7a5\uc774 \uc804\ubd80)\n"
+            "  \u00b7 \uac01 \uce74\ub4dc\ub294 \uc11c\ub85c \ub2e4\ub978 \uae30\uc0ac\u00b7\uc8fc\uc81c \uc0ac\uc6a9\n")
     COMPOSITION = COMPOSITION.replace("__SECTION_4_7__", SECTION_4_7)
 
 PROMPT = f"""당신은 공인노무사이자 HR 전문가입니다. 오늘은 {DATE_LABEL} {WEEKDAY}요일입니다.
